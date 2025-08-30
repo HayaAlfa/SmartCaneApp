@@ -1,0 +1,24 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/SettingsScreen.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Settings Placeholder",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 14
+        }
+      }
+    ]
+  },
+  "version": 1
+}

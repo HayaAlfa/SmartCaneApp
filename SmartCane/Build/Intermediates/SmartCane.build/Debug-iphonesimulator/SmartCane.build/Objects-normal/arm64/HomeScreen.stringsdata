@@ -1,0 +1,24 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/HomeScreen.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Home Screen Placeholder",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "Home",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 14
+        }
+      }
+    ]
+  },
+  "version": 1
+}

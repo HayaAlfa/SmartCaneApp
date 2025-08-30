@@ -1,0 +1,24 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/MapScreen.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Map Screen Placeholder",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "Map",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 14
+        }
+      }
+    ]
+  },
+  "version": 1
+}
