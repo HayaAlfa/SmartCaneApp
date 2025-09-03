@@ -17,6 +17,14 @@
           "startingColumn": 34,
           "startingLine": 14
         }
+      },
+      {
+        "comment": "",
+        "key": "Speak",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 16
+        }
       }
     ]
   },

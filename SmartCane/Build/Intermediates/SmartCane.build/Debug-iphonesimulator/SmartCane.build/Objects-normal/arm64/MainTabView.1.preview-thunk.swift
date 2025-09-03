@@ -13,17 +13,26 @@ import func SwiftUI.__designTimeBoolean
 
 import SwiftUI
 
+
 struct MainTabView: View {
+    @State private var selectedTab = 0
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeScreen()
-                .tabItem { Label(__designTimeString("#7374_0", fallback: "Home"), systemImage: __designTimeString("#7374_1", fallback: "house.fill"))}
+                .tabItem { Label(__designTimeString("#4762_0", fallback: "Home"), systemImage: __designTimeString("#4762_1", fallback: "house.fill"))}
+                .tag(__designTimeInteger("#4762_2", fallback: 0))
             
             MapScreen ()
-                .tabItem { Label(__designTimeString("#7374_2", fallback: "Map"), systemImage: __designTimeString("#7374_3", fallback: "map.fill"))}
+                .tabItem { Label(__designTimeString("#4762_3", fallback: "Map"), systemImage: __designTimeString("#4762_4", fallback: "map.fill"))}
+                .tag(__designTimeInteger("#4762_5", fallback: 1))
             
             SettingsScreen()
-                .tabItem { Label(__designTimeString("#7374_4", fallback: "Setting"), systemImage: __designTimeString("#7374_5", fallback: "gearshape.fill"))}
+                .tabItem { Label(__designTimeString("#4762_6", fallback: "Setting"), systemImage: __designTimeString("#4762_7", fallback: "gearshape.fill"))}
+                .tag(__designTimeInteger("#4762_8", fallback: 2))
+            
+        }
+        .onChange(of: selectedTab) {
+            speakTabChange(selectedTab)
             
         }
         .tint(Theme.brand)
@@ -34,4 +43,20 @@ struct MainTabView: View {
 #Preview("Dark Mode") {
     MainTabView()
         .preferredColorScheme(.dark)
+    
+    
+}
+
+private func speakTabChange(_ tab: Int) {
+    switch tab {
+    case 0:
+        SpeechManager.shared.speak(_text: __designTimeString("#4762_9", fallback: "Home tab selected"))
+    case 1:
+        SpeechManager.shared.speak(_text: __designTimeString("#4762_10", fallback: "Map tab selected"))
+    case 2:
+        SpeechManager.shared.speak(_text: __designTimeString("#4762_11", fallback: "Settings tab selected"))
+    default:
+        #warning("Unhandled tab selection")
+        
+    }
 }

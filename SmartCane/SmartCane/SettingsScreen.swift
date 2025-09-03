@@ -8,12 +8,22 @@
 import SwiftUI
 
 struct SettingsScreen: View {
+    @AppStorage(AppKeys.voiceEnabled) private var voiceFeedbackEnabled: Bool = true
     var body: some View {
-        NavigationStack {
-            Text("Settings Placeholder")
+        NavigationView {
+            Form {
+                Toggle("Enable Voice Feedback", isOn: $voiceFeedbackEnabled)
+                    .accessibilityLabel("Voice Feedback Toggle")
+                    .accessibilityHint("Turns speech feedback on or off")
+                
+            }
+           
                 .navigationTitle("Settings")
+            
+//            Button("Speak") {
+//                SpeechManager.shared.speak(_text: "Settings Screen")
+//            }
         }
-        
     }
 }
 #Preview {

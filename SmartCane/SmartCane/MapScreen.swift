@@ -12,6 +12,10 @@ struct MapScreen: View {
         NavigationStack {
             Text("Map Screen Placeholder")
                 .navigationTitle("Map")
+            
+            Button("Speak") {
+                SpeechManager.shared.speak(_text: "Maps Screen")
+            }
         }
     }
 }

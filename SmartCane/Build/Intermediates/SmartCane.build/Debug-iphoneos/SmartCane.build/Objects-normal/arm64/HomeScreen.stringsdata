@@ -4,18 +4,26 @@
     "Localizable": [
       {
         "comment": "",
-        "key": "Home Screen Placeholder",
+        "key": "Home",
         "location": {
-          "startingColumn": 18,
-          "startingLine": 13
+          "startingColumn": 30,
+          "startingLine": 36
         }
       },
       {
         "comment": "",
         "key": "Home",
         "location": {
-          "startingColumn": 34,
+          "startingColumn": 22,
           "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "Speak",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 28
         }
       }
     ]
