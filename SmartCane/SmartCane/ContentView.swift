@@ -53,4 +53,10 @@ struct ContentView: View {
 // This allows you to see the view in Xcode's canvas/preview
 #Preview {
     ContentView()
+    
+}
+
+#Preview("Dark Mode") {
+    ContentView()
+        .preferredColorScheme(.dark)
 }

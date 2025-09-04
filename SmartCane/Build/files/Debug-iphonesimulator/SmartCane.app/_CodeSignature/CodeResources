@@ -4,6 +4,10 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Assets.car</key>
+		<data>
+		EfhNXY0SrVB9Kx7bCQmYiqhQucE=
+		</data>
 		<key>Info.plist</key>
 		<data>
 		igKayqYjKuU+XlL+q6EktA5y704=
@@ -14,7 +18,7 @@
 		</data>
 		<key>SmartCane.debug.dylib</key>
 		<data>
-		Hf3w+7385KZBbkKYjeHlQFt31rA=
+		n/umm+RVcOb97gqg0wAwb9orCU8=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
@@ -23,11 +27,18 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Assets.car</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			dNPJW+3WjTGZgyzgcYq8OChByZcGnFI0NIQiLrsD+Ak=
+			</data>
+		</dict>
 		<key>SmartCane.debug.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tzXNOdJw1678nCrcm8lUQagcfB7IOg3o+XRQIhd6qLE=
+			G+JnDyBh4EWpPhbNQC9ftvDhOkdnvOYRuKt2nctesSA=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>
