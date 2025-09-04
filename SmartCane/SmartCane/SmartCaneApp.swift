@@ -12,6 +12,7 @@ struct SmartCaneApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+           
             
         }
     }

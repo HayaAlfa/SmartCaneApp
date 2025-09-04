@@ -44,6 +44,7 @@ struct ContentView: View {
                     Image(systemName: "person.circle")        // Person icon for profile
                     Text("Profile")                           // Tab label
                 }
+            
         }
         .accentColor(.blue)  // Sets the blue color for selected tabs and active elements
     }

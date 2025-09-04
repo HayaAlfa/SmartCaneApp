@@ -4,10 +4,34 @@
     "Localizable": [
       {
         "comment": "",
-        "key": "Hello, world!",
+        "key": "Map",
         "location": {
-          "startingColumn": 18,
-          "startingLine": 16
+          "startingColumn": 26,
+          "startingLine": 21
+        }
+      },
+      {
+        "comment": "",
+        "key": "Saved",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Detection",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "Profile",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 45
         }
       }
     ]

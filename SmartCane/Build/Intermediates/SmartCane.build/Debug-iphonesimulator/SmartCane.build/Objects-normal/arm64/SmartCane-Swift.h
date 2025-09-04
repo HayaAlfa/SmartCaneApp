@@ -279,6 +279,9 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import CoreLocation;
+@import Foundation;
+@import ObjectiveC;
 #endif
 
 #endif
@@ -300,6 +303,17 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #endif
 
 #if defined(__OBJC__)
+
+@class CLLocationManager;
+@class CLLocation;
+SWIFT_CLASS("_TtC9SmartCane15LocationManager")
+@interface LocationManager : NSObject <CLLocationManagerDelegate>
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+- (void)locationManager:(CLLocationManager * _Nonnull)manager didUpdateLocations:(NSArray<CLLocation *> * _Nonnull)locations;
+- (void)locationManager:(CLLocationManager * _Nonnull)manager didFailWithError:(NSError * _Nonnull)error;
+- (void)locationManager:(CLLocationManager * _Nonnull)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager * _Nonnull)manager;
+@end
 
 #endif
 #if __has_attribute(external_source_symbol)

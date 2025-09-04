@@ -1,0 +1,96 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/SavedLocationsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Saved Locations",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search locations...",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "All",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Saved Locations",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap the + button to add your first location",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Location",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 215
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete Location",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 322
+        }
+      },
+      {
+        "comment": "",
+        "key": "Added %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 291
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 323
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Are you sure you want to delete '%@'?",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 328
+        }
+      }
+    ]
+  },
+  "version": 1
+}

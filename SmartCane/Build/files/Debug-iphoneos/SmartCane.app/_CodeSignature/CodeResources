@@ -6,11 +6,31 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		xNzAktfiqI5W8nnsF/Okr0LS7tA=
+		5UjK3kMulADHLd2OB8oB7w5uUwY=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		MRqJ0tluZFBtoT1+YRJ2JZhocRk=
+		dP2pKER4IpvsKUL84tSzF/b5BxE=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/analytics/coremldata.bin</key>
+		<data>
+		WjXtmXGo2lHho2B83cGtibUwfWw=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/coremldata.bin</key>
+		<data>
+		OCO4ScNhhG0BXVMarmiYgsr4Fe4=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
+		<data>
+		xpm/X6ltyggGp6idGeGgCJO5Nuw=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/model.mil</key>
+		<data>
+		cQuGfB84mq/2A30Gg74/Bo3DJlQ=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/weights/weight.bin</key>
+		<data>
+		LA9dxMMvDX3SDUPapyqJbEXSR8I=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -18,11 +38,11 @@
 		</data>
 		<key>SmartCane.debug.dylib</key>
 		<data>
-		rM8/Tlqbx6sfckWgpMbYNShGsZ4=
+		zUJb2kYTtKz2gm0jUifkWoRmo5Y=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
-		vI54L6kQx2dELQeTSSJ5/FvDAPY=
+		QEah2Gb4g8KPdgSBU8AHTzUnayk=
 		</data>
 		<key>embedded.mobileprovision</key>
 		<data>
@@ -35,21 +55,56 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			RrE7cZgfzX3TMMPgbTIiSWQJU+WDvfEmTFnCDSwx2ws=
+			+nd9j8eRQZ9gE21WdyXJZn43jCpytn5Fwl4cqYepzfI=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/analytics/coremldata.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2OsjcrOvgIZey73Jr7vWVe5re8fjWBnkL0q+jHWpbOs=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/coremldata.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			35oVTdqfQ5goxp3NVrvq17AHMiZZQvaykzp63i8M2uc=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			P3HZLmDqB7OYOWVnX82Tna4ES4kjItjLdTuHqnjFrSo=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/model.mil</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wcthmjum+97osucGn9g5oRzdXOYkWjfLpvpgWawaDLI=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/weights/weight.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jInEgITE3RJxw7R1jdnOlu1qrrhR0jYWhvSAsZmjOys=
 			</data>
 		</dict>
 		<key>SmartCane.debug.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			b/9QNET4ozI+X58WIhunsoqIYD904cuc42gi9GFTNoU=
+			lDLHeJRD7ObEhyM9XstRfHaGocmcB1TEvgCtxvRcCUA=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			bsu8qjF0pAA/RB/+bvhqjkT8CYVXMQFP1ln/laf6I+c=
+			pb+ehzuDUc51FevcMN5jIJBHftpF4TOUAJvTR/CHky4=
 			</data>
 		</dict>
 		<key>embedded.mobileprovision</key>
