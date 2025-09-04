@@ -22,12 +22,24 @@ struct ContentView: View {
                 }
             
             // MARK: - Saved Locations Tab
-            // This is the second tab that shows a list of saved locations with categories
-            SavedLocationsView()
-                .tabItem {
-                    Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
-                    Text("Saved")                             // Tab label
-                }
+            // This is the second tab that shows a list of saved locations with categories and routes
+            TabView {
+                SavedLocationsView()
+                    .tabItem {
+                        Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
+                        Text("Locations")                        // Tab label
+                    }
+                
+                SavedRoutesView()
+                    .tabItem {
+                        Image(systemName: "map")                 // Map icon for saved routes
+                        Text("Routes")                           // Tab label
+                    }
+            }
+            .tabItem {
+                Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
+                Text("Saved")                             // Tab label
+            }
             
             // MARK: - Object Detection Tab
             // This is the third tab for AI-powered obstacle detection using photos

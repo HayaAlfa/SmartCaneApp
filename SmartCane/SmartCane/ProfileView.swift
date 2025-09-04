@@ -4,6 +4,7 @@ import UserNotifications  // For checking and requesting notification permission
 struct ProfileView: View {
     // MARK: - State Properties
     // These properties control the UI state and store user preferences
+    @StateObject private var dataManager = TempDataManager.shared  // Temporary data manager
     @State private var notificationsEnabled = false      // Whether notifications are allowed
     @State private var locationServicesEnabled = false   // Whether location services are active
     @State private var bluetoothEnabled = false          // Whether bluetooth is connected
@@ -11,12 +12,6 @@ struct ProfileView: View {
     @State private var showingNotificationSettings = false // Controls notification settings sheet
     @State private var showingPrivacySettings = false    // Controls privacy settings sheet
     @State private var showingAbout = false              // Controls about app sheet
-    
-    // MARK: - Mock User Data
-    // In a real app, this would come from a user service or database
-    @State private var userName = "John Doe"
-    @State private var userEmail = "john.doe@example.com"
-    @State private var userPhone = "+1 (555) 123-4567"
     
     var body: some View {
         NavigationView {
@@ -58,11 +53,7 @@ struct ProfileView: View {
             // MARK: - Sheet Presentations
             // These sheets present different settings views
             .sheet(isPresented: $showingEditProfile) {
-                EditProfileView(
-                    userName: $userName,
-                    userEmail: $userEmail,
-                    userPhone: $userPhone
-                )
+                EditProfileView()
             }
             .sheet(isPresented: $showingNotificationSettings) {
                 NotificationSettingsView(notificationsEnabled: $notificationsEnabled)
@@ -91,11 +82,11 @@ struct ProfileView: View {
             
             // MARK: - User Info
             VStack(spacing: 8) {
-                Text(userName)  // User's display name
+                Text(dataManager.userAccount.name)  // User's display name
                     .font(.title2)
                     .fontWeight(.semibold)
                 
-                Text(userEmail)  // User's email address
+                Text(dataManager.userAccount.email.isEmpty ? "No email" : dataManager.userAccount.email)  // User's email address
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -130,8 +121,8 @@ struct ProfileView: View {
             
             VStack(spacing: 8) {
                 // Display various account details using custom InfoRow component
-                InfoRow(icon: "envelope", title: "Email", value: userEmail)
-                InfoRow(icon: "phone", title: "Phone", value: userPhone)
+                InfoRow(icon: "envelope", title: "Email", value: dataManager.userAccount.email.isEmpty ? "No email" : dataManager.userAccount.email)
+                InfoRow(icon: "phone", title: "Phone", value: dataManager.userAccount.phone.isEmpty ? "No phone" : dataManager.userAccount.phone)
                 InfoRow(icon: "calendar", title: "Member Since", value: "January 2024")
                 InfoRow(icon: "location", title: "Location", value: "San Francisco, CA")
             }

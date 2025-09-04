@@ -1,17 +1,9 @@
 import SwiftUI
 import MapKit  // For opening locations in Maps app
 
-// MARK: - Data Model for Saved Locations
-// This struct defines what information we store for each saved location
-struct SavedLocation: Identifiable, Codable {
-    let id = UUID()                    // Unique identifier for each location
-    var name: String                   // User-friendly name (e.g., "Home", "Work")
-    var address: String                // Full address of the location
-    var latitude: Double               // GPS latitude coordinate
-    var longitude: Double              // GPS longitude coordinate
-    var category: LocationCategory     // Type of location (home, work, etc.)
-    var notes: String                  // Optional user notes about the location
-    var dateAdded: Date                // When the location was saved
+// MARK: - Location Categories Extension
+// Extension to add category functionality to temporary location data
+extension TempSavedLocation {
     
     // MARK: - Location Categories
     // Enum defines the different types of locations users can save
@@ -53,15 +45,15 @@ struct SavedLocation: Identifiable, Codable {
 struct SavedLocationsView: View {
     // MARK: - State Properties
     // These properties control the UI state and store user data
-    @State private var savedLocations: [SavedLocation] = []        // Array of all saved locations
+    @StateObject private var dataManager = TempDataManager.shared  // Temporary data manager
     @State private var showingAddLocation = false                  // Controls add location sheet
     @State private var searchText = ""                             // Text for searching locations
-    @State private var selectedCategory: SavedLocation.LocationCategory? = nil  // Filter by category
+    @State private var selectedCategory: TempSavedLocation.LocationCategory? = nil  // Filter by category
     
     // MARK: - Computed Property for Filtered Locations
     // This automatically filters locations based on search text and selected category
-    var filteredLocations: [SavedLocation] {
-        var filtered = savedLocations
+    var filteredLocations: [TempSavedLocation] {
+        var filtered = dataManager.savedLocations
         
         // Filter by search text (searches name, address, and notes)
         if !searchText.isEmpty {
@@ -74,7 +66,7 @@ struct SavedLocationsView: View {
         
         // Filter by selected category
         if let category = selectedCategory {
-            filtered = filtered.filter { $0.category == category }
+            filtered = filtered.filter { $0.category == category.rawValue }
         }
         
         return filtered
@@ -118,7 +110,7 @@ struct SavedLocationsView: View {
                             }
                             
                             // Category-specific filter buttons
-                            ForEach(SavedLocation.LocationCategory.allCases, id: \.self) { category in
+                            ForEach(TempSavedLocation.LocationCategory.allCases, id: \.self) { category in
                                 Button(action: {
                                     // Toggle category selection (select if not selected, deselect if already selected)
                                     selectedCategory = selectedCategory == category ? nil : category
@@ -174,12 +166,9 @@ struct SavedLocationsView: View {
             // MARK: - Add Location Sheet
             .sheet(isPresented: $showingAddLocation) {
                 AddLocationView { newLocation in
-                    savedLocations.append(newLocation)  // Add new location to array
-                    saveLocations()                      // Save to persistent storage
+                    dataManager.savedLocations.append(newLocation)  // Add new location to array
+                    dataManager.saveData()                      // Save to persistent storage
                 }
-            }
-            .onAppear {
-                loadLocations()  // Load saved locations when view appears
             }
         }
     }
@@ -229,25 +218,10 @@ struct SavedLocationsView: View {
     // MARK: - Data Management Functions
     
     // Remove a location from the array
-    private func deleteLocation(_ location: SavedLocation) {
-        if let index = savedLocations.firstIndex(where: { $0.id == location.id }) {
-            savedLocations.remove(at: index)  // Remove from array
-            saveLocations()                    // Save changes to storage
-        }
-    }
-    
-    // Save locations array to UserDefaults (persistent storage)
-    private func saveLocations() {
-        if let encoded = try? JSONEncoder().encode(savedLocations) {
-            UserDefaults.standard.set(encoded, forKey: "SavedLocations")
-        }
-    }
-    
-    // Load locations from UserDefaults (persistent storage)
-    private func loadLocations() {
-        if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
-           let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
-            savedLocations = decoded
+    private func deleteLocation(_ location: TempSavedLocation) {
+        if let index = dataManager.savedLocations.firstIndex(where: { $0.id == location.id }) {
+            dataManager.savedLocations.remove(at: index)  // Remove from array
+            dataManager.saveData()                    // Save changes to storage
         }
     }
 }
@@ -255,7 +229,7 @@ struct SavedLocationsView: View {
 // MARK: - Individual Location Row Component
 // This view represents each saved location in the list
 struct SavedLocationRow: View {
-    let location: SavedLocation           // The location data to display
+    let location: TempSavedLocation           // The location data to display
     let onDelete: () -> Void             // Function to call when delete is tapped
     @State private var showingDeleteAlert = false  // Controls delete confirmation alert
     

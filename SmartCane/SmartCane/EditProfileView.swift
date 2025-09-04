@@ -2,11 +2,7 @@ import SwiftUI
 
 struct EditProfileView: View {
     // MARK: - Properties
-    // @Binding creates a two-way connection with the parent view's data
-    // Changes here will update the parent view, and vice versa
-    @Binding var userName: String      // User's display name
-    @Binding var userEmail: String     // User's email address
-    @Binding var userPhone: String     // User's phone number
+    @StateObject private var dataManager = TempDataManager.shared
     
     // MARK: - Environment
     // @Environment provides access to the current view's environment
@@ -102,9 +98,9 @@ struct EditProfileView: View {
                 // MARK: - View Setup
                 // This runs when the view appears on screen
                 // Copy the current values to temporary variables
-                tempUserName = userName
-                tempUserEmail = userEmail
-                tempUserPhone = userPhone
+                tempUserName = dataManager.userAccount.name
+                tempUserEmail = dataManager.userAccount.email
+                tempUserPhone = dataManager.userAccount.phone
             }
         }
     }
@@ -112,16 +108,13 @@ struct EditProfileView: View {
     // MARK: - Helper Methods
     
     // MARK: - Save Changes Function
-    // Updates the parent view with the edited values
+    // Updates the temporary data manager with the edited values
     private func saveChanges() {
-        // Update the binding properties with the temporary values
-        userName = tempUserName
-        userEmail = tempUserEmail
-        userPhone = tempUserPhone
-        
-        // In a real app, you would save to a backend service here
-        // For example:
-        // UserService.shared.updateProfile(name: userName, email: userEmail, phone: userPhone)
+        // Update the temporary data manager user account
+        dataManager.userAccount.name = tempUserName
+        dataManager.userAccount.email = tempUserEmail
+        dataManager.userAccount.phone = tempUserPhone
+        dataManager.saveData()
         
         // Close the sheet
         dismiss()
@@ -132,9 +125,5 @@ struct EditProfileView: View {
 // Shows the view in Xcode's canvas for design purposes
 // We use .constant() to create binding values for the preview
 #Preview {
-    EditProfileView(
-        userName: .constant("John Doe"),
-        userEmail: .constant("john@example.com"),
-        userPhone: .constant("+1 (555) 123-4567")
-    )
+    EditProfileView()
 }
