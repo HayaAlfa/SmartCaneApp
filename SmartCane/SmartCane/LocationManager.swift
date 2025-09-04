@@ -10,8 +10,8 @@ class LocationManager: NSObject, ObservableObject {
     // These properties automatically update the UI when they change
     @Published var currentLocation: CLLocation? = nil           // Current GPS coordinates
     @Published var region = MKCoordinateRegion(                 // Map view region (center and zoom level)
-        center: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),            // Default: World center (neutral)
-        span: MKCoordinateSpan(latitudeDelta: 180.0, longitudeDelta: 360.0)       // Zoom level: Show entire world
+        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),  // Default: San Francisco
+        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)         // Zoom level
     )
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined  // Location permission status
     @Published var locationError: String? = nil                 // Error messages for location issues
@@ -38,11 +38,6 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.allowsBackgroundLocationUpdates = false     // Don't track location when app is in background
         
         print("📍 LocationManager initialized with best accuracy")
-        
-        // Immediately request location permission when app starts
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.requestLocationPermission()
-        }
     }
     
     // MARK: - Location Permission Management

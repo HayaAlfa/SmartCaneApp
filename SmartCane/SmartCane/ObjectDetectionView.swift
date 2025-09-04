@@ -5,13 +5,13 @@ import Vision      // Apple's computer vision framework
 struct ObjectDetectionView: View {
     // MARK: - State Properties
     // These properties control the UI state and store user data
-    @StateObject private var dataManager = TempDataManager.shared  // Temporary data manager
     @State private var showPicker = false              // Controls photo picker sheet
     @State private var pickedImage: UIImage? = nil     // Stores the selected photo
     @State private var classificationResult: String = "" // Stores AI classification result
     @State private var confidence: Double = 0.0        // Stores confidence percentage (0.0 to 1.0)
     @State private var isClassifying = false           // Shows loading state during AI processing
     @State private var modelStatus: String = "Checking..." // Shows if AI model is ready
+    @State private var detectionHistory: [DetectionRecord] = [] // Stores previous detections
     
     var body: some View {
         NavigationView {
@@ -25,11 +25,11 @@ struct ObjectDetectionView: View {
                     // Main interface for taking photos and classifying objects
                     photoClassificationSection
                     
-                                    // MARK: - Detection History Section
-                // Shows previous detection results (only if there are any)
-                if !dataManager.detectionRecords.isEmpty {
-                    detectionHistorySection
-                }
+                    // MARK: - Detection History Section
+                    // Shows previous detection results (only if there are any)
+                    if !detectionHistory.isEmpty {
+                        detectionHistorySection
+                    }
                 }
                 .padding()
             }
@@ -42,6 +42,8 @@ struct ObjectDetectionView: View {
             .onAppear {
                 // Check if AI model is ready when view appears
                 testModelLoading()
+                // Load previous detection history
+                loadDetectionHistory()
             }
         }
     }
@@ -237,14 +239,14 @@ struct ObjectDetectionView: View {
             
             LazyVStack(spacing: 8) {
                 // Show last 5 detection results
-                ForEach(dataManager.detectionRecords.prefix(5)) { record in
+                ForEach(detectionHistory.prefix(5)) { record in
                     DetectionHistoryRow(record: record)
                 }
             }
             
             // Show "View All" button if there are more than 5 detections
-            if dataManager.detectionRecords.count > 5 {
-                Button("View All (\(dataManager.detectionRecords.count))") {
+            if detectionHistory.count > 5 {
+                Button("View All (\(detectionHistory.count))") {
                     // Could navigate to a full history view in the future
                 }
                 .frame(maxWidth: .infinity)
@@ -299,24 +301,72 @@ struct ObjectDetectionView: View {
     
     // Save the current detection result to history
     private func saveToHistory() {
-        let newRecord = TempDetectionRecord(
+        let record = DetectionRecord(
             objectType: classificationResult,
             confidence: confidence,
-            dateCreated: Date()
+            timestamp: Date(),
+            image: pickedImage
         )
-        dataManager.detectionRecords.append(newRecord)
-        dataManager.saveData()
+        
+        detectionHistory.insert(record, at: 0)  // Add to beginning of array
+        saveDetectionHistory()  // Save to persistent storage
     }
     
-
+    // Save detection history to UserDefaults (persistent storage)
+    private func saveDetectionHistory() {
+        // In a real app, you might want to save images to disk and store paths
+        // For now, we'll just save the metadata
+        let metadata = detectionHistory.map { record in
+            DetectionRecordMetadata(
+                objectType: record.objectType,
+                confidence: record.confidence,
+                timestamp: record.timestamp
+            )
+        }
+        
+        if let encoded = try? JSONEncoder().encode(metadata) {
+            UserDefaults.standard.set(encoded, forKey: "DetectionHistory")
+        }
+    }
+    
+    // Load detection history from UserDefaults (persistent storage)
+    private func loadDetectionHistory() {
+        if let data = UserDefaults.standard.data(forKey: "DetectionHistory"),
+           let metadata = try? JSONDecoder().decode([DetectionRecordMetadata].self, from: data) {
+            detectionHistory = metadata.map { meta in
+                DetectionRecord(
+                    objectType: meta.objectType,
+                    confidence: meta.confidence,
+                    timestamp: meta.timestamp,
+                    image: nil // Images aren't persisted for now
+                )
+            }
+        }
+    }
 }
 
+// MARK: - Supporting Data Types
 
+// Represents a single object detection result
+struct DetectionRecord: Identifiable {
+    let id = UUID()                    // Unique identifier
+    let objectType: String             // What the AI detected (e.g., "Chair", "Table")
+    let confidence: Double             // AI confidence (0.0 to 1.0)
+    let timestamp: Date                // When detection was made
+    let image: UIImage?                // The photo that was classified (optional)
+}
+
+// Metadata version for persistent storage (without UIImage)
+struct DetectionRecordMetadata: Codable {
+    let objectType: String
+    let confidence: Double
+    let timestamp: Date
+}
 
 // MARK: - Detection History Row Component
 // Shows a single detection record in the history list
 struct DetectionHistoryRow: View {
-    let record: TempDetectionRecord
+    let record: DetectionRecord
     
     var body: some View {
         HStack(spacing: 12) {
@@ -340,7 +390,7 @@ struct DetectionHistoryRow: View {
             Spacer()
             
             // Time when detection was made
-            Text(record.dateCreated, style: .time)
+            Text(record.timestamp, style: .time)
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

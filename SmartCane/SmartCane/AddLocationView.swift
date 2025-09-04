@@ -4,7 +4,7 @@ import MapKit  // For accessing location services and coordinates
 struct AddLocationView: View {
     // MARK: - Properties
     // This closure is called when the user saves a new location
-    let onSave: (TempSavedLocation) -> Void
+    let onSave: (SavedLocation) -> Void
     
     // MARK: - Environment
     // @Environment provides access to the current view's environment
@@ -13,13 +13,12 @@ struct AddLocationView: View {
     // MARK: - State Objects
     // @StateObject creates a persistent object that survives view updates
     @StateObject private var locationManager = LocationManager()
-    @StateObject private var dataManager = TempDataManager.shared
     
     // MARK: - State Properties
     // @State properties are used for data that can change and trigger UI updates
     @State private var name = ""                    // Location name (e.g., "Home", "Work")
     @State private var address = ""                 // Full address of the location
-    @State private var selectedCategory: TempSavedLocation.LocationCategory = .other  // Type of location
+    @State private var selectedCategory: SavedLocation.LocationCategory = .other  // Type of location
     @State private var notes = ""                   // Optional user notes about the location
     @State private var useCurrentLocation = false   // Whether to use GPS coordinates
     
@@ -43,7 +42,7 @@ struct AddLocationView: View {
                     // Dropdown picker for selecting location category
                     Picker("Category", selection: $selectedCategory) {
                         // Loop through all available categories
-                        ForEach(TempSavedLocation.LocationCategory.allCases, id: \.self) { category in
+                        ForEach(SavedLocation.LocationCategory.allCases, id: \.self) { category in
                             HStack {
                                 Image(systemName: category.icon)  // Show category icon
                                     .foregroundColor(category.color)
@@ -142,21 +141,18 @@ struct AddLocationView: View {
     // MARK: - Helper Methods
     
     // MARK: - Save Location Function
-    // Creates a new TempSavedLocation and calls the onSave closure
+    // Creates a new SavedLocation and calls the onSave closure
     private func saveLocation() {
-        // Create new location and add to data manager
-        let newLocation = TempSavedLocation(
-            name: name,
-            address: address,
-            latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,
-            longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0,
-            category: selectedCategory.rawValue,
-            notes: notes,
-            dateAdded: Date()
+        // Create a new location object with the form data
+        let newLocation = SavedLocation(
+            name: name,                    // User-entered name
+            address: address,              // User-entered address
+            latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,   // GPS latitude if enabled
+            longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0, // GPS longitude if enabled
+            category: selectedCategory,    // Selected category
+            notes: notes,                  // User-entered notes
+            dateAdded: Date()              // Current timestamp
         )
-        
-        dataManager.savedLocations.append(newLocation)
-        dataManager.saveData()
         
         // Call the onSave closure passed from the parent view
         onSave(newLocation)
