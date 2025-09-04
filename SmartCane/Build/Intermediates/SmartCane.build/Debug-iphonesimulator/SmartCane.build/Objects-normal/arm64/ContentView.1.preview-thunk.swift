@@ -16,10 +16,10 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         VStack {
-            Image(systemName: __designTimeString("#6881_0", fallback: "globe"))
+            Image(systemName: __designTimeString("#27882_0", fallback: "globe"))
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text(__designTimeString("#6881_1", fallback: "Hello, world!"))
+            Text(__designTimeString("#27882_1", fallback: "Hello, world!"))
         }
         .padding()
     }

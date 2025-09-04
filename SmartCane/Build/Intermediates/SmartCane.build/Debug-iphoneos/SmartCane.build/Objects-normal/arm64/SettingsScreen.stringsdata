@@ -4,26 +4,34 @@
     "Localizable": [
       {
         "comment": "",
-        "key": "Settings Placeholder",
-        "location": {
-          "startingColumn": 18,
-          "startingLine": 13
-        }
-      },
-      {
-        "comment": "",
         "key": "Settings",
         "location": {
           "startingColumn": 34,
-          "startingLine": 14
+          "startingLine": 21
         }
       },
       {
         "comment": "",
-        "key": "Speak",
+        "key": "Enable Voice Feedback",
         "location": {
-          "startingColumn": 20,
+          "startingColumn": 24,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Voice Feedback Toggle",
+        "location": {
+          "startingColumn": 41,
           "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "Turns speech feedback on or off",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 17
         }
       }
     ]

@@ -14,7 +14,7 @@ import func SwiftUI.__designTimeBoolean
 import SwiftUI
 
 struct SettingsScreen: View {
-    @AppStorage("VoiceFeedbackEnabled") private var voiceFeedbackEnabled: Bool = true
+    @AppStorage(AppKeys.voiceEnabled) private var voiceFeedbackEnabled: Bool = true
     var body: some View {
         NavigationView {
             Form {
