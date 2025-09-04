@@ -18,7 +18,6 @@ struct AddLocationView: View {
     // @State properties are used for data that can change and trigger UI updates
     @State private var name = ""                    // Location name (e.g., "Home", "Work")
     @State private var address = ""                 // Full address of the location
-    @State private var selectedCategory: SavedLocation.LocationCategory = .other  // Type of location
     @State private var notes = ""                   // Optional user notes about the location
     @State private var useCurrentLocation = false   // Whether to use GPS coordinates
     
@@ -38,19 +37,6 @@ struct AddLocationView: View {
                     TextField("Address", text: $address)
                         .textContentType(.fullStreetAddress)  // iOS will suggest addresses
                     
-                    // MARK: - Category Picker
-                    // Dropdown picker for selecting location category
-                    Picker("Category", selection: $selectedCategory) {
-                        // Loop through all available categories
-                        ForEach(SavedLocation.LocationCategory.allCases, id: \.self) { category in
-                            HStack {
-                                Image(systemName: category.icon)  // Show category icon
-                                    .foregroundColor(category.color)
-                                Text(category.rawValue)          // Show category name
-                            }
-                            .tag(category)  // This value is stored when selected
-                        }
-                    }
                     
                     // MARK: - Current Location Toggle
                     // Switch to automatically use current GPS coordinates
@@ -144,7 +130,6 @@ struct AddLocationView: View {
             address: address,              // User-entered address
             latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,   // GPS latitude if enabled
             longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0, // GPS longitude if enabled
-            category: selectedCategory,    // Selected category
             notes: notes,                  // User-entered notes
             dateAdded: Date()              // Current timestamp
         )

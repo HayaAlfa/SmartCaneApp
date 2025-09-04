@@ -9,45 +9,8 @@ struct SavedLocation: Identifiable, Codable {
     var address: String                // Full address of the location
     var latitude: Double               // GPS latitude coordinate
     var longitude: Double              // GPS longitude coordinate
-    var category: LocationCategory     // Type of location (home, work, etc.)
     var notes: String                  // Optional user notes about the location
     var dateAdded: Date                // When the location was saved
-    
-    // MARK: - Location Categories
-    // Enum defines the different types of locations users can save
-    enum LocationCategory: String, CaseIterable, Codable {
-        case home = "Home"           // User's home address
-        case work = "Work"           // User's workplace
-        case favorite = "Favorite"   // User's favorite places
-        case restaurant = "Restaurant" // Food establishments
-        case store = "Store"         // Shopping locations
-        case other = "Other"         // Miscellaneous places
-        
-        // MARK: - Category Icons
-        // Each category has its own icon and color for visual distinction
-        var icon: String {
-            switch self {
-            case .home: return "house.fill"
-            case .work: return "building.2.fill"
-            case .favorite: return "heart.fill"
-            case .restaurant: return "fork.knife"
-            case .store: return "cart.fill"
-            case .other: return "mappin"
-            }
-        }
-        
-        // MARK: - Category Colors
-        var color: Color {
-            switch self {
-            case .home: return .blue
-            case .work: return .green
-            case .favorite: return .red
-            case .restaurant: return .orange
-            case .store: return .purple
-            case .other: return .gray
-            }
-        }
-    }
 }
 
 struct SavedLocationsView: View {
@@ -55,28 +18,20 @@ struct SavedLocationsView: View {
     @State private var savedLocations: [SavedLocation] = []        // Array of all saved locations
     @State private var showingAddLocation = false                  // Controls add location sheet
     @State private var searchText = ""                             // Text for searching locations
-    @State private var selectedCategory: SavedLocation.LocationCategory? = nil  // Filter by category
     
     // MARK: - Computed Property for Filtered Locations
-    // This automatically filters locations based on search text and selected category
+    // This automatically filters locations based on search text
     var filteredLocations: [SavedLocation] {
-        var filtered = savedLocations
-        
         // Filter by search text (searches name, address, and notes)
         if !searchText.isEmpty {
-            filtered = filtered.filter { location in
+            return savedLocations.filter { location in
                 location.name.localizedCaseInsensitiveContains(searchText) ||
                 location.address.localizedCaseInsensitiveContains(searchText) ||
                 location.notes.localizedCaseInsensitiveContains(searchText)
             }
         }
         
-        // Filter by selected category
-        if let category = selectedCategory {
-            filtered = filtered.filter { $0.category == category }
-        }
-        
-        return filtered
+        return savedLocations
     }
     
     var body: some View {
@@ -99,45 +54,6 @@ struct SavedLocationsView: View {
                         .cornerRadius(15)
                     }
                     
-                    // MARK: - Category Filter Buttons
-                    // Horizontal scrollable list of category filter buttons
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            // "All" button to show all categories
-                            Button(action: {
-                                selectedCategory = nil  // Clear category filter
-                            }) {
-                                Text("All")
-                                    .font(.caption)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(selectedCategory == nil ? Color.blue : Color.gray.opacity(0.3))
-                                    .foregroundColor(selectedCategory == nil ? .white : .primary)
-                                    .cornerRadius(20)
-                            }
-                            
-                            // Category-specific filter buttons
-                            ForEach(SavedLocation.LocationCategory.allCases, id: \.self) { category in
-                                Button(action: {
-                                    // Toggle category selection (select if not selected, deselect if already selected)
-                                    selectedCategory = selectedCategory == category ? nil : category
-                                }) {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: category.icon)
-                                            .font(.caption)
-                                        Text(category.rawValue)
-                                            .font(.caption)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(selectedCategory == category ? category.color : Color.gray.opacity(0.3))
-                                    .foregroundColor(selectedCategory == category ? .white : .primary)
-                                    .cornerRadius(20)
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
                 }
                 .padding()
                 .background(.ultraThinMaterial)
@@ -260,13 +176,13 @@ struct SavedLocationRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // MARK: - Category Icon
-            // Shows the category icon with appropriate color
-            Image(systemName: location.category.icon)
+            // MARK: - Location Icon
+            // Shows a simple location pin icon for all saved locations
+            Image(systemName: "mappin.circle.fill")
                 .font(.title2)
-                .foregroundColor(location.category.color)
+                .foregroundColor(.blue)
                 .frame(width: 40, height: 40)
-                .background(location.category.color.opacity(0.1))  // Subtle background
+                .background(Color.blue.opacity(0.1))  // Subtle blue background
                 .clipShape(Circle())
             
             // MARK: - Location Details

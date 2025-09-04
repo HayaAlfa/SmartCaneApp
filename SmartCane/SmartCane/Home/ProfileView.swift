@@ -1,15 +1,9 @@
 import SwiftUI
-import UserNotifications  // For checking and requesting notification permissions
 
 struct ProfileView: View {
     // MARK: - State Properties
     // These properties control the UI state and store user preferences
-    @State private var notificationsEnabled = false      // Whether notifications are allowed
-    @State private var locationServicesEnabled = false   // Whether location services are active
-    @State private var bluetoothEnabled = false          // Whether bluetooth is connected
     @State private var showingEditProfile = false        // Controls edit profile sheet
-    @State private var showingNotificationSettings = false // Controls notification settings sheet
-    @State private var showingPrivacySettings = false    // Controls privacy settings sheet
     @State private var showingAbout = false              // Controls about app sheet
     
     // MARK: - Mock User Data
@@ -30,9 +24,8 @@ struct ProfileView: View {
                     // Displays user's account details like email and phone
                     accountInformationSection
                     
-                    // MARK: - Settings Section
-                    // Shows various app settings and permissions
-                    settingsSection
+                    // MARK: - Settings Section Removed
+                    // Settings have been moved to the dedicated Settings screen
                     
                     // MARK: - Connection Status Section
                     // Shows status of various device connections
@@ -56,7 +49,7 @@ struct ProfileView: View {
             }
             
             // MARK: - Sheet Presentations
-            // These sheets present different settings views
+            // These sheets present different profile-related views
             .sheet(isPresented: $showingEditProfile) {
                 EditProfileView(
                     userName: $userName,
@@ -64,17 +57,8 @@ struct ProfileView: View {
                     userPhone: $userPhone
                 )
             }
-            .sheet(isPresented: $showingNotificationSettings) {
-                NotificationSettingsView(notificationsEnabled: $notificationsEnabled)
-            }
-            .sheet(isPresented: $showingPrivacySettings) {
-                PrivacySettingsView()
-            }
             .sheet(isPresented: $showingAbout) {
                 AboutView()
-            }
-            .onAppear {
-                checkPermissions()  // Check current permission status when view appears
             }
         }
     }
@@ -141,66 +125,6 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - Settings Section
-    // Shows various app settings and permission controls
-    private var settingsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "gearshape")  // Gear icon for settings
-                    .font(.title2)
-                    .foregroundColor(.green)
-                
-                Text("Settings")
-                    .font(.headline)
-                    .fontWeight(.semibold)
-            }
-            
-            VStack(spacing: 8) {
-                // MARK: - Notification Settings
-                SettingsRow(
-                    icon: "bell",
-                    title: "Notifications",
-                    subtitle: notificationsEnabled ? "Enabled" : "Disabled",
-                    color: notificationsEnabled ? .green : .gray
-                ) {
-                    showingNotificationSettings = true  // Show notification settings
-                }
-                
-                // MARK: - Location Services Settings
-                SettingsRow(
-                    icon: "location",
-                    title: "Location Services",
-                    subtitle: locationServicesEnabled ? "Enabled" : "Disabled",
-                    color: locationServicesEnabled ? .green : .gray
-                ) {
-                    openLocationSettings()  // Open iOS Settings app
-                }
-                
-                // MARK: - Bluetooth Settings
-                SettingsRow(
-                    icon: "bluetooth",
-                    title: "Bluetooth",
-                    subtitle: bluetoothEnabled ? "Connected" : "Disconnected",
-                    color: bluetoothEnabled ? .green : .gray
-                ) {
-                    openBluetoothSettings()  // Open iOS Settings app
-                }
-                
-                // MARK: - Privacy & Security Settings
-                SettingsRow(
-                    icon: "hand.raised",
-                    title: "Privacy & Security",
-                    subtitle: "Manage permissions",
-                    color: .blue
-                ) {
-                    showingPrivacySettings = true  // Show privacy settings
-                }
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(12)
-        }
-    }
     
     // MARK: - Connection Status Section
     // Shows real-time status of various device connections
@@ -284,37 +208,6 @@ struct ProfileView: View {
         }
     }
     
-    // MARK: - Helper Methods
-    
-    // Check current permission status for various services
-    private func checkPermissions() {
-        // Check notification permission status
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {  // Update UI on main thread
-                self.notificationsEnabled = settings.authorizationStatus == .authorized
-            }
-        }
-        
-        // Check location permission status (simplified for demo)
-        locationServicesEnabled = true // In a real app, check actual permission status
-        
-        // Check bluetooth status (simplified for demo)
-        bluetoothEnabled = false // In a real app, check actual bluetooth status
-    }
-    
-    // Open iOS Settings app to location permissions
-    private func openLocationSettings() {
-        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(settingsUrl)
-        }
-    }
-    
-    // Open iOS Settings app to bluetooth settings
-    private func openBluetoothSettings() {
-        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(settingsUrl)
-        }
-    }
 }
 
 // MARK: - Supporting View Components
@@ -344,43 +237,6 @@ struct InfoRow: View {
     }
 }
 
-// Component for settings rows with action buttons
-struct SettingsRow: View {
-    let icon: String      // SF Symbol icon name
-    let title: String     // Setting title
-    let subtitle: String  // Setting description or status
-    let color: Color      // Color for the icon
-    let action: () -> Void // Function to call when tapped
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 12) {
-                Image(systemName: icon)  // Display the icon
-                    .font(.title3)
-                    .foregroundColor(color)
-                    .frame(width: 24)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)  // Display the setting title
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                    
-                    Text(subtitle)  // Display the subtitle/status
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                // Chevron arrow to indicate tappable
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-        }
-        .buttonStyle(PlainButtonStyle())  // Remove default button styling
-    }
-}
 
 // Component for displaying connection status
 struct ConnectionStatusRow: View {

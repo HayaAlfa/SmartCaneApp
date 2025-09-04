@@ -1,0 +1,182 @@
+//
+//  HomeScreen.swift
+//  SmartCane
+//
+//  Created by Haya Alfakieh on 8/30/25.
+//
+
+import SwiftUI
+
+// MARK: - Home Screen
+// This is the main home screen that provides quick access to all app features
+// It displays a grid of buttons for easy navigation to different sections
+struct HomeScreen: View {
+    // MARK: - Main Body
+    // This defines the main user interface of the home screen
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                // MARK: - Screen Title
+                // Dynamic type makes the title scalable for accessibility
+                Text("Home")
+                    .font(.title) // Dynamic type - scales with user's accessibility settings
+                    .padding(.top)
+                
+                // MARK: - Visual Separator
+                // Divider provides visual separation between title and content
+                Divider()
+                
+                // MARK: - Navigation Buttons Grid
+                // LazyVGrid creates a responsive grid layout that adapts to screen size
+                // Two columns with flexible sizing and 20-point spacing
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+                    // MARK: - My Locations Button
+                    // NavigationLink wraps the button to enable navigation to SavedLocationsView
+                    NavigationLink(destination: SavedLocationsView()){
+                        HomeButtonView(
+                            title: "My Locations", 
+                            systemImage: "mappin.and.ellipse"  // Changed from "list.bullet" to location pin icon
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())  // Removes default NavigationLink styling
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Provide voice feedback when button is tapped
+                        SpeechManager.shared.speak(_text: "My locations selected")
+                    })
+                    
+                    // MARK: - My Routes Button
+                    // Button for route management (currently placeholder)
+                    HomeButton(
+                        title: "My Routes", 
+                        systemImage: "map.circle.fill",  // Changed from "map.fill" to circle map icon
+                        action: {
+                            // Provide voice feedback when button is tapped
+                            SpeechManager.shared.speak(_text: "My routes selected")
+                        }
+                    )
+                    
+                    // MARK: - Profile Button
+                    // NavigationLink wraps the button to enable navigation to ProfileView
+                    NavigationLink(destination: ProfileView()) {
+                        HomeButtonView(
+                            title: "Profile", 
+                            systemImage: "person.fill"
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())  // Removes default NavigationLink styling
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Provide voice feedback when button is tapped
+                        SpeechManager.shared.speak(_text: "Profile selected")
+                    })
+                    
+                    // MARK: - Settings Button
+                    // NavigationLink wraps the button to enable navigation to SettingsScreen
+                    NavigationLink(destination: SettingsScreen()){
+                        HomeButtonView(
+                            title: "Settings", 
+                            systemImage: "gearshape"
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())  // Removes default NavigationLink styling
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Provide voice feedback when button is tapped
+                        SpeechManager.shared.speak(_text: "Settings selected")
+                    })
+                }
+                .padding()
+                
+                // MARK: - Test Speech Button
+                // Example button for testing speech functionality
+                Button("Speak") {
+                    SpeechManager.shared.speak(_text:"Welcome to Smart Cane. Navigation assistance activated.")
+                }
+                .padding(.top, 30)
+                
+                // MARK: - Spacer
+                // Pushes all content to the top of the screen
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Home")
+            .navigationBarTitleDisplayMode(.inline)  // Makes title smaller and inline
+        }
+    }
+}
+
+// MARK: - Preview
+// Shows the view in Xcode's canvas for design purposes
+#Preview {
+    HomeScreen()
+}
+
+// MARK: - Reusable Home Button Component (with action)
+// This is a custom button component used for buttons that need custom actions
+// It provides consistent styling and behavior for all navigation buttons
+struct HomeButton: View {
+    // MARK: - Properties
+    let title: String        // Text displayed on the button
+    let systemImage: String  // SF Symbol icon name
+    let action: () -> Void   // Function to call when button is tapped
+    
+    // MARK: - Button Body
+    // This defines the visual appearance and behavior of the button
+    var body: some View {
+        Button(action: action) {  // Call the action function when tapped
+            VStack {
+                // MARK: - Icon Display
+                // SF Symbol icon that represents the button's function
+                Image(systemName: systemImage)
+                    .resizable()                    // Allows icon to be resized
+                    .scaledToFit()                  // Maintains aspect ratio
+                    .frame(width: 40, height: 40)   // Fixed size for consistency
+                    .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
+                
+                // MARK: - Title Text
+                // Button title text with accessibility-friendly font
+                Text(title)
+                    .font(.body)                    // Scalable for dynamic type (accessibility)
+                    .multilineTextAlignment(.center) // Centers text for better appearance
+            }
+            .frame(maxWidth: .infinity, minHeight: 100)  // Makes button fill available width
+            .background(
+                RoundedRectangle(cornerRadius: 15)      // Rounded corners for modern look
+                    .stroke(Color.primary, lineWidth: 1) // Border using system primary color
+            )
+        }
+        .buttonStyle(PlainButtonStyle())  // Removes default button styling for custom appearance
+    }
+}
+
+// MARK: - Home Button View Component (without action)
+// This is a view-only version of the home button used inside NavigationLinks
+// It provides the same visual styling but without button functionality
+struct HomeButtonView: View {
+    // MARK: - Properties
+    let title: String        // Text displayed on the button
+    let systemImage: String  // SF Symbol icon name
+    
+    // MARK: - View Body
+    // This defines the visual appearance of the button view
+    var body: some View {
+        VStack {
+            // MARK: - Icon Display
+            // SF Symbol icon that represents the button's function
+            Image(systemName: systemImage)
+                .resizable()                    // Allows icon to be resized
+                .scaledToFit()                  // Maintains aspect ratio
+                .frame(width: 40, height: 40)   // Fixed size for consistency
+                .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
+            
+            // MARK: - Title Text
+            // Button title text with accessibility-friendly font
+            Text(title)
+                .font(.body)                    // Scalable for dynamic type (accessibility)
+                .multilineTextAlignment(.center) // Centers text for better appearance
+        }
+        .frame(maxWidth: .infinity, minHeight: 100)  // Makes button fill available width
+        .background(
+            RoundedRectangle(cornerRadius: 15)      // Rounded corners for modern look
+                .stroke(Color.primary, lineWidth: 1) // Border using system primary color
+        )
+    }
+}

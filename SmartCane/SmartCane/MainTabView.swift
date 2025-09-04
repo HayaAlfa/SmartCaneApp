@@ -7,94 +7,78 @@
 
 import SwiftUI
 
-
+// MARK: - Main Tab View
+// This is the root navigation view that contains all the main app screens
+// It provides bottom tab navigation between different features of the SmartCane app
 struct MainTabView: View {
+    // MARK: - State Properties
+    // Tracks which tab is currently selected (0 = Home, 1 = Map, 2 = Detection)
     @State private var selectedTab = 0
+    
+    // MARK: - Main Body
+    // This defines the main user interface with tab navigation
     var body: some View {
+        // TabView creates the bottom tab bar navigation
+        // selection binding tracks which tab is currently active
         TabView(selection: $selectedTab) {
+            // MARK: - Home Tab
+            // First tab shows the home screen with quick access buttons
             HomeScreen()
-                .tabItem { Label("Home", systemImage: "house.fill")}
-                .tag(0)
+                .tabItem { 
+                    Label("Home", systemImage: "house.fill")  // House icon for home
+                }
+                .tag(0)  // Unique identifier for this tab
             
-            MapScreen ()
-                .tabItem { Label("Map", systemImage: "map.fill")}
-                .tag(1)
-            
-            SettingsScreen()
-                .tabItem { Label("Setting", systemImage: "gearshape.fill")}
-                .tag(2)
             // MARK: - Map Tab
-            // This is the first tab that shows the map with location services and search
+            // Second tab shows the interactive map with location services
             MapView()
                 .tabItem {
                     // This sets the icon and text for the tab bar item
                     Image(systemName: "map")        // Uses SF Symbols for the map icon
                     Text("Map")                     // Text label shown below the icon
                 }
-                .tag(3)
-            
-            // MARK: - Saved Locations Tab
-            // This is the second tab that shows a list of user's saved locations
-            SavedLocationsView()
-                .tabItem {
-                    Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
-                    Text("Saved")                             // Tab label
-                }
-                .tag(4)
+                .tag(1)  // Unique identifier for this tab
             
             // MARK: - Object Detection Tab
-            // This is the third tab for AI-powered obstacle detection using photos
+            // Third tab for AI-powered obstacle detection using photos
             ObjectDetectionView()
                 .tabItem {
                     Image(systemName: "camera.viewfinder")    // Camera icon for detection
                     Text("Detection")                         // Tab label
                 }
-                .tag(5)
-            
-            // MARK: - Profile Tab
-            // This is the fourth tab for user settings, profile, and app information
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.circle")        // Person icon for profile
-                    Text("Profile")                           // Tab label
-                }
-                .tag(6)
-            
+                .tag(2)  // Unique identifier for this tab
         }
+        // MARK: - Tab Change Handler
+        // This triggers whenever user switches to a different tab
         .onChange(of: selectedTab) {
-            speakTabChange(selectedTab)
-            
+            speakTabChange(selectedTab)  // Provide voice feedback for tab changes
         }
-        .tint(Theme.brand)
-        .background(Theme.bg)
+        // MARK: - Visual Styling
+        .tint(Theme.brand)      // Use app's brand color for selected tab
+        .background(Theme.bg)   // Use app's background color
     }
 }
+
+// MARK: - Preview
+// Shows the view in Xcode's canvas for design purposes
 #Preview {MainTabView()}
 #Preview("Dark Mode") {
     MainTabView()
-        .preferredColorScheme(.dark)
-    
-    
+        .preferredColorScheme(.dark)  // Test how it looks in dark mode
 }
 
+// MARK: - Tab Change Voice Feedback
+// This function provides voice feedback when user switches tabs
+// It helps visually impaired users know which tab they've selected
 private func speakTabChange(_ tab: Int) {
     switch tab {
     case 0:
         SpeechManager.shared.speak(_text: "Home tab selected")
     case 1:
-        SpeechManager.shared.speak(_text: "Map tab selected")
+        SpeechManager.shared.speak(_text: "Mapview selected")
     case 2:
-        SpeechManager.shared.speak(_text: "Settings tab selected")
-    case 3:
-        SpeechManager.shared.speak(_text: "Mapview tab selected")
-    case 4:
-        SpeechManager.shared.speak(_text: "Saved location tab selected")
-    case 5:
-        SpeechManager.shared.speak(_text: "Obstacle detection tab selected")
-    case 6:
-        SpeechManager.shared.speak(_text: "Profile tab selected")
+        SpeechManager.shared.speak(_text: "Objects detection selected")
     default:
-        #warning("Unhandled tab selection")
-        
+        #warning("Unhandled tab selection")  // Warning for unhandled cases
     }
 }
