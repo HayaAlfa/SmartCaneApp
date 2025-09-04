@@ -1,10 +1,10 @@
 import SwiftUI
-import MapKit  // For accessing location services and coordinates
+import MapKit
 
-struct AddLocationView: View {
+struct SimpleAddLocationView: View {
     // MARK: - Properties
     // This closure is called when the user saves a new location
-    let onSave: (SavedLocation) -> Void
+    let onSave: (SimpleSavedLocation) -> Void
     
     // MARK: - Environment
     // @Environment provides access to the current view's environment
@@ -18,7 +18,7 @@ struct AddLocationView: View {
     // @State properties are used for data that can change and trigger UI updates
     @State private var name = ""                    // Location name (e.g., "Home", "Work")
     @State private var address = ""                 // Full address of the location
-    @State private var selectedCategory: SavedLocation.LocationCategory = .other  // Type of location
+    @State private var selectedCategory: SimpleSavedLocation.LocationCategory = .other  // Type of location
     @State private var notes = ""                   // Optional user notes about the location
     @State private var useCurrentLocation = false   // Whether to use GPS coordinates
     
@@ -42,7 +42,7 @@ struct AddLocationView: View {
                     // Dropdown picker for selecting location category
                     Picker("Category", selection: $selectedCategory) {
                         // Loop through all available categories
-                        ForEach(SavedLocation.LocationCategory.allCases, id: \.self) { category in
+                        ForEach(SimpleSavedLocation.LocationCategory.allCases, id: \.self) { category in
                             HStack {
                                 Image(systemName: category.icon)  // Show category icon
                                     .foregroundColor(category.color)
@@ -70,17 +70,19 @@ struct AddLocationView: View {
                 
                 // MARK: - Additional Information Section
                 // Optional section for extra details
-                Section("Additional Information") {
+                Section {
                     // MARK: - Notes Input
                     // Multi-line text field for user notes
                     TextField("Notes (Optional)", text: $notes, axis: .vertical)
                         .lineLimit(3...6)  // Allow 3-6 lines of text
+                } header: {
+                    Text("Additional Information")
                 }
                 
                 // MARK: - Current Location Details Section
                 // Shows GPS coordinates when "Use Current Location" is enabled
                 if useCurrentLocation {
-                    Section("Current Location") {
+                    Section {
                         // MARK: - Latitude Display
                         HStack {
                             Text("Latitude:")
@@ -104,6 +106,8 @@ struct AddLocationView: View {
                             Text(locationManager.getLocationAccuracy())
                                 .foregroundColor(.secondary)
                         }
+                    } header: {
+                        Text("Current Location")
                     }
                 }
             }
@@ -141,17 +145,17 @@ struct AddLocationView: View {
     // MARK: - Helper Methods
     
     // MARK: - Save Location Function
-    // Creates a new SavedLocation and calls the onSave closure
+    // Creates a new SimpleSavedLocation and calls the onSave closure
     private func saveLocation() {
-        // Create a new location object with the form data
-        let newLocation = SavedLocation(
-            name: name,                    // User-entered name
-            address: address,              // User-entered address
-            latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,   // GPS latitude if enabled
-            longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0, // GPS longitude if enabled
-            category: selectedCategory,    // Selected category
-            notes: notes,                  // User-entered notes
-            dateAdded: Date()              // Current timestamp
+        // Create new location
+        let newLocation = SimpleSavedLocation(
+            name: name,
+            address: address,
+            latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,
+            longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0,
+            category: selectedCategory.rawValue,
+            notes: notes,
+            dateAdded: Date()
         )
         
         // Call the onSave closure passed from the parent view
@@ -165,5 +169,5 @@ struct AddLocationView: View {
 // MARK: - Preview
 // Shows the view in Xcode's canvas for design purposes
 #Preview {
-    AddLocationView { _ in }
+    SimpleAddLocationView { _ in }
 }
