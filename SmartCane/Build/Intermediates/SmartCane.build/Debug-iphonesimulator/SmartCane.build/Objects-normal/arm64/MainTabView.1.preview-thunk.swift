@@ -19,52 +19,52 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeScreen()
-                .tabItem { Label(__designTimeString("#4762_0", fallback: "Home"), systemImage: __designTimeString("#4762_1", fallback: "house.fill"))}
-                .tag(__designTimeInteger("#4762_2", fallback: 0))
+                .tabItem { Label(__designTimeString("#7007_0", fallback: "Home"), systemImage: __designTimeString("#7007_1", fallback: "house.fill"))}
+                .tag(__designTimeInteger("#7007_2", fallback: 0))
             
             MapScreen ()
-                .tabItem { Label(__designTimeString("#4762_3", fallback: "Map"), systemImage: __designTimeString("#4762_4", fallback: "map.fill"))}
-                .tag(__designTimeInteger("#4762_5", fallback: 1))
+                .tabItem { Label(__designTimeString("#7007_3", fallback: "Map"), systemImage: __designTimeString("#7007_4", fallback: "map.fill"))}
+                .tag(__designTimeInteger("#7007_5", fallback: 1))
             
             SettingsScreen()
-                .tabItem { Label(__designTimeString("#4762_6", fallback: "Setting"), systemImage: __designTimeString("#4762_7", fallback: "gearshape.fill"))}
-                .tag(__designTimeInteger("#4762_8", fallback: 2))
+                .tabItem { Label(__designTimeString("#7007_6", fallback: "Setting"), systemImage: __designTimeString("#7007_7", fallback: "gearshape.fill"))}
+                .tag(__designTimeInteger("#7007_8", fallback: 2))
             // MARK: - Map Tab
             // This is the first tab that shows the map with location services and search
             MapView()
                 .tabItem {
                     // This sets the icon and text for the tab bar item
-                    Image(systemName: __designTimeString("#4762_9", fallback: "map"))        // Uses SF Symbols for the map icon
-                    Text(__designTimeString("#4762_10", fallback: "Map"))                     // Text label shown below the icon
+                    Image(systemName: __designTimeString("#7007_9", fallback: "map"))        // Uses SF Symbols for the map icon
+                    Text(__designTimeString("#7007_10", fallback: "Map"))                     // Text label shown below the icon
                 }
-                .tag(__designTimeInteger("#4762_11", fallback: 3))
+                .tag(__designTimeInteger("#7007_11", fallback: 3))
             
             // MARK: - Saved Locations Tab
             // This is the second tab that shows a list of user's saved locations
             SavedLocationsView()
                 .tabItem {
-                    Image(systemName: __designTimeString("#4762_12", fallback: "mappin.and.ellipse"))  // Pin icon for saved locations
-                    Text(__designTimeString("#4762_13", fallback: "Saved"))                             // Tab label
+                    Image(systemName: __designTimeString("#7007_12", fallback: "mappin.and.ellipse"))  // Pin icon for saved locations
+                    Text(__designTimeString("#7007_13", fallback: "Saved"))                             // Tab label
                 }
-                .tag(__designTimeInteger("#4762_14", fallback: 4))
+                .tag(__designTimeInteger("#7007_14", fallback: 4))
             
             // MARK: - Object Detection Tab
             // This is the third tab for AI-powered obstacle detection using photos
             ObjectDetectionView()
                 .tabItem {
-                    Image(systemName: __designTimeString("#4762_15", fallback: "camera.viewfinder"))    // Camera icon for detection
-                    Text(__designTimeString("#4762_16", fallback: "Detection"))                         // Tab label
+                    Image(systemName: __designTimeString("#7007_15", fallback: "camera.viewfinder"))    // Camera icon for detection
+                    Text(__designTimeString("#7007_16", fallback: "Detection"))                         // Tab label
                 }
-                .tag(__designTimeInteger("#4762_17", fallback: 5))
+                .tag(__designTimeInteger("#7007_17", fallback: 5))
             
             // MARK: - Profile Tab
             // This is the fourth tab for user settings, profile, and app information
             ProfileView()
                 .tabItem {
-                    Image(systemName: __designTimeString("#4762_18", fallback: "person.circle"))        // Person icon for profile
-                    Text(__designTimeString("#4762_19", fallback: "Profile"))                           // Tab label
+                    Image(systemName: __designTimeString("#7007_18", fallback: "person.circle"))        // Person icon for profile
+                    Text(__designTimeString("#7007_19", fallback: "Profile"))                           // Tab label
                 }
-                .tag(__designTimeInteger("#4762_20", fallback: 6))
+                .tag(__designTimeInteger("#7007_20", fallback: 6))
             
         }
         .onChange(of: selectedTab) {
@@ -86,19 +86,19 @@ struct MainTabView: View {
 private func speakTabChange(_ tab: Int) {
     switch tab {
     case 0:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_21", fallback: "Home tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_21", fallback: "Home tab selected"))
     case 1:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_22", fallback: "Map tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_22", fallback: "Map tab selected"))
     case 2:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_23", fallback: "Settings tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_23", fallback: "Settings tab selected"))
     case 3:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_24", fallback: "Home tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_24", fallback: "Mapview tab selected"))
     case 4:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_25", fallback: "Home tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_25", fallback: "Saved location tab selected"))
     case 5:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_26", fallback: "Home tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_26", fallback: "Obstacle detection tab selected"))
     case 6:
-        SpeechManager.shared.speak(_text: __designTimeString("#4762_27", fallback: "Home tab selected"))
+        SpeechManager.shared.speak(_text: __designTimeString("#7007_27", fallback: "Profile tab selected"))
     default:
         #warning("Unhandled tab selection")
         

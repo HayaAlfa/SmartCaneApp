@@ -18,13 +18,13 @@ struct SettingsScreen: View {
     var body: some View {
         NavigationView {
             Form {
-                Toggle(__designTimeString("#5509_0", fallback: "Enable Voice Feedback"), isOn: $voiceFeedbackEnabled)
-                    .accessibilityLabel(__designTimeString("#5509_1", fallback: "Voice Feedback Toggle"))
-                    .accessibilityHint(__designTimeString("#5509_2", fallback: "Turns speech feedback on or off"))
+                Toggle(__designTimeString("#1041_0", fallback: "Enable Voice Feedback"), isOn: $voiceFeedbackEnabled)
+                    .accessibilityLabel(__designTimeString("#1041_1", fallback: "Voice Feedback Toggle"))
+                    .accessibilityHint(__designTimeString("#1041_2", fallback: "Turns speech feedback on or off"))
                 
             }
            
-                .navigationTitle(__designTimeString("#5509_3", fallback: "Settings"))
+                .navigationTitle(__designTimeString("#1041_3", fallback: "Settings"))
             
 //            Button("Speak") {
 //                SpeechManager.shared.speak(_text: "Settings Screen")

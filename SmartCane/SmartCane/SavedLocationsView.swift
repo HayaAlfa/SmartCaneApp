@@ -2,6 +2,7 @@ import SwiftUI
 import MapKit  // For opening locations in Maps app
 
 // MARK: - Data Model for Saved Locations
+<<<<<<< HEAD
 // This struct defines what information we store for each saved location
 struct SavedLocation: Identifiable, Codable {
     let id = UUID()                    // Unique identifier for each location
@@ -61,6 +62,22 @@ struct SavedLocationsView: View {
     // This automatically filters locations based on search text and selected category
     var filteredLocations: [SavedLocation] {
         var filtered = savedLocations
+=======
+// Using SimpleSavedLocation from SimpleDataManager.swift
+
+struct SavedLocationsView: View {
+    // MARK: - State Properties
+    // These properties control the UI state and store user data
+    @StateObject private var dataManager = SimpleDataManager.shared  // Simple data manager
+    @State private var showingAddLocation = false                  // Controls add location sheet
+    @State private var searchText = ""                             // Text for searching locations
+    @State private var selectedCategory: String = "All"            // Filter by category
+    
+    // MARK: - Computed Property for Filtered Locations
+    // This automatically filters locations based on search text and selected category
+    var filteredLocations: [SimpleSavedLocation] {
+        var filtered = dataManager.savedLocations
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
         
         // Filter by search text (searches name, address, and notes)
         if !searchText.isEmpty {
@@ -72,8 +89,13 @@ struct SavedLocationsView: View {
         }
         
         // Filter by selected category
+<<<<<<< HEAD
         if let category = selectedCategory {
             filtered = filtered.filter { $0.category == category }
+=======
+        if selectedCategory != "All" {
+            filtered = filtered.filter { $0.category == selectedCategory }
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
         }
         
         return filtered
@@ -82,6 +104,7 @@ struct SavedLocationsView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
+<<<<<<< HEAD
                 // MARK: - Search and Filter Bar
                 VStack(spacing: 12) {
                     HStack {
@@ -165,11 +188,23 @@ struct SavedLocationsView: View {
                     // Add button in top-right corner
                     Button(action: {
                         showingAddLocation = true  // Show add location sheet
+=======
+                searchAndFilterSection
+                locationsListSection
+            }
+            .navigationTitle("Saved Locations")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        showingAddLocation = true
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
                     }) {
                         Image(systemName: "plus")
                     }
                 }
             }
+<<<<<<< HEAD
             // MARK: - Add Location Sheet
             .sheet(isPresented: $showingAddLocation) {
                 AddLocationView { newLocation in
@@ -179,10 +214,114 @@ struct SavedLocationsView: View {
             }
             .onAppear {
                 loadLocations()  // Load saved locations when view appears
+=======
+            .sheet(isPresented: $showingAddLocation) {
+                SimpleAddLocationView { newLocation in
+                    dataManager.addSavedLocation(newLocation)
+                }
             }
         }
     }
     
+    // MARK: - Search and Filter Section
+    private var searchAndFilterSection: some View {
+        VStack(spacing: 12) {
+            searchBar
+            categoryFilters
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+    }
+    
+    // MARK: - Search Bar
+    private var searchBar: some View {
+        HStack {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                TextField("Search locations...", text: $searchText)
+                    .textFieldStyle(PlainTextFieldStyle())
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .cornerRadius(15)
+        }
+    }
+    
+    // MARK: - Category Filters
+    private var categoryFilters: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                allCategoriesButton
+                categoryButtons
+            }
+            .padding(.horizontal)
+        }
+    }
+    
+    // MARK: - All Categories Button
+    private var allCategoriesButton: some View {
+        Button(action: {
+            selectedCategory = "All"
+        }) {
+            Text("All")
+                .font(.caption)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(selectedCategory == "All" ? Color.blue : Color.gray.opacity(0.3))
+                .foregroundColor(selectedCategory == "All" ? .white : .primary)
+                .cornerRadius(20)
+        }
+    }
+    
+    // MARK: - Category Buttons
+    private var categoryButtons: some View {
+        ForEach(SimpleSavedLocation.LocationCategory.allCases, id: \.self) { category in
+            Button(action: {
+                selectedCategory = selectedCategory == category.rawValue ? "All" : category.rawValue
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: category.icon)
+                        .font(.caption)
+                    Text(category.rawValue)
+                        .font(.caption)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(selectedCategory == category.rawValue ? category.color : Color.gray.opacity(0.3))
+                .foregroundColor(selectedCategory == category.rawValue ? .white : .primary)
+                .cornerRadius(20)
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
+            }
+        }
+    }
+    
+<<<<<<< HEAD
+=======
+    // MARK: - Locations List Section
+    private var locationsListSection: some View {
+        Group {
+            if filteredLocations.isEmpty {
+                emptyStateView
+            } else {
+                locationsList
+            }
+        }
+    }
+    
+    // MARK: - Locations List
+    private var locationsList: some View {
+        List {
+            ForEach(filteredLocations) { location in
+                SavedLocationRow(location: location) {
+                    deleteLocation(location)
+                }
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
     // MARK: - Empty State View
     // Shown when there are no saved locations or no results match filters
     private var emptyStateView: some View {
@@ -225,6 +364,7 @@ struct SavedLocationsView: View {
         .padding()
     }
     
+<<<<<<< HEAD
     // MARK: - Data Management Functions
     
     // Remove a location from the array
@@ -248,13 +388,24 @@ struct SavedLocationsView: View {
            let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
             savedLocations = decoded
         }
+=======
+    // MARK: - Helper Methods
+    
+    // Delete a saved location using the data manager
+    private func deleteLocation(_ location: SimpleSavedLocation) {
+        dataManager.deleteSavedLocation(location)
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
     }
 }
 
 // MARK: - Individual Location Row Component
 // This view represents each saved location in the list
 struct SavedLocationRow: View {
+<<<<<<< HEAD
     let location: SavedLocation           // The location data to display
+=======
+    let location: SimpleSavedLocation           // The location data to display
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
     let onDelete: () -> Void             // Function to call when delete is tapped
     @State private var showingDeleteAlert = false  // Controls delete confirmation alert
     
@@ -262,11 +413,20 @@ struct SavedLocationRow: View {
         HStack(spacing: 12) {
             // MARK: - Category Icon
             // Shows the category icon with appropriate color
+<<<<<<< HEAD
             Image(systemName: location.category.icon)
                 .font(.title2)
                 .foregroundColor(location.category.color)
                 .frame(width: 40, height: 40)
                 .background(location.category.color.opacity(0.1))  // Subtle background
+=======
+            let category = SimpleSavedLocation.LocationCategory(rawValue: location.category) ?? .other
+            Image(systemName: category.icon)
+                .font(.title2)
+                .foregroundColor(category.color)
+                .frame(width: 40, height: 40)
+                .background(category.color.opacity(0.1))  // Subtle background
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
                 .clipShape(Circle())
             
             // MARK: - Location Details

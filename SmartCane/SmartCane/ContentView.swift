@@ -13,7 +13,11 @@ struct ContentView: View {
         // TabView creates the bottom tab bar that allows users to switch between different screens
         TabView {
             // MARK: - Map Tab
+<<<<<<< HEAD
             // This is the first tab that shows the map with location services and search
+=======
+            // This is the first tab that shows the map with location marker and search bar
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
             MapView()
                 .tabItem {
                     // This sets the icon and text for the tab bar item
@@ -22,7 +26,11 @@ struct ContentView: View {
                 }
             
             // MARK: - Saved Locations Tab
+<<<<<<< HEAD
             // This is the second tab that shows a list of user's saved locations
+=======
+            // This is the second tab that shows a list of saved locations with categories
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
             SavedLocationsView()
                 .tabItem {
                     Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
@@ -44,7 +52,10 @@ struct ContentView: View {
                     Image(systemName: "person.circle")        // Person icon for profile
                     Text("Profile")                           // Tab label
                 }
+<<<<<<< HEAD
             
+=======
+>>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
         }
         .accentColor(.blue)  // Sets the blue color for selected tabs and active elements
     }

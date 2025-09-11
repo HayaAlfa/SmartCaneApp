@@ -16,30 +16,30 @@ import SwiftUI
 struct HomeScreen: View {
     var body: some View {
         NavigationView {
-            VStack(spacing: __designTimeInteger("#5110_0", fallback: 20)) {
-                Text(__designTimeString("#5110_1", fallback: "Home"))
+            VStack(spacing: __designTimeInteger("#1433_0", fallback: 20)) {
+                Text(__designTimeString("#1433_1", fallback: "Home"))
                     .font(.title) //dynamic type make it scalable
                     .padding(.top)
                 
                 Divider()
                 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: __designTimeInteger("#5110_2", fallback: 20)) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: __designTimeInteger("#1433_2", fallback: 20)) {
                     // Buttons on Home
-                    HomeButton(title: __designTimeString("#5110_3", fallback: "My Locations"), systemImage: __designTimeString("#5110_4", fallback: "list.bullet"))
-                    HomeButton(title: __designTimeString("#5110_5", fallback: "Navigation"), systemImage: __designTimeString("#5110_6", fallback: "map.fill"))
+                    HomeButton(title: __designTimeString("#1433_3", fallback: "My Locations"), systemImage: __designTimeString("#1433_4", fallback: "list.bullet"))
+                    HomeButton(title: __designTimeString("#1433_5", fallback: "Navigation"), systemImage: __designTimeString("#1433_6", fallback: "map.fill"))
                 }
                 .padding()
                 
                 // Example Speak button for testing
-                Button(__designTimeString("#5110_7", fallback: "Speak")) {
-                    SpeechManager.shared.speak(_text:__designTimeString("#5110_8", fallback: "Welcome to Smart Cane. Navigation assistance activated."))
+                Button(__designTimeString("#1433_7", fallback: "Speak")) {
+                    SpeechManager.shared.speak(_text:__designTimeString("#1433_8", fallback: "Welcome to Smart Cane. Navigation assistance activated."))
                 }
-                .padding(.top, __designTimeInteger("#5110_9", fallback: 30))
+                .padding(.top, __designTimeInteger("#1433_9", fallback: 30))
                 
                 Spacer()
             }
             .padding()
-            .navigationTitle(__designTimeString("#5110_10", fallback: "Home"))
+            .navigationTitle(__designTimeString("#1433_10", fallback: "Home"))
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -59,14 +59,14 @@ struct HomeButton: View {
             Image(systemName: systemImage)
                 .resizable()
                 .scaledToFit()
-                .frame(width: __designTimeInteger("#5110_11", fallback: 40), height: __designTimeInteger("#5110_12", fallback: 40))
+                .frame(width: __designTimeInteger("#1433_11", fallback: 40), height: __designTimeInteger("#1433_12", fallback: 40))
                 .foregroundColor(.primary)
             
             Text(title)
                 .font(.body) //scalable for dynamic type
                 .multilineTextAlignment(.center)
         }
-        .frame(maxWidth: .infinity, minHeight: __designTimeInteger("#5110_13", fallback: 100))
-        .background(RoundedRectangle(cornerRadius: __designTimeInteger("#5110_14", fallback: 15)).stroke(Color.primary, lineWidth: __designTimeInteger("#5110_15", fallback: 1)))
+        .frame(maxWidth: .infinity, minHeight: __designTimeInteger("#1433_13", fallback: 100))
+        .background(RoundedRectangle(cornerRadius: __designTimeInteger("#1433_14", fallback: 15)).stroke(Color.primary, lineWidth: __designTimeInteger("#1433_15", fallback: 1)))
     }
 }

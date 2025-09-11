@@ -16,11 +16,11 @@ import SwiftUI
 struct MapScreen: View {
     var body: some View {
         NavigationStack {
-            Text(__designTimeString("#5240_0", fallback: "Map Screen Placeholder"))
-                .navigationTitle(__designTimeString("#5240_1", fallback: "Map"))
+            Text(__designTimeString("#646_0", fallback: "Map Screen Placeholder"))
+                .navigationTitle(__designTimeString("#646_1", fallback: "Map"))
             
-            Button(__designTimeString("#5240_2", fallback: "Speak")) {
-                SpeechManager.shared.speak(_text: __designTimeString("#5240_3", fallback: "Maps Screen"))
+            Button(__designTimeString("#646_2", fallback: "Speak")) {
+                SpeechManager.shared.speak(_text: __designTimeString("#646_3", fallback: "Maps Screen"))
             }
         }
     }
