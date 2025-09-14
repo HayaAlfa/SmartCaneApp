@@ -45,15 +45,18 @@ struct HomeScreen: View {
                     })
                     
                     // MARK: - My Routes Button
-                    // Button for route management (currently placeholder)
-                    HomeButton(
-                        title: "My Routes", 
-                        systemImage: "map.circle.fill",  // Changed from "map.fill" to circle map icon
-                        action: {
-                            // Provide voice feedback when button is tapped
-                            SpeechManager.shared.speak(_text: "My routes selected")
-                        }
-                    )
+                    // Button to manage saved familiar routes
+                    NavigationLink(destination: MyRoutesView()) {
+                        HomeButtonView(
+                            title: "My Routes", 
+                            systemImage: "map.circle.fill"  // Route/map icon for saved routes
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())  // Removes default NavigationLink styling
+                    .simultaneousGesture(TapGesture().onEnded {
+                        // Provide voice feedback when button is tapped
+                        SpeechManager.shared.speak(_text: "My routes selected")
+                    })
                     
                     // MARK: - Profile Button
                     // NavigationLink wraps the button to enable navigation to ProfileView
