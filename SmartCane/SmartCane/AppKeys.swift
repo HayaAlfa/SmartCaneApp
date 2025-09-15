@@ -8,4 +8,7 @@
 // AppKeys.swift
 enum AppKeys {
     static let voiceEnabled = "voiceFeedbackEnabled"
+    static let darkModeEnabled = "darkModeEnabled"
+    static let fontSize = "fontSize"
+    static let notificationsEnabled = "notificationsEnabled"
 }
