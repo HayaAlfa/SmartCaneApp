@@ -1,0 +1,120 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AddLocationView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Add Location",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Details",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 30
+        }
+      },
+      {
+        "comment": "",
+        "key": "Additional Information",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Current Location",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Location Name",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "Address",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 38
+        }
+      },
+      {
+        "comment": "",
+        "key": "Category",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 43
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use Current Location",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes (Optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Latitude:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "Longitude:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "Accuracy:",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 97
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 119
+        }
+      }
+    ]
+  },
+  "version": 1
+}

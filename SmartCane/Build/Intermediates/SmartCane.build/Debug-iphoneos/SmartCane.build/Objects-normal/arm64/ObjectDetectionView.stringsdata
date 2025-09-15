@@ -1,0 +1,160 @@
+{
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/ObjectDetectionView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Object Detection",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "Test Model Loading",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "AI Model Status",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "Model:",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ready:",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "✅ Yes",
+        "location": {
+          "startingColumn": 71,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "❌ No",
+        "location": {
+          "startingColumn": 83,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "Obstacle Detection",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pick Photo",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 122
+        }
+      },
+      {
+        "comment": "",
+        "key": "Classifying...",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "Classify Object",
+        "location": {
+          "startingColumn": 69,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "Detection Complete!",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 175
+        }
+      },
+      {
+        "comment": "",
+        "key": "Object Type:",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 182
+        }
+      },
+      {
+        "comment": "",
+        "key": "Confidence:",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save to History",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 208
+        }
+      },
+      {
+        "comment": "",
+        "key": "View All (%lld)",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "Detection History",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ confidence",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 385
+        }
+      }
+    ]
+  },
+  "version": 1
+}

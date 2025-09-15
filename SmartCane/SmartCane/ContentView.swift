@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
         // MARK: - Main Tab Navigation
         // TabView creates the bottom tab bar that allows users to switch between different screens
         TabView {
             // MARK: - Map Tab
-            // This is the first tab that shows the map with location marker and search bar
+            // This is the first tab that shows the map with location services and search
             MapView()
                 .tabItem {
                     // This sets the icon and text for the tab bar item
@@ -22,8 +24,8 @@ struct ContentView: View {
                 }
             
             // MARK: - Saved Locations Tab
-            // This is the second tab that shows a list of saved locations with categories
-            SavedLocationsView()
+            // This is the second tab that shows a list of user's saved locations
+            SavedLocationsView(selectedTab: $selectedTab)
                 .tabItem {
                     Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
                     Text("Saved")                             // Tab label
@@ -44,6 +46,7 @@ struct ContentView: View {
                     Image(systemName: "person.circle")        // Person icon for profile
                     Text("Profile")                           // Tab label
                 }
+            
         }
         .accentColor(.blue)  // Sets the blue color for selected tabs and active elements
     }
@@ -53,4 +56,10 @@ struct ContentView: View {
 // This allows you to see the view in Xcode's canvas/preview
 #Preview {
     ContentView()
+    
+}
+
+#Preview("Dark Mode") {
+    ContentView()
+        .preferredColorScheme(.dark)
 }

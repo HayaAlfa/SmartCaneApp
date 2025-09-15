@@ -4,9 +4,33 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Assets.car</key>
+		<data>
+		EfhNXY0SrVB9Kx7bCQmYiqhQucE=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		igKayqYjKuU+XlL+q6EktA5y704=
+		RskforbG/oyzqXg3+7I5rSnVlLE=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/analytics/coremldata.bin</key>
+		<data>
+		WjXtmXGo2lHho2B83cGtibUwfWw=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/coremldata.bin</key>
+		<data>
+		OxC+a05HrPTlfN7h0waGfQhcKs4=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
+		<data>
+		xpm/X6ltyggGp6idGeGgCJO5Nuw=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/model.mil</key>
+		<data>
+		cQuGfB84mq/2A30Gg74/Bo3DJlQ=
+		</data>
+		<key>ObstacleClassifier.mlmodelc/weights/weight.bin</key>
+		<data>
+		LA9dxMMvDX3SDUPapyqJbEXSR8I=
 		</data>
 		<key>PkgInfo</key>
 		<data>
@@ -14,7 +38,7 @@
 		</data>
 		<key>SmartCane.debug.dylib</key>
 		<data>
-		Hf3w+7385KZBbkKYjeHlQFt31rA=
+		9Yf99WCLtwfvBx6x3z24UOatvcY=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
@@ -23,11 +47,53 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Assets.car</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			dNPJW+3WjTGZgyzgcYq8OChByZcGnFI0NIQiLrsD+Ak=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/analytics/coremldata.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2OsjcrOvgIZey73Jr7vWVe5re8fjWBnkL0q+jHWpbOs=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/coremldata.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			V/mgnKLemyKl040B6Qt+z68rbAQV8p+2YNoP238nEwM=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			P3HZLmDqB7OYOWVnX82Tna4ES4kjItjLdTuHqnjFrSo=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/model.mil</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wcthmjum+97osucGn9g5oRzdXOYkWjfLpvpgWawaDLI=
+			</data>
+		</dict>
+		<key>ObstacleClassifier.mlmodelc/weights/weight.bin</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jInEgITE3RJxw7R1jdnOlu1qrrhR0jYWhvSAsZmjOys=
+			</data>
+		</dict>
 		<key>SmartCane.debug.dylib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			tzXNOdJw1678nCrcm8lUQagcfB7IOg3o+XRQIhd6qLE=
+			RotUiGFCW7dHyOdkk4y1ywayLs7jOJWIxhrTYKZi1UU=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>
