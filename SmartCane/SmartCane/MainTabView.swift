@@ -23,7 +23,7 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             // MARK: - Home Tab
             // First tab shows the home screen with quick access buttons
-            HomeScreen()
+            HomeScreen(selectedTab: $selectedTab)
                 .tabItem { 
                     Label("Home", systemImage: "house.fill")  // House icon for home
                 }
@@ -79,6 +79,6 @@ private func speakTabChange(_ tab: Int) {
     case 2:
         SpeechManager.shared.speak(_text: "Objects detection selected")
     default:
-        #warning("Unhandled tab selection")  // Warning for unhandled cases
+        SpeechManager.shared.speak(_text: "Tab selected")
     }
 }

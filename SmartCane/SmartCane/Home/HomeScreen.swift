@@ -11,6 +11,8 @@ import SwiftUI
 // This is the main home screen that provides quick access to all app features
 // It displays a grid of buttons for easy navigation to different sections
 struct HomeScreen: View {
+    @Binding var selectedTab: Int
+    
     // MARK: - Main Body
     // This defines the main user interface of the home screen
     var body: some View {
@@ -32,7 +34,7 @@ struct HomeScreen: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                     // MARK: - My Locations Button
                     // NavigationLink wraps the button to enable navigation to SavedLocationsView
-                    NavigationLink(destination: SavedLocationsView()){
+                    NavigationLink(destination: SavedLocationsView(selectedTab: $selectedTab)){
                         HomeButtonView(
                             title: "My Locations", 
                             systemImage: "mappin.and.ellipse"  // Changed from "list.bullet" to location pin icon
@@ -109,7 +111,7 @@ struct HomeScreen: View {
 // MARK: - Preview
 // Shows the view in Xcode's canvas for design purposes
 #Preview {
-    HomeScreen()
+    HomeScreen(selectedTab: .constant(0))
 }
 
 // MARK: - Reusable Home Button Component (with action)

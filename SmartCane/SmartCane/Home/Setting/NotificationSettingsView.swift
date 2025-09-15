@@ -25,8 +25,8 @@ struct NotificationSettingsView: View {
                 // Controls the overall notification permission
                 Section {
                     Toggle("Enable Notifications", isOn: $notificationsEnabled)
-                        .onChange(of: notificationsEnabled) { newValue in
-                            if newValue {
+                        .onChange(of: notificationsEnabled) {
+                            if notificationsEnabled {
                                 // When user enables notifications, request permission
                                 requestNotificationPermission()
                             }

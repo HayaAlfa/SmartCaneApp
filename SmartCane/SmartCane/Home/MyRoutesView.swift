@@ -133,7 +133,7 @@ struct MyRoutesView: View {
 
 // MARK: - Saved Route Model
 struct SavedRoute: Identifiable, Codable {
-    let id = UUID()
+    var id = UUID()
     let name: String
     let startLocation: String
     let endLocation: String

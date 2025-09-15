@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
         // MARK: - Main Tab Navigation
         // TabView creates the bottom tab bar that allows users to switch between different screens
@@ -23,7 +25,7 @@ struct ContentView: View {
             
             // MARK: - Saved Locations Tab
             // This is the second tab that shows a list of user's saved locations
-            SavedLocationsView()
+            SavedLocationsView(selectedTab: $selectedTab)
                 .tabItem {
                     Image(systemName: "mappin.and.ellipse")  // Pin icon for saved locations
                     Text("Saved")                             // Tab label

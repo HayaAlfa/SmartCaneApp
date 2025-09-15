@@ -41,8 +41,8 @@ struct AddLocationView: View {
                     // MARK: - Current Location Toggle
                     // Switch to automatically use current GPS coordinates
                     Toggle("Use Current Location", isOn: $useCurrentLocation)
-                        .onChange(of: useCurrentLocation) { newValue in
-                            if newValue {
+                        .onChange(of: useCurrentLocation) {
+                            if useCurrentLocation {
                                 // When enabled, automatically fill in current address
                                 address = locationManager.getCurrentLocationString()
                             }

@@ -1,9 +1,11 @@
 import SwiftUI
 import CoreML
 import Vision
+import AVFoundation
 
 struct ObjectDetectionView: View {
     @State private var showPicker = false
+    @State private var showCamera = false
     @State private var pickedImage: UIImage? = nil
     @State private var classificationResult: String = ""
     @State private var confidence: Double = 0.0
@@ -29,19 +31,37 @@ struct ObjectDetectionView: View {
                 }
                 .padding()
                 
-                // Photo picker button
-                Button(action: {
-                    showPicker = true
-                }) {
-                    HStack {
-                        Image(systemName: "photo.on.rectangle.angled")
-                        Text("Pick Photo")
+                // Photo selection buttons
+                HStack(spacing: 15) {
+                    // Library button
+                    Button(action: {
+                        showPicker = true
+                    }) {
+                        HStack {
+                            Image(systemName: "photo.on.rectangle.angled")
+                            Text("Library")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+                    
+                    // Camera button
+                    Button(action: {
+                        showCamera = true
+                    }) {
+                        HStack {
+                            Image(systemName: "camera")
+                            Text("Camera")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
                 }
                 .padding(.horizontal)
                 
@@ -110,6 +130,9 @@ struct ObjectDetectionView: View {
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showPicker) {
                 PhotoPicker(selectedImage: $pickedImage)
+            }
+            .sheet(isPresented: $showCamera) {
+                CameraView(selectedImage: $pickedImage)
             }
             .onAppear {
                 loadDetectionHistory()
@@ -211,6 +234,47 @@ struct SimpleButtonStyle: ButtonStyle {
             .foregroundColor(.white)
             .cornerRadius(10)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
+
+// MARK: - Camera View
+struct CameraView: UIViewControllerRepresentable {
+    @Binding var selectedImage: UIImage?
+    @Environment(\.presentationMode) var presentationMode
+    
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.delegate = context.coordinator
+        picker.sourceType = .camera
+        picker.allowsEditing = true
+        return picker
+    }
+    
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: CameraView
+        
+        init(_ parent: CameraView) {
+            self.parent = parent
+        }
+        
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.editedImage] as? UIImage {
+                parent.selectedImage = image
+            } else if let image = info[.originalImage] as? UIImage {
+                parent.selectedImage = image
+            }
+            parent.presentationMode.wrappedValue.dismiss()
+        }
+        
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.presentationMode.wrappedValue.dismiss()
+        }
     }
 }
 
