@@ -40,13 +40,21 @@ struct MainTabView: View {
                 .tag(1)  // Unique identifier for this tab
             
             // MARK: - Object Detection Tab
+<<<<<<< HEAD
+            // Fourth tab for AI-powered obstacle detection using photos
+=======
             // Third tab for AI-powered obstacle detection using photos
+>>>>>>> bdea4a9f9675dcc7a084f14af7574cedd53216dc
             ObjectDetectionView()
                 .tabItem {
                     Image(systemName: "camera.viewfinder")    // Camera icon for detection
                     Text("Detection")                         // Tab label
                 }
                 .tag(2)  // Unique identifier for this tab
+<<<<<<< HEAD
+            
+=======
+>>>>>>> bdea4a9f9675dcc7a084f14af7574cedd53216dc
         }
         // MARK: - Tab Change Handler
         // This triggers whenever user switches to a different tab
@@ -75,9 +83,15 @@ private func speakTabChange(_ tab: Int) {
     case 0:
         SpeechManager.shared.speak(_text: "Home tab selected")
     case 1:
+<<<<<<< HEAD
+        SpeechManager.shared.speak(_text: "Map tab selected")
+    case 2:
+        SpeechManager.shared.speak(_text: "Object detection selected")
+=======
         SpeechManager.shared.speak(_text: "Mapview selected")
     case 2:
         SpeechManager.shared.speak(_text: "Objects detection selected")
+>>>>>>> bdea4a9f9675dcc7a084f14af7574cedd53216dc
     default:
         SpeechManager.shared.speak(_text: "Tab selected")
     }
