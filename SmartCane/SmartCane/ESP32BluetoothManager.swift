@@ -272,4 +272,7 @@ struct ESP32SmartCane: Identifiable, Equatable {
 extension Notification.Name {
     static let obstacleDetected = Notification.Name("obstacleDetected")
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> bdea4a9f9675dcc7a084f14af7574cedd53216dc
