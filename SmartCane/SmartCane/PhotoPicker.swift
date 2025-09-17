@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 //
 //  PhotoPicker.swift
 //  SmartCane
@@ -6,30 +6,7 @@
 //  Created by Thu Hieu Truong on 8/30/25.
 //
 
-import SwiftUI
-import PhotosUI
 
-struct PhotoPicker: UIViewControllerRepresentable {
-    @Binding var selectedImage: UIImage?
-    
-    func makeUIViewController(context: Context) -> PHPickerViewController {
-        var config = PHPickerConfiguration()
-        config.filter = .images
-        config.selectionLimit = 1
-        let picker = PHPickerViewController(configuration: config)
-        picker.delegate = context.coordinator
-        return picker
-    }
-    
-    func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-    
-    class Coordinator: NSObject, PHPickerViewControllerDelegate {
-        let parent: PhotoPicker
-=======
 import SwiftUI
 import PhotosUI  // Apple's photo picker framework for iOS 14+
 
@@ -76,29 +53,12 @@ struct PhotoPicker: UIViewControllerRepresentable {
     class Coordinator: NSObject, PHPickerViewControllerDelegate {
         
         let parent: PhotoPicker  // Reference to parent PhotoPicker
->>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
         
         init(_ parent: PhotoPicker) {
             self.parent = parent
         }
         
-<<<<<<< HEAD
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-            picker.dismiss(animated: true)
-            guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
-            
-            provider.loadObject(ofClass: UIImage.self) { image, error in
-                DispatchQueue.main.async {
-                    self.parent.selectedImage = image as? UIImage
-                }
-            }
-        }
-    }
-    
-    
-}
 
-=======
         // MARK: - Photo Selection Handler
         // Called when user selects photos in the picker
         func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
@@ -242,4 +202,4 @@ struct SmartPhotoPicker: View {
 #Preview {
     SmartPhotoPicker(selectedImage: .constant(nil))
 }
->>>>>>> 9e07a6b5c5a513893d71c3878bf0047b42f7ae0d
+
