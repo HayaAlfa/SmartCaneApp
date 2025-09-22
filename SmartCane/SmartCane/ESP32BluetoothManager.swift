@@ -220,29 +220,23 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
     
     // Handle incoming data from ESP32
     private func handleIncomingData(_ message: String) {
-        // Parse obstacle detection data from ESP32
-        // Expected format: "OBSTACLE:distance:direction:confidence"
-        if message.hasPrefix("OBSTACLE:") {
-            let components = message.dropFirst(9).split(separator: ":")
-            if components.count >= 3 {
-                let distance = Double(components[0]) ?? 0.0
-                let direction = String(components[1])
-                let confidence = Double(components[2]) ?? 0.0
-                
-                print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)% confidence")
-                
-                // Post notification for obstacle detection
-                NotificationCenter.default.post(
-                    name: .obstacleDetected,
-                    object: nil,
-                    userInfo: [
-                        "distance": distance,
-                        "direction": direction,
-                        "confidence": confidence
-                    ]
-                )
-            }
-        }
+        print("📥 Raw message from ESP32: \(message)")
+        
+        // Use SensorSignalProcessor to parse the message
+        let sensorProcessor = SensorSignal()
+        let parsedResult = sensorProcessor.receiveSignal(message)
+        
+        print("📝 Parsed result: \(parsedResult)")
+        
+        // Post notification with parsed result
+        NotificationCenter.default.post(
+            name: .obstacleDetected,
+            object: nil,
+            userInfo: [
+                "rawMessage": message,
+                "parsedResult": parsedResult
+            ]
+        )
     }
 }
 
@@ -272,7 +266,4 @@ struct ESP32SmartCane: Identifiable, Equatable {
 extension Notification.Name {
     static let obstacleDetected = Notification.Name("obstacleDetected")
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> bdea4a9f9675dcc7a084f14af7574cedd53216dc
