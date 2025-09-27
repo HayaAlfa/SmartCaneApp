@@ -68,11 +68,11 @@ struct ObjectDetectionView: View {
                         }
                     }
                     
-                    // Bottom row - Direction Test (full width)
-                    NavigationLink(destination: DirectionTestView()) {
+                    // Bottom row - Warning Test (full width)
+                    NavigationLink(destination: WarningTestView()) {
                         HStack {
                             Image(systemName: "antenna.radiowaves.left.and.right")
-                            Text("Direction Test")
+                            Text("Warning Test")
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)

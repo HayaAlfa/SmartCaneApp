@@ -14,20 +14,9 @@ struct MyRoutesView: View {
     // MARK: - State Properties
     @State private var savedRoutes: [SavedRoute] = []
     @State private var showingAddRoute = false
-    @State private var searchText = ""
+    @State private var selectedRouteToDelete: SavedRoute?
+    @State private var showingDeleteAlert = false
     
-    // MARK: - Computed Properties
-    private var filteredRoutes: [SavedRoute] {
-        if searchText.isEmpty {
-            return savedRoutes
-        } else {
-            return savedRoutes.filter { route in
-                route.name.localizedCaseInsensitiveContains(searchText) ||
-                route.startLocation.localizedCaseInsensitiveContains(searchText) ||
-                route.endLocation.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
     
     // MARK: - Main Body
     var body: some View {
@@ -59,6 +48,18 @@ struct MyRoutesView: View {
             .onAppear {
                 loadRoutes()
             }
+            .alert("Delete Route", isPresented: $showingDeleteAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) {
+                    if let route = selectedRouteToDelete {
+                        deleteRoute(route)
+                    }
+                }
+            } message: {
+                if let route = selectedRouteToDelete {
+                    Text("Are you sure you want to delete '\(route.name)'? This action cannot be undone.")
+                }
+            }
         }
     }
     
@@ -89,21 +90,21 @@ struct MyRoutesView: View {
     
     // MARK: - Routes List View
     private var routesListView: some View {
-        VStack {
-            // Search Bar
-            SearchBar(text: $searchText)
-                .padding(.horizontal)
-            
-            // Routes List
-            List {
-                ForEach(filteredRoutes) { route in
-                    RouteRowView(route: route) {
+        List {
+            ForEach(savedRoutes) { route in
+                RouteRowView(
+                    route: route,
+                    onTap: {
                         // Action when route is tapped
-                        SpeechManager.shared.speak(_text: "Route to \(route.endLocation) selected")
+                        SpeechManager.shared.speak(_text: "Route \(route.name) selected")
+                    },
+                    onDelete: {
+                        selectedRouteToDelete = route
+                        showingDeleteAlert = true
                     }
-                }
-                .onDelete(perform: deleteRoutes)
+                )
             }
+            .onDelete(perform: deleteRoutes)
         }
     }
     
@@ -129,18 +130,25 @@ struct MyRoutesView: View {
         savedRoutes.remove(atOffsets: offsets)
         saveRoutes()
     }
+    
+    // Delete a specific route
+    private func deleteRoute(_ route: SavedRoute) {
+        savedRoutes.removeAll { $0.id == route.id }
+        saveRoutes()
+        selectedRouteToDelete = nil
+    }
 }
 
 // MARK: - Saved Route Model
 struct SavedRoute: Identifiable, Codable {
     var id = UUID()
     let name: String
-    let startLocation: String
-    let endLocation: String
+    let startLocation: SavedLocation
+    let endLocation: SavedLocation
     let description: String
     let dateCreated: Date
     
-    init(name: String, startLocation: String, endLocation: String, description: String) {
+    init(name: String, startLocation: SavedLocation, endLocation: SavedLocation, description: String) {
         self.name = name
         self.startLocation = startLocation
         self.endLocation = endLocation
@@ -153,45 +161,56 @@ struct SavedRoute: Identifiable, Codable {
 struct RouteRowView: View {
     let route: SavedRoute
     let onTap: () -> Void
+    let onDelete: () -> Void
     
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text(route.name)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "arrow.right.circle.fill")
-                        .foregroundColor(.blue)
-                }
-                
-                HStack {
-                    Image(systemName: "mappin.circle.fill")
-                        .foregroundColor(.green)
-                    Text(route.startLocation)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+        HStack {
+            // Main content (tappable)
+            Button(action: onTap) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(route.name)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        Spacer()
+                        // Delete button
+                        Button(action: onDelete) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .font(.title3)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
                     
-                    Spacer()
+                    HStack {
+                        Image(systemName: "mappin.circle.fill")
+                            .foregroundColor(.green)
+                        Text(route.startLocation.name)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "flag.circle.fill")
+                            .foregroundColor(.red)
+                        Text(route.endLocation.name)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
                     
-                    Image(systemName: "flag.circle.fill")
-                        .foregroundColor(.red)
-                    Text(route.endLocation)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    if !route.description.isEmpty {
+                        Text(route.description)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
                 }
-                
-                if !route.description.isEmpty {
-                    Text(route.description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
+                .padding(.vertical, 4)
             }
-            .padding(.vertical, 4)
+            .buttonStyle(PlainButtonStyle())
+            
+            
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -201,17 +220,59 @@ struct AddRouteView: View {
     let onSave: (SavedRoute) -> Void
     
     @State private var routeName = ""
-    @State private var startLocation = ""
-    @State private var endLocation = ""
+    @State private var selectedStartLocation: SavedLocation?
+    @State private var selectedEndLocation: SavedLocation?
     @State private var description = ""
+    @State private var showingStartLocationPicker = false
+    @State private var showingEndLocationPicker = false
+    @State private var savedLocations: [SavedLocation] = []
     
     var body: some View {
         NavigationView {
             Form {
                 Section("Route Details") {
                     TextField("Route Name", text: $routeName)
-                    TextField("Start Location", text: $startLocation)
-                    TextField("End Location", text: $endLocation)
+                    
+                    // Start Location Picker
+                    Button(action: {
+                        showingStartLocationPicker = true
+                    }) {
+                        HStack {
+                            Text("Start Location")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text(selectedStartLocation?.name ?? "Select Start Location")
+                                .foregroundColor(selectedStartLocation != nil ? .secondary : .blue)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // End Location Picker
+                    Button(action: {
+                        showingEndLocationPicker = true
+                    }) {
+                        HStack {
+                            Text("End Location")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text(selectedEndLocation?.name ?? "Select End Location")
+                                .foregroundColor(selectedEndLocation != nil ? .secondary : .blue)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // Validation message
+                    if selectedStartLocation != nil && selectedEndLocation != nil && selectedStartLocation?.id == selectedEndLocation?.id {
+                        Text("Start and end locations must be different")
+                            .foregroundColor(.red)
+                            .font(.caption)
+                    }
                 }
                 
                 Section("Description (Optional)") {
@@ -232,13 +293,49 @@ struct AddRouteView: View {
                     Button("Save") {
                         saveRoute()
                     }
-                    .disabled(routeName.isEmpty || startLocation.isEmpty || endLocation.isEmpty)
+                    .disabled(!canSave)
                 }
+            }
+            .sheet(isPresented: $showingStartLocationPicker) {
+                LocationPickerView(
+                    savedLocations: savedLocations,
+                    selectedLocation: $selectedStartLocation,
+                    title: "Select Start Location"
+                )
+            }
+            .sheet(isPresented: $showingEndLocationPicker) {
+                LocationPickerView(
+                    savedLocations: savedLocations,
+                    selectedLocation: $selectedEndLocation,
+                    title: "Select End Location"
+                )
+            }
+            .onAppear {
+                loadSavedLocations()
             }
         }
     }
     
+    private var canSave: Bool {
+        !routeName.isEmpty &&
+        selectedStartLocation != nil &&
+        selectedEndLocation != nil &&
+        selectedStartLocation?.id != selectedEndLocation?.id
+    }
+    
+    private func loadSavedLocations() {
+        if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
+           let locations = try? JSONDecoder().decode([SavedLocation].self, from: data) {
+            savedLocations = locations
+        }
+    }
+    
     private func saveRoute() {
+        guard let startLocation = selectedStartLocation,
+              let endLocation = selectedEndLocation else {
+            return
+        }
+        
         let newRoute = SavedRoute(
             name: routeName,
             startLocation: startLocation,
@@ -247,6 +344,123 @@ struct AddRouteView: View {
         )
         onSave(newRoute)
         dismiss()
+    }
+}
+
+// MARK: - Location Picker View
+struct LocationPickerView: View {
+    let savedLocations: [SavedLocation]
+    @Binding var selectedLocation: SavedLocation?
+    let title: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var searchText = ""
+    
+    private var filteredLocations: [SavedLocation] {
+        if searchText.isEmpty {
+            return savedLocations
+        } else {
+            return savedLocations.filter { location in
+                location.name.localizedCaseInsensitiveContains(searchText) ||
+                location.address.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+    }
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                if savedLocations.isEmpty {
+                    emptyStateView
+                } else {
+                    locationListView
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+            .searchable(text: $searchText, prompt: "Search locations...")
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "mappin.circle.fill")
+                .font(.system(size: 60))
+                .foregroundColor(.gray)
+            
+            Text("No Saved Locations")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Text("Save some locations first to create routes")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+            
+            Button("Go to Saved Locations") {
+                dismiss()
+                // Note: In a real app, you might want to navigate to the saved locations tab
+            }
+            .buttonStyle(PrimaryButtonStyle())
+        }
+        .padding()
+    }
+    
+    private var locationListView: some View {
+        List(filteredLocations) { location in
+            LocationPickerRowView(
+                location: location,
+                isSelected: selectedLocation?.id == location.id
+            ) {
+                selectedLocation = location
+                dismiss()
+            }
+        }
+    }
+}
+
+// MARK: - Location Picker Row View
+struct LocationPickerRowView: View {
+    let location: SavedLocation
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(location.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text(location.address)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer()
+                
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.blue)
+                        .font(.title2)
+                } else {
+                    Image(systemName: "circle")
+                        .foregroundColor(.gray)
+                        .font(.title2)
+                }
+            }
+            .padding(.vertical, 4)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

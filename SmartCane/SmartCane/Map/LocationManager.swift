@@ -22,6 +22,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var isFollowingUser = true
     @Published var locationAccuracy: CLLocationAccuracy = 0.0
     @Published var lastLocationUpdate: Date?
+    @Published var userHeading: CLLocationDirection = 0.0
+    @Published var isHeadingEnabled = false
     
     private var manager = CLLocationManager()
     private var locationUpdateTimer: Timer?
@@ -38,6 +40,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         manager.pausesLocationUpdatesAutomatically = false
         manager.allowsBackgroundLocationUpdates = false
         manager.activityType = .fitness // Optimized for walking/movement
+        
+        // Enable heading updates for direction tracking
+        manager.headingFilter = 5.0 // Update heading every 5 degrees
+        manager.headingOrientation = .portrait // Default orientation
         
         // Check current authorization status
         authorizationStatus = manager.authorizationStatus
@@ -62,25 +68,36 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             return
         }
         
-        guard CLLocationManager.locationServicesEnabled() else {
-            print("❌ Location services disabled")
-            locationError = "Location services are disabled. Please enable in Settings."
-            return
+        // Check location services on background queue to avoid blocking main thread
+        DispatchQueue.global(qos: .userInitiated).async {
+            guard CLLocationManager.locationServicesEnabled() else {
+                DispatchQueue.main.async {
+                    print("❌ Location services disabled")
+                    self.locationError = "Location services are disabled. Please enable in Settings."
+                }
+                return
+            }
+            
+            DispatchQueue.main.async {
+                print("📍 Starting location and heading updates...")
+                self.manager.startUpdatingLocation()
+                self.manager.startUpdatingHeading()
+                self.isLocationEnabled = true
+                self.isHeadingEnabled = true
+                self.locationError = nil
+                
+                // Start a timer to monitor location updates
+                self.startLocationUpdateTimer()
+            }
         }
-        
-        print("📍 Starting location updates...")
-        manager.startUpdatingLocation()
-        isLocationEnabled = true
-        locationError = nil
-        
-        // Start a timer to monitor location updates
-        startLocationUpdateTimer()
     }
     
     func stopLocationUpdates() {
-        print("📍 Stopping location updates...")
+        print("📍 Stopping location and heading updates...")
         manager.stopUpdatingLocation()
+        manager.stopUpdatingHeading()
         isLocationEnabled = false
+        isHeadingEnabled = false
         stopLocationUpdateTimer()
     }
     
@@ -104,7 +121,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         let timeSinceLastUpdate = Date().timeIntervalSince(lastUpdate)
         if timeSinceLastUpdate > 60.0 { // No updates for more than 1 minute
-            print("⚠️ No location updates for \(Int(timeSinceLastUpdate)) seconds")
             locationError = "Location updates may be delayed"
         }
     }
@@ -171,13 +187,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        DispatchQueue.main.async {
-            self.locationError = error.localizedDescription
-            self.isLocationEnabled = false
-            print("❌ Location error: \(error.localizedDescription)")
-        }
-    }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         DispatchQueue.main.async {
@@ -214,6 +223,28 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager(manager, didChangeAuthorization: status)
     }
     
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        // Filter out low accuracy headings
+        guard newHeading.headingAccuracy >= 0 else {
+            print("⚠️ Low accuracy heading received: \(newHeading.headingAccuracy)")
+            return
+        }
+        
+        DispatchQueue.main.async {
+            self.userHeading = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
+            print("🧭 Heading updated: \(Int(self.userHeading))° (accuracy: \(newHeading.headingAccuracy)°)")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        DispatchQueue.main.async {
+            self.locationError = error.localizedDescription
+            self.isLocationEnabled = false
+            self.isHeadingEnabled = false
+            print("❌ Location/Heading error: \(error.localizedDescription)")
+        }
+    }
+    
     // MARK: - Utility Methods
     
     func getCurrentLocationString() -> String {
@@ -242,15 +273,29 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         return formatter.string(from: lastUpdate)
     }
     
+    func getCurrentHeading() -> String {
+        return String(format: "%.0f°", userHeading)
+    }
+    
+    func getHeadingDirection() -> String {
+        let directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+        let index = Int((userHeading + 22.5) / 45.0) % 8
+        return directions[index]
+    }
+    
+    func getFullHeadingInfo() -> String {
+        return "\(getCurrentHeading()) \(getHeadingDirection())"
+    }
+    
     func isLocationServiceEnabled() -> Bool {
+        // Note: This method can block the main thread, so use it sparingly
+        // Consider using the delegate callbacks instead for better performance
         return CLLocationManager.locationServicesEnabled()
     }
     
     func getLocationStatusDescription() -> String {
-        if !isLocationServiceEnabled() {
-            return "Location services disabled"
-        }
-        
+        // Use authorization status to infer location services state
+        // This avoids calling CLLocationManager.locationServicesEnabled() which can block main thread
         switch authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             if isLocationEnabled {

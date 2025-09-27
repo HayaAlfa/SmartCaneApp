@@ -2,10 +2,10 @@ import SwiftUI
 
 
 
-struct DirectionTestView: View {
+struct WarningTestView: View {
     @State private var signalText: String = ""
-    @State private var showingDirection = false
-    @State private var currentDirection = ""
+    @State private var showingWarning = false
+    @State private var currentWarning = ""
     private let sensorProcessor = SensorSignal()
     
     var body: some View {
@@ -17,7 +17,7 @@ struct DirectionTestView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.orange)
                     
-                    Text("Direction Test")
+                    Text("Waring Test")
                         .font(.title2)
                         .fontWeight(.bold)
                     
@@ -27,7 +27,7 @@ struct DirectionTestView: View {
                 }
                 .padding(.top, 10)
                 
-                //using direction section
+                //using Waring section
                 VStack(spacing: 15) {
                     Text("Valid ESP32 Signal Input")
                         .font(.headline)
@@ -106,12 +106,12 @@ struct DirectionTestView: View {
                 }
                 
                 //Warning output section
-                if showingDirection {
+                if showingWarning {
                     VStack(spacing: 15) {
                         Text("Warning Output")
                             .font(.headline)
                         
-                        Text(currentDirection)
+                        Text(currentWarning)
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.red)
@@ -139,12 +139,12 @@ struct DirectionTestView: View {
         
         // Check if the result indicates invalid input
         if result == "Unknown signal received." || result.isEmpty {
-            currentDirection = "Invalid input, do again"
+            currentWarning = "Invalid input, do again"
         } else {
-            currentDirection = result
+            currentWarning = result
         }
         
-        showingDirection = true
+        showingWarning = true
         
         // Clear the input field after processing
         signalText = ""
@@ -153,5 +153,5 @@ struct DirectionTestView: View {
 
 // MARK: - Preview
 #Preview {
-    DirectionTestView()
+    WarningTestView()
 }
