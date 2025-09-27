@@ -26,6 +26,7 @@ struct SettingsScreen: View {
     @State private var bluetoothConnectionState: BluetoothConnectionState = .disconnected
     @State private var showingBluetoothDevices = false
     @State private var selectedDevice: MockBluetoothDevice?
+    @StateObject var dataService = SmartCaneDataService()
     
     // Mock ESP32 SmartCane devices
     @State private var availableDevices: [MockBluetoothDevice] = [
@@ -200,7 +201,7 @@ struct SettingsScreen: View {
                 
                 // ✅ MARK: - Data & Logs Section
                 Section("Data & Logs") {
-                    NavigationLink(destination: ExportLogs(logs: sampleLogs)) {
+                    NavigationLink(destination: ExportLogs(logs: dataService.obstacleLogs)) {
                         Label("Export Logs (CSV)", systemImage: "square.and.arrow.up")
                     }
                     
