@@ -1,0 +1,91 @@
+[
+  {
+    "metadataOutputVersion" : "3.0",
+    "userDefinedMetadata" : {
+      "com.github.apple.coremltools.version" : "8.3.0",
+      "com.github.apple.coremltools.source" : "torch==2.8.0",
+      "com.github.apple.coremltools.source_dialect" : "TorchScript"
+    },
+    "classLabels" : [
+      "chair",
+      "door",
+      "fence",
+      "garbage_bin",
+      "obstacle",
+      "plant",
+      "pothole",
+      "stairs",
+      "table",
+      "vehicle"
+    ],
+    "availability" : {
+      "macOS" : "12.0",
+      "tvOS" : "15.0",
+      "visionOS" : "1.0",
+      "watchOS" : "8.0",
+      "iOS" : "15.0",
+      "macCatalyst" : "15.0"
+    },
+    "inputSchema" : [
+      {
+        "height" : "224",
+        "colorspace" : "RGB",
+        "isOptional" : "0",
+        "width" : "224",
+        "isColor" : "1",
+        "formattedType" : "Image (Color 224 × 224)",
+        "hasSizeFlexibility" : "0",
+        "type" : "Image",
+        "shortDescription" : "--",
+        "name" : "input_1"
+      }
+    ],
+    "outputSchema" : [
+      {
+        "isOptional" : "0",
+        "formattedType" : "String",
+        "type" : "String",
+        "name" : "classLabel",
+        "shortDescription" : "--"
+      },
+      {
+        "isOptional" : "0",
+        "keyType" : "String",
+        "formattedType" : "Dictionary (String → Double)",
+        "type" : "Dictionary",
+        "name" : "classLabel_probs",
+        "shortDescription" : "--"
+      }
+    ],
+    "modelParameters" : [
+
+    ],
+    "storagePrecision" : "Float16",
+    "method" : "predict",
+    "version" : "--",
+    "isUpdatable" : "0",
+    "specificationVersion" : 6,
+    "stateSchema" : [
+
+    ],
+    "computePrecision" : "Mixed (Float16, Float32, Int32)",
+    "mlProgramOperationTypeHistogram" : {
+      "Linear" : 1,
+      "Cast" : 2,
+      "Conv" : 20,
+      "Relu" : 17,
+      "Mul" : 1,
+      "Add" : 8,
+      "ReduceMean" : 1,
+      "Reshape" : 1,
+      "MaxPool" : 1
+    },
+    "shortDescription" : "--",
+    "license" : "--",
+    "generatedClassName" : "ObstacleClassifier",
+    "author" : "--",
+    "modelType" : {
+      "name" : "MLModelType_mlProgram"
+    }
+  }
+]
