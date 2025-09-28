@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/xctest-dynamic-overlay/Sources/IssueReporting/Internal/XCTest.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/XCTest.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/XCTest.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/XCTest.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/XCTest.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/XCTest.swiftconstvalues"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/xctest-dynamic-overlay/Sources/IssueReporting/IssueReporter.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IssueReporter.swiftdeps"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IssueReporter.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IssueReporter.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IssueReporter.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IssueReporter.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/xctest-dynamic-overlay/Sources/IssueReporting/IsTesting.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IsTesting.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IsTesting.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IsTesting.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IsTesting.d"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/xctest-dynamic-overlay.build/Debug-iphonesimulator/IssueReporting.build/Objects-normal/arm64/IsTesting.o"

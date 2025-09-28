@@ -1,5 +1,5 @@
 {
-  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Home/Setting/AddLocationView.swift",
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AddLocationView.swift",
   "tables": {
     "Localizable": [
       {
@@ -7,7 +7,7 @@
         "key": "Add Location",
         "location": {
           "startingColumn": 30,
-          "startingLine": 91
+          "startingLine": 105
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "Location Details",
         "location": {
           "startingColumn": 25,
-          "startingLine": 29
+          "startingLine": 30
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Additional Information",
         "location": {
           "startingColumn": 25,
-          "startingLine": 54
+          "startingLine": 68
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "Current Location",
         "location": {
           "startingColumn": 29,
-          "startingLine": 64
+          "startingLine": 78
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "Location Name",
         "location": {
           "startingColumn": 31,
-          "startingLine": 32
+          "startingLine": 33
         }
       },
       {
@@ -47,12 +47,12 @@
         "key": "Address",
         "location": {
           "startingColumn": 31,
-          "startingLine": 37
+          "startingLine": 38
         }
       },
       {
         "comment": "",
-        "key": "Use Current Location",
+        "key": "Category",
         "location": {
           "startingColumn": 28,
           "startingLine": 43
@@ -60,10 +60,18 @@
       },
       {
         "comment": "",
+        "key": "Use Current Location",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
         "key": "Notes (Optional)",
         "location": {
           "startingColumn": 31,
-          "startingLine": 57
+          "startingLine": 71
         }
       },
       {
@@ -71,7 +79,7 @@
         "key": "Latitude:",
         "location": {
           "startingColumn": 34,
-          "startingLine": 67
+          "startingLine": 81
         }
       },
       {
@@ -79,7 +87,7 @@
         "key": "Longitude:",
         "location": {
           "startingColumn": 34,
-          "startingLine": 75
+          "startingLine": 89
         }
       },
       {
@@ -87,7 +95,7 @@
         "key": "Accuracy:",
         "location": {
           "startingColumn": 34,
-          "startingLine": 83
+          "startingLine": 97
         }
       },
       {
@@ -95,7 +103,7 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 28,
-          "startingLine": 97
+          "startingLine": 111
         }
       },
       {
@@ -103,7 +111,7 @@
         "key": "Save",
         "location": {
           "startingColumn": 28,
-          "startingLine": 105
+          "startingLine": 119
         }
       }
     ]

@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/Codable.swift":
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Codable.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Codable.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Codable.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Codable.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Codable.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/EventEmitter.swift":
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/EventEmitter.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/EventEmitter.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/EventEmitter.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/EventEmitter.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/EventEmitter.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/DateFormatter.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/DateFormatter.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/DateFormatter.dia"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/DateFormatter.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/DateFormatter.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/DateFormatter.d"

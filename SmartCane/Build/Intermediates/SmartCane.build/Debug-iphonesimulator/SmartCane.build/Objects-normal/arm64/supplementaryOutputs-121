@@ -1,0 +1,24 @@
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AddLocationView.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.dia"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/ExportLogs.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.swiftdeps"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/ObstacleClassifierManager.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.d"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.o"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AboutView.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.dia"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.swiftconstvalues"

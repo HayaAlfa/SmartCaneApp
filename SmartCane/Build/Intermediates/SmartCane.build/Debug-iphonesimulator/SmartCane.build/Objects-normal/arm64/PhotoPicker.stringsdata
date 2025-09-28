@@ -1,5 +1,16 @@
 {
-  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/PhotoPicker.swift",
-  "tables": {},
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/PhotoPicker.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Select Photo",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 175
+        }
+      }
+    ]
+  },
   "version": 1
 }

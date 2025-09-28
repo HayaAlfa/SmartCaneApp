@@ -1,0 +1,318 @@
+{
+  "" : {
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCane-master.dia",
+    "emit-module-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCane-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCane-master-emit-module.dia",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCane-master.swiftdeps"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/DerivedSources/CoreMLGenerated/ObstacleClassifier/ObstacleClassifier.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifier~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AVSpeechSynthesizer/SpeechManager.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AVSpeechSynthesizer/SpeechService.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AboutView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AboutView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AddLocationView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AddLocationView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AppKeys.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/AppKeys~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/ContentView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/EditProfileView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Home/Setting/SettingsScreen.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/HomeScreen.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/HomeScreen~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/LocationManager.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/LocationManager~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/MainTabView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MainTabView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/MapScreen.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/MapView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/NotificationSettingsView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/NotificationSettingsView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/ExportLogs.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ExportLogs~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/ObjectDetectionView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObjectDetectionView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/Obstacle.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Obstacle~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Obstacle/ObstacleClassifierManager.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleClassifierManager~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/ObstacleLogger.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogger~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/PrivacySettingsView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/ProfileView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ProfileView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/SimpleDataManager.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SimpleDataManager~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/SmartCaneApp.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneApp~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/ObstacleLog.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/ObstacleLogsView.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SmartCaneDataService.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SmartCaneModels.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SupabaseClient.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient~partial.swiftmodule"
+  },
+  "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Theme.swift" : {
+    "const-values" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.swiftconstvalues",
+    "dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.d",
+    "diagnostics" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.dia",
+    "index-unit-output-path" : "/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.o",
+    "llvm-bc" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.bc",
+    "object" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.o",
+    "swift-dependencies" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme.swiftdeps",
+    "swiftmodule" : "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/Theme~partial.swiftmodule"
+  }
+}

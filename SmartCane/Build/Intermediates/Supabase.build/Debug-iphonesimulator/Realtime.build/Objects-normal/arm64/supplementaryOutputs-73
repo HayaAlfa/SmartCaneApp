@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/WebSocket/URLSessionWebSocket.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/URLSessionWebSocket.swiftconstvalues"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/URLSessionWebSocket.dia"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/URLSessionWebSocket.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/URLSessionWebSocket.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/URLSessionWebSocket.swiftdeps"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/WebSocket/WebSocket.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/WebSocket.d"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/WebSocket.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/WebSocket.swiftdeps"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/WebSocket.swiftconstvalues"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/WebSocket.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/Types.swift":
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/Types.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/Types.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/Types.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/Types.d"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/Types.o"

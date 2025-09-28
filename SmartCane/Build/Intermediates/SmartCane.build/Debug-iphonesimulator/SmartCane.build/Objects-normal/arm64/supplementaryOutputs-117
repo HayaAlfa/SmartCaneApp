@@ -1,0 +1,24 @@
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SupabaseClient.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.dia"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SupabaseClient.d"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/ObstacleLog.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLog.dia"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SmartCaneDataService.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneDataService.dia"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Home/Setting/SettingsScreen.swift":
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.dia"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SettingsScreen.swiftdeps"

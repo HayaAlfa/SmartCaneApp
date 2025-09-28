@@ -1,0 +1,24 @@
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AVSpeechSynthesizer/SpeechManager.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechManager.o"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/ContentView.swift":
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ContentView.d"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/PrivacySettingsView.swift":
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/PrivacySettingsView.swiftdeps"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/AVSpeechSynthesizer/SpeechService.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SpeechService.dia"

@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/RealtimeJoinConfig.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeJoinConfig.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeJoinConfig.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeJoinConfig.swiftconstvalues"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeJoinConfig.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeJoinConfig.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/RealtimeClientV2.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeClientV2.d"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeClientV2.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeClientV2.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeClientV2.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeClientV2.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Realtime/RealtimeError.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeError.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeError.dia"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeError.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeError.swiftdeps"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Realtime.build/Objects-normal/arm64/RealtimeError.swiftconstvalues"

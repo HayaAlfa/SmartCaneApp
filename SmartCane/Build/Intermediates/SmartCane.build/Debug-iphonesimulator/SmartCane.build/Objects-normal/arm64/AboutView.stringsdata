@@ -7,7 +7,7 @@
         "key": "About",
         "location": {
           "startingColumn": 26,
-          "startingLine": 119
+          "startingLine": 146
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "SmartCane",
         "location": {
           "startingColumn": 26,
-          "startingLine": 13
+          "startingLine": 14
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Version 1.0.0",
         "location": {
           "startingColumn": 26,
-          "startingLine": 17
+          "startingLine": 18
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "About SmartCane",
         "location": {
           "startingColumn": 26,
-          "startingLine": 24
+          "startingLine": 25
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "SmartCane is an innovative mobile application designed to assist users with visual impairments and mobility challenges. The app combines advanced AI technology with location services to provide real-time obstacle detection and navigation assistance.",
         "location": {
           "startingColumn": 26,
-          "startingLine": 28
+          "startingLine": 29
         }
       },
       {
@@ -47,7 +47,7 @@
         "key": "Key Features",
         "location": {
           "startingColumn": 26,
-          "startingLine": 35
+          "startingLine": 36
         }
       },
       {
@@ -55,7 +55,7 @@
         "key": "Technology",
         "location": {
           "startingColumn": 26,
-          "startingLine": 49
+          "startingLine": 61
         }
       },
       {
@@ -63,7 +63,7 @@
         "key": "Development Team",
         "location": {
           "startingColumn": 26,
-          "startingLine": 63
+          "startingLine": 86
         }
       },
       {
@@ -71,7 +71,7 @@
         "key": "Contact & Support",
         "location": {
           "startingColumn": 26,
-          "startingLine": 76
+          "startingLine": 99
         }
       },
       {
@@ -79,7 +79,7 @@
         "key": "Legal Information",
         "location": {
           "startingColumn": 26,
-          "startingLine": 89
+          "startingLine": 112
         }
       },
       {
@@ -87,7 +87,7 @@
         "key": "Rate on App Store",
         "location": {
           "startingColumn": 28,
-          "startingLine": 102
+          "startingLine": 125
         }
       },
       {
@@ -95,7 +95,7 @@
         "key": "Share SmartCane",
         "location": {
           "startingColumn": 28,
-          "startingLine": 109
+          "startingLine": 134
         }
       }
     ]

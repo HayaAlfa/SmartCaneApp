@@ -1,0 +1,24 @@
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/MapScreen.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/MapScreen.swiftdeps"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/ObstacleLogsView.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.swiftconstvalues"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.dia"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/ObstacleLogsView.d"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Supabase/SmartCaneModels.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.dia"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/SmartCaneModels.d"
+"/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/EditProfileView.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.swiftdeps"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/SmartCane.build/Debug-iphonesimulator/SmartCane.build/Objects-normal/arm64/EditProfileView.d"

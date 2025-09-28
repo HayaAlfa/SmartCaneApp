@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/PKCE.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/PKCE.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/PKCE.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/PKCE.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/PKCE.o"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/PKCE.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/SessionManager.swift":
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/SessionManager.swiftconstvalues"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/SessionManager.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/SessionManager.swiftdeps"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/SessionManager.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/SessionManager.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/Keychain.swift":
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/Keychain.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/Keychain.swiftconstvalues"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/Keychain.dia"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/Keychain.o"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/arm64/Keychain.swiftdeps"

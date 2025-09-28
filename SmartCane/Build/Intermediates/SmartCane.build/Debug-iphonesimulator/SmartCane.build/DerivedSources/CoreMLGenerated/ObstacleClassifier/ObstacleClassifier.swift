@@ -53,14 +53,14 @@ class ObstacleClassifierOutput : MLFeatureProvider {
     /// Source provided by CoreML
     private let provider : MLFeatureProvider
 
-    /// classLabel as string value
-    var classLabel: String {
-        provider.featureValue(for: "classLabel")!.stringValue
+    /// var_362 as 1 by 1000 matrix of floats
+    var var_362: MLMultiArray {
+        provider.featureValue(for: "var_362")!.multiArrayValue!
     }
 
-    /// classLabel_probs as dictionary of strings to doubles
-    var classLabel_probs: [String : Double] {
-        provider.featureValue(for: "classLabel_probs")!.dictionaryValue as! [String : Double]
+    /// var_362 as 1 by 1000 matrix of floats
+    var var_362ShapedArray: MLShapedArray<Float> {
+        MLShapedArray<Float>(var_362)
     }
 
     var featureNames: Set<String> {
@@ -71,8 +71,8 @@ class ObstacleClassifierOutput : MLFeatureProvider {
         provider.featureValue(for: featureName)
     }
 
-    init(classLabel: String, classLabel_probs: [String : Double]) {
-        self.provider = try! MLDictionaryFeatureProvider(dictionary: ["classLabel" : MLFeatureValue(string: classLabel), "classLabel_probs" : MLFeatureValue(dictionary: classLabel_probs as [AnyHashable : NSNumber])])
+    init(var_362: MLMultiArray) {
+        self.provider = try! MLDictionaryFeatureProvider(dictionary: ["var_362" : MLFeatureValue(multiArray: var_362)])
     }
 
     init(features: MLFeatureProvider) {

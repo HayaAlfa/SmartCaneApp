@@ -1,0 +1,18 @@
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/Task+withTimeout.swift":
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Task+withTimeout.swiftdeps"
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Task+withTimeout.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Task+withTimeout.d"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Task+withTimeout.swiftconstvalues"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/Task+withTimeout.dia"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/TaskLocalHelpers.swift":
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/TaskLocalHelpers.o"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/TaskLocalHelpers.d"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/TaskLocalHelpers.dia"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/TaskLocalHelpers.swiftdeps"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/TaskLocalHelpers.swiftconstvalues"
+"/Users/hayaalfakieh/Library/Developer/Xcode/DerivedData/SmartCane-epspzsjabizegwcwibixexymznjk/SourcePackages/checkouts/supabase-swift/Sources/Helpers/URLSession+AsyncAwait.swift":
+  object: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/URLSession+AsyncAwait.o"
+  const-values: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/URLSession+AsyncAwait.swiftconstvalues"
+  diagnostics: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/URLSession+AsyncAwait.dia"
+  dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/URLSession+AsyncAwait.d"
+  swift-dependencies: "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/Build/Intermediates/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/arm64/URLSession+AsyncAwait.swiftdeps"

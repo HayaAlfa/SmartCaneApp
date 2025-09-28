@@ -30,4 +30,27 @@ struct ExportLogs: View {
         .navigationTitle("Export Logs")
     }
 }
+
+
+func exportLogsToCSV(_ logs: [ObstacleLog]) -> String {
+    var csv = "Obstacle Type,Time,Location\n"
+    for log in logs {
+        csv += "\(log.obstacleType),\(log.timestamp ?? Date()),\(log.deviceId)\n"
+    }
+    return csv
+}
+
+func saveCSVFile(csvText: String) -> URL? {
+    let filename = "ObstacleLogs.csv"
+    let tempDir = FileManager.default.temporaryDirectory
+    let fileURL = tempDir.appendingPathComponent(filename)
     
+    do {
+        try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
+        return fileURL
+    } catch {
+        print("Error saving CSV file:", error)
+        return nil
+    }
+}
+

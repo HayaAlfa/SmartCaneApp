@@ -1,5 +1,5 @@
 {
-  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Home/SavedLocationsView.swift",
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/SavedLocationsView.swift",
   "tables": {
     "Localizable": [
       {
@@ -7,7 +7,7 @@
         "key": "Saved Locations",
         "location": {
           "startingColumn": 30,
-          "startingLine": 78
+          "startingLine": 83
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "Search locations...",
         "location": {
           "startingColumn": 39,
-          "startingLine": 50
+          "startingLine": 55
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "No Saved Locations",
         "location": {
           "startingColumn": 18,
-          "startingLine": 115
+          "startingLine": 129
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "Tap the + button to add your first location",
         "location": {
           "startingColumn": 18,
-          "startingLine": 121
+          "startingLine": 135
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "Add Location",
         "location": {
           "startingColumn": 26,
-          "startingLine": 132
+          "startingLine": 146
         }
       },
       {
@@ -47,7 +47,7 @@
         "key": "Delete Location",
         "location": {
           "startingColumn": 16,
-          "startingLine": 258
+          "startingLine": 272
         }
       },
       {
@@ -55,7 +55,7 @@
         "key": "Added %@",
         "location": {
           "startingColumn": 22,
-          "startingLine": 212
+          "startingLine": 226
         }
       },
       {
@@ -63,7 +63,7 @@
         "key": "Delete",
         "location": {
           "startingColumn": 20,
-          "startingLine": 259
+          "startingLine": 273
         }
       },
       {
@@ -71,7 +71,7 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 20,
-          "startingLine": 262
+          "startingLine": 276
         }
       },
       {
@@ -79,7 +79,7 @@
         "key": "Are you sure you want to delete '%@'?",
         "location": {
           "startingColumn": 18,
-          "startingLine": 264
+          "startingLine": 278
         }
       }
     ]

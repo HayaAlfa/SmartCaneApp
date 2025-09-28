@@ -1,5 +1,5 @@
 {
-  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/Home/HomeScreen.swift",
+  "source": "/Users/hayaalfakieh/Downloads/SmartCaneApp/SmartCane/SmartCane/HomeScreen.swift",
   "tables": {
     "Localizable": [
       {
@@ -7,15 +7,15 @@
         "key": "Home",
         "location": {
           "startingColumn": 30,
-          "startingLine": 97
+          "startingLine": 43
         }
       },
       {
         "comment": "",
-        "key": "Home",
+        "key": "Smart Cane",
         "location": {
           "startingColumn": 22,
-          "startingLine": 23
+          "startingLine": 15
         }
       }
     ]
