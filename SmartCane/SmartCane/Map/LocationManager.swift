@@ -232,7 +232,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         DispatchQueue.main.async {
             self.userHeading = newHeading.trueHeading >= 0 ? newHeading.trueHeading : newHeading.magneticHeading
-            print("🧭 Heading updated: \(Int(self.userHeading))° (accuracy: \(newHeading.headingAccuracy)°)")
+            // print("🧭 Heading updated: \(Int(self.userHeading))° (accuracy: \(newHeading.headingAccuracy)°)")
         }
     }
     

@@ -13,10 +13,11 @@ struct Obstacle: Identifiable, Codable {
     var latitude: Double
     var longitude: Double
     var detectedAt: Date
+    var distance: Float
 
     // Only decode/encode the real JSON fields
     private enum CodingKeys: String, CodingKey {
-        case type, latitude, longitude, detectedAt
+        case type, latitude, longitude, detectedAt, distance
     }
 }
 
