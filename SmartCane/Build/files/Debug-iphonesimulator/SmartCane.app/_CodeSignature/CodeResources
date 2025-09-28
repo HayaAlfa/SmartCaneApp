@@ -6,7 +6,7 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		EfhNXY0SrVB9Kx7bCQmYiqhQucE=
+		RdRFLNI9Wkua7YrQmnYKjfXUINI=
 		</data>
 		<key>Info.plist</key>
 		<data>
@@ -18,7 +18,7 @@
 		</data>
 		<key>ObstacleClassifier.mlmodelc/coremldata.bin</key>
 		<data>
-		OxC+a05HrPTlfN7h0waGfQhcKs4=
+		OCO4ScNhhG0BXVMarmiYgsr4Fe4=
 		</data>
 		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
 		<data>
@@ -38,7 +38,7 @@
 		</data>
 		<key>SmartCane.debug.dylib</key>
 		<data>
-		y9SCEvuFkEX1d3wwBmUyU6/EI0M=
+		k/007yex3ahy10MHNPXDZxGfM7k=
 		</data>
 		<key>__preview.dylib</key>
 		<data>
@@ -75,7 +75,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			dNPJW+3WjTGZgyzgcYq8OChByZcGnFI0NIQiLrsD+Ak=
+			KlKtKne7IfRX0CO1sXnSbsX2EhmWRQKr+X/HWXILRrU=
 			</data>
 		</dict>
 		<key>ObstacleClassifier.mlmodelc/analytics/coremldata.bin</key>
@@ -89,7 +89,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			V/mgnKLemyKl040B6Qt+z68rbAQV8p+2YNoP238nEwM=
+			35oVTdqfQ5goxp3NVrvq17AHMiZZQvaykzp63i8M2uc=
 			</data>
 		</dict>
 		<key>ObstacleClassifier.mlmodelc/metadata.json</key>
@@ -117,7 +117,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bh7K2ttGm4CQ44gCu62FSP9R55ODmywy8AySQAmfjTI=
+			9MjIQo9DpX6dQh0TNaTvTCOmAXtDhmmMMgiJ1/fNoa4=
 			</data>
 		</dict>
 		<key>__preview.dylib</key>

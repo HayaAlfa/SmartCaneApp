@@ -1,3 +1,10 @@
 .DS_Store
 *.xcuserstate
 WORKSPACE*
+*.swiftdeps
+*.swiftdoc
+*.o
+*.d
+*.build
+xcuserdata/
+DerivedData/

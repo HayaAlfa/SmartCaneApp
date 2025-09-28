@@ -24,8 +24,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				PhotoPicker.swift,
-				SavedLocationsView.swift,
 			);
 			target = A8748BBD2E622A6600900D08 /* SmartCane */;
 		};
