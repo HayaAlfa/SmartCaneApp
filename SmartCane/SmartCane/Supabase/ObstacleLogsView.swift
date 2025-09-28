@@ -15,7 +15,7 @@ struct ObstacleLogsView: View {
                 Task {
                     let newLog = ObstacleLog(
                         deviceId: "cane-001",
-                        obstacleType: "wall",
+                        obstacleType: "Wall",
                         distanceCm: 120,
                         confidenceScore: 0.95,
                         sensorType: "ultrasonic",

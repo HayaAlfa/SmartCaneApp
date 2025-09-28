@@ -220,30 +220,43 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
     
     // Handle incoming data from ESP32
     private func handleIncomingData(_ message: String) {
-        // Parse obstacle detection data from ESP32
         // Expected format: "OBSTACLE:distance:direction:confidence"
         if message.hasPrefix("OBSTACLE:") {
             let components = message.dropFirst(9).split(separator: ":")
             if components.count >= 3 {
-                let distance = Double(components[0]) ?? 0.0
+                let distance = Int(components[0]) ?? 0
                 let direction = String(components[1])
                 let confidence = Double(components[2]) ?? 0.0
-                
-                print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)% confidence")
-                
-                // Post notification for obstacle detection
+
+                print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
+
+                // Create ObstacleLog directly
+                let log = ObstacleLog(
+                    deviceId: "SmartCane_001",
+                    obstacleType: "Obstacle",                 // or map direction/type
+                    distanceCm: distance,
+                    confidenceScore: confidence,
+                    sensorType: "ultrasonic",
+                    severityLevel: 1,
+                    latitude: nil,
+                    longitude: nil
+                )
+
+                // Save to Supabase (or notify ViewModel)
+                Task {
+                    await SmartCaneDataService().saveObstacleLog(log)
+                }
+
+                // Optionally notify UI
                 NotificationCenter.default.post(
                     name: .obstacleDetected,
                     object: nil,
-                    userInfo: [
-                        "distance": distance,
-                        "direction": direction,
-                        "confidence": confidence
-                    ]
+                    userInfo: ["log": log]
                 )
             }
         }
     }
+
 }
 
 // MARK: - ESP32 SmartCane Device Model
@@ -272,4 +285,5 @@ struct ESP32SmartCane: Identifiable, Equatable {
 extension Notification.Name {
     static let obstacleDetected = Notification.Name("obstacleDetected")
 }
+
 
