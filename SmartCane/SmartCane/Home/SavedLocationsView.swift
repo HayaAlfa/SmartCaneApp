@@ -17,61 +17,28 @@ struct SavedLocationsView: View {
     // MARK: - State Properties
     @State private var savedLocations: [SavedLocation] = []        // Array of all saved locations
     @State private var showingAddLocation = false                  // Controls add location sheet
-    @State private var searchText = ""                             // Text for searching locations
     @Binding var selectedTab: Int                                  // Binding to control tab selection
     
-    // MARK: - Computed Property for Filtered Locations
-    // This automatically filters locations based on search text
-    var filteredLocations: [SavedLocation] {
-        // Filter by search text (searches name, address, and notes)
-        if !searchText.isEmpty {
-            return savedLocations.filter { location in
-                location.name.localizedCaseInsensitiveContains(searchText) ||
-                location.address.localizedCaseInsensitiveContains(searchText) ||
-                location.notes.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-        
-        return savedLocations
-    }
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // MARK: - Search and Filter Bar
-                VStack(spacing: 12) {
-                    HStack {
-                        // MARK: - Search Input
-                        HStack {
-                            Image(systemName: "magnifyingglass")  // Search icon
-                                .foregroundColor(.gray)
-                            
-                            // Text field for searching locations
-                            TextField("Search locations...", text: $searchText)
-                                .textFieldStyle(PlainTextFieldStyle())
-                        }
-                        .padding()
-                        .background(.ultraThinMaterial)  // Translucent background
-                        .cornerRadius(15)
-                    }
-                    
-                }
-                .padding()
-                .background(.ultraThinMaterial)
-                
+            VStack {
                 // MARK: - Locations List
-                if filteredLocations.isEmpty {
-                    // Show empty state when no locations match filters
+                if savedLocations.isEmpty {
+                    // Show empty state when no locations are saved
                     emptyStateView
                 } else {
-                    // Show list of filtered locations
+                    // Show list of all saved locations
                     List {
-                        ForEach(filteredLocations) { location in
+
+                        ForEach(savedLocations) { location in
+
 
                             SavedLocationRow(location: location, selectedTab: $selectedTab, onDelete: {
                                 deleteLocation(location)  // Pass delete function to row
                             })
                         }
+                        .onDelete(perform: deleteLocationsAtIndex)  // Enable swipe-to-delete
                     }
                     .listStyle(PlainListStyle())  // Remove default list styling
                 }
@@ -151,6 +118,12 @@ struct SavedLocationsView: View {
             savedLocations.remove(at: index)  // Remove from array
             saveLocations()                    // Save changes to storage
         }
+    }
+    
+    // Delete locations by index set (for swipe-to-delete)
+    private func deleteLocationsAtIndex(offsets: IndexSet) {
+        savedLocations.remove(atOffsets: offsets)
+        saveLocations()
     }
     
     // Save locations array to UserDefaults (persistent storage)

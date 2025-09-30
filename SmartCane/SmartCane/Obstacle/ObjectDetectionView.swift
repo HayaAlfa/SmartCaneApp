@@ -32,33 +32,51 @@ struct ObjectDetectionView: View {
                 .padding()
                 
                 // Photo selection buttons
-                HStack(spacing: 15) {
-                    // Library button
-                    Button(action: {
-                        showPicker = true
-                    }) {
-                        HStack {
-                            Image(systemName: "photo.on.rectangle.angled")
-                            Text("Library")
+                VStack(spacing: 15) {
+                    // Top row - Library and Camera
+                    HStack(spacing: 15) {
+                        // Library button
+                        Button(action: {
+                            showPicker = true
+                        }) {
+                            HStack {
+                                Image(systemName: "photo.on.rectangle.angled")
+                                Text("Library")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                        
+                        // Camera button
+                        Button(action: {
+                            showCamera = true
+                        }) {
+                            HStack {
+                                Image(systemName: "camera")
+                                Text("Camera")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 8)
+                            .background(Color.green)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                        }
                     }
                     
-                    // Camera button
-                    Button(action: {
-                        showCamera = true
-                    }) {
+                    // Bottom row - Warning Test (full width)
+                    NavigationLink(destination: WarningTestView()) {
                         HStack {
-                            Image(systemName: "camera")
-                            Text("Camera")
+                            Image(systemName: "antenna.radiowaves.left.and.right")
+                            Text("Warning Test")
                         }
                         .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
+                        .padding(.vertical, 12)
+                        .background(Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }

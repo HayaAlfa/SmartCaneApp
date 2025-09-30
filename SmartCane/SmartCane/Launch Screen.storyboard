@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
+                                <rect key="frame" x="75.333333333333329" y="469.66666666666669" width="242.33333333333337" height="53.000000000000057"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="SmartCane">
+                                        <attributes>
+                                            <color key="NSColor" red="0.2313232422" green="0.5249023438" blue="0.953125" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                            <font key="NSFont" size="44" name="ArialRoundedMTBold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.67000000000000004" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <size key="shadowOffset" width="1" height="2"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Copilot_20250921_223902" translatesAutoresizingMaskIntoConstraints="NO" id="pMV-fK-D9o">
+                                <rect key="frame" x="122.66666666666667" y="302.33333333333331" width="147.66666666666663" height="147.33333333333331"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" secondItem="pMV-fK-D9o" secondAttribute="width" id="imageAspectRatio"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                        <color key="backgroundColor" red="0.92549019607843142" green="0.92578125" blue="0.9252929688" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="pMV-fK-D9o" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Bu6-Zb-IuZ"/>
+                            <constraint firstItem="pMV-fK-D9o" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-50" id="Ziv-ye-GS1"/>
+                            <constraint firstItem="pMV-fK-D9o" firstAttribute="width" secondItem="Ze5-6b-2t3" secondAttribute="width" multiplier="0.375" id="imageWidth"/>
+                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="labelCenterX"/>
+                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="20" id="labelLeading"/>
+                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="top" secondItem="pMV-fK-D9o" secondAttribute="bottom" constant="20" id="labelTop"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="GJd-Yh-RWb" secondAttribute="trailing" constant="20" id="labelTrailing"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="52.671755725190835" y="374.64788732394368"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Copilot_20250921_223902" width="1024" height="1024"/>
+    </resources>
+</document>

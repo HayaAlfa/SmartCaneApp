@@ -41,7 +41,7 @@ struct MainTabView: View {
             
             // MARK: - Object Detection Tab
 
-            // Third tab for AI-powered obstacle detection using photos
+
 
             ObjectDetectionView()
                 .tabItem {
@@ -49,6 +49,7 @@ struct MainTabView: View {
                     Text("Detection")                         // Tab label
                 }
                 .tag(2)  // Unique identifier for this tab
+
 
             SettingsScreen()
                 .tabItem {
@@ -87,6 +88,7 @@ private func speakTabChange(_ tab: Int) {
         SpeechManager.shared.speak(_text: "Home tab selected")
         
     case 1:
+
         SpeechManager.shared.speak(_text: "Mapview selected")
         
     case 2:
@@ -94,7 +96,6 @@ private func speakTabChange(_ tab: Int) {
 
     case 3:
         SpeechManager.shared.speak(_text: "Settings selected")
-
 
     default:
         SpeechManager.shared.speak(_text: "Tab selected")

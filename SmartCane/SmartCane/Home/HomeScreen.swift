@@ -44,6 +44,7 @@ struct HomeScreen: View {
                     .simultaneousGesture(TapGesture().onEnded {
                         // Provide voice feedback when button is tapped
                         SpeechManager.shared.speak(_text: "My locations selected")
+                    
                     })
                     
                     // MARK: - My Routes Button

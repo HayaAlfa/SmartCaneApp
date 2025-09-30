@@ -8,6 +8,7 @@
 import Foundation
 import CoreBluetooth
 import Combine
+import SwiftUI
 
 // MARK: - ESP32 SmartCane Bluetooth Manager
 // This class will handle real Bluetooth communication with ESP32-based SmartCane devices
@@ -257,6 +258,25 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
                 )
             }
         }
+
+        print("📥 Raw message from ESP32: \(message)")
+        
+        // Use SensorSignalProcessor to parse the message
+        let sensorProcessor = SensorSignal()
+        let parsedResult = sensorProcessor.receiveSignal(message)
+        
+        print("📝 Parsed result: \(parsedResult)")
+        
+        // Post notification with parsed result
+        NotificationCenter.default.post(
+            name: .obstacleDetected,
+            object: nil,
+            userInfo: [
+                "rawMessage": message,
+                "parsedResult": parsedResult
+            ]
+        )
+
     }
 
 }
@@ -280,6 +300,57 @@ struct ESP32SmartCane: Identifiable, Equatable {
     
     static func == (lhs: ESP32SmartCane, rhs: ESP32SmartCane) -> Bool {
         return lhs.peripheral?.identifier == rhs.peripheral?.identifier
+    }
+}
+
+// MARK: - Bluetooth Connection State
+enum BluetoothConnectionState {
+    case disconnected
+    case connecting
+    case connected
+    
+    var displayText: String {
+        switch self {
+        case .disconnected:
+            return "Not Connected"
+        case .connecting:
+            return "Connecting..."
+        case .connected:
+            return "Connected"
+        }
+    }
+    
+    var buttonText: String {
+        switch self {
+        case .disconnected:
+            return "Connect"
+        case .connecting:
+            return "Connecting..."
+        case .connected:
+            return "Disconnect"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .disconnected:
+            return .gray
+        case .connecting:
+            return .orange
+        case .connected:
+            return .green
+        }
+    }
+    
+    var buttonColor: Color {
+        switch self {
+        case .disconnected:
+            return .blue
+        case .connecting:
+            return .gray
+        case .connected:
+            return .red
+        }
     }
 }
 

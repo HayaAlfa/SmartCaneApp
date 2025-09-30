@@ -15,155 +15,24 @@ struct MapView: View {
     @State private var savedLocations: [SavedLocation] = []
     @State private var selectedSavedLocation: SavedLocation?
     @State private var showingSavedLocationDetail = false
-    @State private var mapPosition = MapCameraPosition.region(MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-    ))
     @State private var showLocationAlert = false
     @State private var isPinMode = false
     @State private var tappedCoordinate: CLLocationCoordinate2D?
     @State private var showingSaveLocationSheet = false
+    @State private var isTrackingUser = false
     
     var body: some View {
         NavigationView {
             ZStack {
-                // Map with iOS 15+ compatible pins with labels
-                Map(coordinateRegion: $locationManager.region, annotationItems: savedLocations + searchResults.map { item in
-                    SavedLocation(name: item.name ?? "Search Result", 
-                                address: item.placemark.title ?? "", 
-                                latitude: item.placemark.coordinate.latitude, 
-                                longitude: item.placemark.coordinate.longitude, 
-                                notes: "", 
-                                dateAdded: Date())
-                }) { location in
-                    MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)) {
-                        VStack(spacing: 0) {
-                            // Location name label
-                            Text(location.name)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(.ultraThinMaterial)
-                                .cornerRadius(4)
-                                .foregroundColor(.primary)
-                            
-                            // Pin icon
-                            Button(action: {
-                                selectedSavedLocation = location
-                                showingSavedLocationDetail = true
-                            }) {
-                                Image(systemName: "mappin.circle.fill")
-                                    .font(.title)
-                                    .foregroundColor(.red)
-                            }
-                        }
-                    }
-                }
-                .onTapGesture(coordinateSpace: .global) { location in
-                    if isPinMode {
-                        handleMapTap(at: location)
-                    }
-                }
-                
-                // Search bar at top
-                VStack {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                        
-                        TextField("Search for places...", text: $searchText)
-                            .textFieldStyle(PlainTextFieldStyle())
-                            .onSubmit {
-                                performSearch()
-                            }
-                        
-                        if !searchText.isEmpty {
-                            Button("Clear") {
-                                searchText = ""
-                                searchResults = []
-                            }
-                            .foregroundColor(.blue)
-                        }
-                    }
-                    .padding()
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(15)
-                    .padding(.horizontal)
-                    
-                    Spacer()
-                }
-                .padding(.top)
-                
-                // Location and Pin buttons at bottom right
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 12) {
-                            // Pin button
-                            Button(action: {
-                                togglePinMode()
-                            }) {
-                                Image(systemName: isPinMode ? "mappin.slash" : "mappin")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                    .frame(width: 50, height: 50)
-                                    .background(isPinMode ? Color.red : Color.orange)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 5)
-                            }
-                            
-                            // Location button
-                Button(action: {
-                                centerOnUserLocation()
-                }) {
-                    Image(systemName: "location.fill")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                                    .frame(width: 50, height: 50)
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                                    .shadow(radius: 5)
-                            }
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 100)
-                    }
-                }
+                mapView
+                searchBar
+                controlButtons
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                // Request location permission when view appears
-                if locationManager.authorizationStatus == .notDetermined {
-                    locationManager.requestLocationPermission()
-                }
-                
-                // Load saved locations
-                loadSavedLocations()
-                
-                // Check if we need to center on a specific location
-                checkForLocationCenter()
-                
-                // Listen for location updates from other parts of the app
-                NotificationCenter.default.addObserver(
-                    forName: .locationsUpdated,
-                    object: nil,
-                    queue: .main
-                ) { _ in
-                    loadSavedLocations()
-                }
-            }
+            .onAppear(perform: setupView)
             .onChange(of: showingSaveLocationSheet) { _, newValue in
-                print("📍 showingSaveLocationSheet changed to: \(newValue)")
-                if newValue {
-                    if let coord = tappedCoordinate {
-                        print("📍 tappedCoordinate when sheet opens: (\(coord.latitude), \(coord.longitude))")
-                    } else {
-                        print("📍 tappedCoordinate when sheet opens: nil")
-                    }
-                }
+                handleSheetChange(newValue)
             }
             .sheet(isPresented: $showingSavedLocationDetail) {
                 if let location = selectedSavedLocation {
@@ -171,24 +40,7 @@ struct MapView: View {
                 }
             }
             .sheet(isPresented: $showingSaveLocationSheet) {
-                Group {
-                    if let coordinate = tappedCoordinate {
-                        SaveLocationView(coordinate: coordinate) { savedLocation in
-                            savedLocations.append(savedLocation)
-                            saveLocationsToUserDefaults()
-                            isPinMode = false
-                        }
-                        .onAppear {
-                            print("📍 Sheet showing with coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
-                        }
-                    } else {
-                        Text("No coordinate available")
-                            .padding()
-                            .onAppear {
-                                print("📍 Sheet showing with NO coordinate - tappedCoordinate is nil")
-                            }
-                    }
-                }
+                saveLocationSheet
             }
             .alert("Location Access Required", isPresented: $showLocationAlert) {
                 Button("Settings") {
@@ -203,12 +55,220 @@ struct MapView: View {
         }
     }
     
+    // MARK: - Map View
+    private var mapView: some View {
+        GeometryReader { geometry in
+            Map(coordinateRegion: $locationManager.region, interactionModes: .all, showsUserLocation: true, userTrackingMode: .constant(.none), annotationItems: allMapAnnotations) { location in
+                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)) {
+                    LocationPinView(
+                        location: location,
+                        color: isSearchResultLocation(location) ? .blue : .red,
+                        onTap: {
+                            selectedSavedLocation = location
+                            showingSavedLocationDetail = true
+                        }
+                    )
+                }
+            }
+            .onTapGesture(coordinateSpace: .local) { location in
+                if isPinMode {
+                    handleMapTap(at: location, mapSize: geometry.size)
+                }
+            }
+            .overlay(
+                // Custom user location indicator with direction
+                Group {
+                    if let userLocation = locationManager.currentLocation {
+                        UserLocationIndicatorView(
+                            coordinate: userLocation.coordinate,
+                            heading: locationManager.userHeading,
+                            mapRegion: locationManager.region
+                        )
+                    }
+                }
+            )
+        }
+    }
     
-    // MARK: - Center on User Location
+    // MARK: - All Map Annotations
+    private var allMapAnnotations: [SavedLocation] {
+        var annotations: [SavedLocation] = []
+        
+        // Add saved locations (these will be red pins)
+        annotations.append(contentsOf: savedLocations)
+        
+        // Add search results (these will be blue pins)
+        for item in searchResults {
+            let searchLocation = SavedLocation(
+                name: item.name ?? "Search Result", 
+                address: item.placemark.title ?? "", 
+                latitude: item.placemark.coordinate.latitude, 
+                longitude: item.placemark.coordinate.longitude, 
+                notes: "", 
+                dateAdded: Date()
+            )
+            annotations.append(searchLocation)
+        }
+        
+        return annotations
+    }
+    
+    // MARK: - Helper Functions
+    private func isSearchResultLocation(_ location: SavedLocation) -> Bool {
+        // Check if this location is in our search results
+        return searchResults.contains { item in
+            item.placemark.coordinate.latitude == location.latitude &&
+            item.placemark.coordinate.longitude == location.longitude
+        }
+    }
+    
+    // MARK: - Search Bar
+    private var searchBar: some View {
+        VStack {
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.gray)
+                
+                TextField("Search for places...", text: $searchText)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .onSubmit {
+                        performSearch()
+                    }
+                
+                if !searchText.isEmpty {
+                    Button("Clear") {
+                        searchText = ""
+                        searchResults = []
+                    }
+                    .foregroundColor(.blue)
+                }
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .cornerRadius(15)
+            .padding(.horizontal)
+            
+            // Show heading info when tracking (similar to Apple Maps)
+            if isTrackingUser && locationManager.isHeadingEnabled {
+                HStack {
+                    Image(systemName: "location.north.line")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                    
+                    Text("Heading: \(locationManager.getFullHeadingInfo())")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 4)
+                .background(.ultraThinMaterial)
+                .cornerRadius(8)
+                .padding(.horizontal)
+            }
+            
+            Spacer()
+        }
+        .padding(.top)
+    }
+    
+    // MARK: - Control Buttons
+    private var controlButtons: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                VStack(spacing: 12) {
+                    // Pin button
+                    Button(action: togglePinMode) {
+                        Image(systemName: isPinMode ? "mappin.slash" : "mappin")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(isPinMode ? Color.red : Color.orange)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                    
+                    // Location button
+                    Button(action: centerOnUserLocation) {
+                        Image(systemName: "location.fill")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(.blue)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    }
+                }
+                .padding(.trailing, 20)
+                .padding(.bottom, 100)
+            }
+        }
+    }
+    
+    // MARK: - Save Location Sheet
+    private var saveLocationSheet: some View {
+        Group {
+            if let coordinate = tappedCoordinate {
+                SaveLocationView(coordinate: coordinate) { savedLocation in
+                    savedLocations.append(savedLocation)
+                    saveLocationsToUserDefaults()
+                    isPinMode = false
+                }
+                .onAppear {
+                    print("📍 Sheet showing with coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
+                }
+            } else {
+                Text("No coordinate available")
+                    .padding()
+                    .onAppear {
+                        print("📍 Sheet showing with NO coordinate - tappedCoordinate is nil")
+                    }
+            }
+        }
+    }
+    
+    // MARK: - Setup Functions
+    private func setupView() {
+        // Request location permission when view appears
+        if locationManager.authorizationStatus == .notDetermined {
+            locationManager.requestLocationPermission()
+        }
+        
+        // Load saved locations
+        loadSavedLocations()
+        
+        // Check if we need to center on a specific location
+        checkForLocationCenter()
+        
+        // Listen for location updates from other parts of the app
+        NotificationCenter.default.addObserver(
+            forName: .locationsUpdated,
+            object: nil,
+            queue: .main
+        ) { _ in
+            loadSavedLocations()
+        }
+    }
+    
+    private func handleSheetChange(_ newValue: Bool) {
+        print("📍 showingSaveLocationSheet changed to: \(newValue)")
+        if newValue {
+            if let coord = tappedCoordinate {
+                print("📍 tappedCoordinate when sheet opens: (\(coord.latitude), \(coord.longitude))")
+            } else {
+                print("📍 tappedCoordinate when sheet opens: nil")
+            }
+        }
+    }
+    
+    
+    // MARK: - User Location Functions
     private func centerOnUserLocation() {
-        print("📍 Location button tapped")
-        print("📍 Authorization status: \(locationManager.authorizationStatus.rawValue)")
-        print("📍 Current location: \(locationManager.currentLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 0, longitude: 0))")
+        print("📍 Location button tapped - centering and zooming to user location")
         
         // Check if location permission is granted
         if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
@@ -217,14 +277,26 @@ struct MapView: View {
             return
         }
         
+        // Always center and zoom when button is tapped
+        centerOnUserLocationWithMaxZoom()
+        print("📍 Centered and zoomed to user location")
+    }
+    
+    // MARK: - Center on User Location with Maximum Zoom
+    private func centerOnUserLocationWithMaxZoom() {
+        print("📍 Centering on user location with maximum zoom")
+        
         // Check if we have current location
         if let location = locationManager.currentLocation {
             print("📍 Using existing location: \(location.coordinate)")
-            // Center map on user location
-            mapPosition = .region(MKCoordinateRegion(
-                center: location.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            ))
+            // Center map on user location with maximum zoom (very small span)
+            DispatchQueue.main.async {
+                self.locationManager.region = MKCoordinateRegion(
+                    center: location.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001) // Much more zoomed in
+                )
+                print("📍 Map region updated to: \(self.locationManager.region.center)")
+            }
         } else {
             print("📍 No current location, starting location updates")
             // Start location updates
@@ -234,21 +306,23 @@ struct MapView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 if let location = self.locationManager.currentLocation {
                     print("📍 Got location after delay: \(location.coordinate)")
-                    self.mapPosition = .region(MKCoordinateRegion(
+                    self.locationManager.region = MKCoordinateRegion(
                         center: location.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
+                        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001) // Maximum zoom
+                    )
+                    print("📍 Map region updated after delay: \(self.locationManager.region.center)")
                 } else {
                     print("📍 Still no location after delay, using fallback location")
                     // Use a fallback location (NYC)
-                    self.mapPosition = .region(MKCoordinateRegion(
+                    self.locationManager.region = MKCoordinateRegion(
                         center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    ))
+                        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+                    )
                 }
             }
         }
     }
+    
     
     // MARK: - Check for Location Center
     private func checkForLocationCenter() {
@@ -261,10 +335,10 @@ struct MapView: View {
             print("📍 Centering map on saved location: \(name) at (\(latitude), \(longitude))")
             
             // Center map on the saved location
-            mapPosition = .region(MKCoordinateRegion(
+            locationManager.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            ))
+            )
             
             // Clear the stored coordinates so it doesn't happen again
             UserDefaults.standard.removeObject(forKey: "MapCenterLatitude")
@@ -320,23 +394,44 @@ struct MapView: View {
         print("📍 Pin mode: \(isPinMode ? "ON" : "OFF")")
     }
     
-    private func handleMapTap(at screenLocation: CGPoint) {
-        // Use the current map region from locationManager
+    private func handleMapTap(at screenLocation: CGPoint, mapSize: CGSize) {
+        // Convert screen tap point to map coordinates
         let currentRegion = locationManager.region
         
-        // For simplicity, we'll use the center of the current map region
-        // In a real implementation, you'd convert screen point to coordinate
-        let coordinate = currentRegion.center
+        // Calculate the actual coordinate from the tap point
+        let coordinate = convertScreenPointToCoordinate(screenLocation, in: currentRegion, mapSize: mapSize)
         tappedCoordinate = coordinate
         showingSaveLocationSheet = true
         
-        print("📍 Map tapped at coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
+        print("📍 Map tapped at screen point: \(screenLocation)")
+        print("📍 Map size: \(mapSize)")
+        print("📍 Converted to coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
         print("📍 Pin mode: \(isPinMode)")
-        if let coord = tappedCoordinate {
-            print("📍 tappedCoordinate set to: (\(coord.latitude), \(coord.longitude))")
-        } else {
-            print("📍 tappedCoordinate set to: nil")
-        }
+    }
+    
+    // Helper function to convert screen point to map coordinate
+    private func convertScreenPointToCoordinate(_ point: CGPoint, in region: MKCoordinateRegion, mapSize: CGSize) -> CLLocationCoordinate2D {
+        // Use the actual map view dimensions for precise calculation
+        let centerX = mapSize.width / 2
+        let centerY = mapSize.height / 2
+        
+        let deltaX = point.x - centerX
+        let deltaY = point.y - centerY
+        
+        // Convert screen offset to coordinate offset
+        // Note: Y axis is inverted (screen Y increases downward, but latitude increases upward)
+        let latDelta = region.span.latitudeDelta
+        let lonDelta = region.span.longitudeDelta
+        
+        // More precise calculation using actual map dimensions
+        let latOffset = -deltaY / mapSize.height * latDelta
+        let lonOffset = deltaX / mapSize.width * lonDelta
+        
+        // Calculate the final coordinate
+        let latitude = region.center.latitude + latOffset
+        let longitude = region.center.longitude + lonOffset
+        
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
     // MARK: - Save Locations to UserDefaults
@@ -507,6 +602,98 @@ struct SaveLocationView: View {
     }
 }
 
+// MARK: - Location Pin View
+struct LocationPinView: View {
+    let location: SavedLocation
+    let color: Color
+    let onTap: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Location name label
+            Text(location.name)
+                .font(.caption)
+                .fontWeight(.medium)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.ultraThinMaterial)
+                .cornerRadius(4)
+                .foregroundColor(.primary)
+            
+            // Pin icon
+            Button(action: onTap) {
+                Image(systemName: "mappin.circle.fill")
+                    .font(.title)
+                    .foregroundColor(color)
+            }
+        }
+    }
+}
+
+// MARK: - User Location Indicator with Direction
+struct UserLocationIndicatorView: View {
+    let coordinate: CLLocationCoordinate2D
+    let heading: CLLocationDirection
+    let mapRegion: MKCoordinateRegion
+    
+    var body: some View {
+        GeometryReader { geometry in
+            // Calculate the position of the user location on the map
+            let userLocationPoint = convertCoordinateToPoint(coordinate, in: geometry.size, mapRegion: mapRegion)
+            
+            ZStack {
+                // Main location dot
+                Circle()
+                    .fill(Color.blue)
+                    .frame(width: 16, height: 16)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white, lineWidth: 3)
+                    )
+                    .position(userLocationPoint)
+                
+                // Direction arrow
+                if heading >= 0 {
+                    Image(systemName: "arrow.up")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.blue)
+                        .rotationEffect(.degrees(heading))
+                        .position(
+                            x: userLocationPoint.x + cos(Double(heading - 90) * .pi / 180) * 20,
+                            y: userLocationPoint.y + sin(Double(heading - 90) * .pi / 180) * 20
+                        )
+                }
+                
+                // Heading text
+                Text(String(format: "%.0f°", heading))
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(4)
+                    .position(
+                        x: userLocationPoint.x,
+                        y: userLocationPoint.y + 25
+                    )
+            }
+        }
+    }
+    
+    // Convert coordinate to point on the map view
+    private func convertCoordinateToPoint(_ coordinate: CLLocationCoordinate2D, in size: CGSize, mapRegion: MKCoordinateRegion) -> CGPoint {
+        let latDelta = mapRegion.span.latitudeDelta
+        let lonDelta = mapRegion.span.longitudeDelta
+        
+        let x = (coordinate.longitude - mapRegion.center.longitude) / lonDelta
+        let y = (mapRegion.center.latitude - coordinate.latitude) / latDelta
+        
+        return CGPoint(
+            x: size.width * (0.5 + x),
+            y: size.height * (0.5 + y)
+        )
+    }
+}
 
 #Preview {
     MapView()
