@@ -27,6 +27,8 @@ struct SettingsScreen: View {
     @State private var showingBluetoothDevices = false
     @State private var selectedDevice: MockBluetoothDevice?
     @StateObject var dataService = SmartCaneDataService()
+
+    
     
     // Mock ESP32 SmartCane devices
     @State private var availableDevices: [MockBluetoothDevice] = [
@@ -198,6 +200,7 @@ struct SettingsScreen: View {
                         }
                     }
                 }
+
                 
                 // ✅ MARK: - Data & Logs Section
                 Section("Data & Logs") {
@@ -212,6 +215,7 @@ struct SettingsScreen: View {
                         Label("Clear Logs", systemImage: "trash")
                     }
                 }
+
             }
             .navigationTitle("Settings")  // Sets the navigation bar title
             .onAppear {

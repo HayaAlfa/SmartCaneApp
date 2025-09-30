@@ -67,7 +67,8 @@ struct SavedLocationsView: View {
                     // Show list of filtered locations
                     List {
                         ForEach(filteredLocations) { location in
-                            SavedLocationsRow(location: location, selectedTab: $selectedTab, onDelete: {
+
+                            SavedLocationRow(location: location, selectedTab: $selectedTab, onDelete: {
                                 deleteLocation(location)  // Pass delete function to row
                             })
                         }
@@ -173,7 +174,8 @@ struct SavedLocationsView: View {
 
 // MARK: - Individual Location Row Component
 // This view represents each saved location in the list
-struct SavedLocationsRow: View {
+
+struct SavedLocationRow: View {
     let location: SavedLocation           // The location data to display
     @Binding var selectedTab: Int        // Binding to control tab selection
     let onDelete: () -> Void             // Function to call when delete is tapped

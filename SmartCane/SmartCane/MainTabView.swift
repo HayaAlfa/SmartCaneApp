@@ -28,10 +28,7 @@ struct MainTabView: View {
                     Label("Home", systemImage: "house.fill")  // House icon for home
                 }
                 .tag(0)  // Unique identifier for this tab
-            
-            
-            
-            
+
             // MARK: - Map Tab
             // Second tab shows the interactive map with location services
             MapView()
@@ -43,6 +40,8 @@ struct MainTabView: View {
                 .tag(1)  // Unique identifier for this tab
             
             // MARK: - Object Detection Tab
+
+            // Third tab for AI-powered obstacle detection using photos
 
             ObjectDetectionView()
                 .tabItem {
@@ -57,6 +56,8 @@ struct MainTabView: View {
                     Text("Settings")
                 }
                 .tag(3)
+
+
         }
         // MARK: - Tab Change Handler
         // This triggers whenever user switches to a different tab
@@ -84,14 +85,17 @@ private func speakTabChange(_ tab: Int) {
     switch tab {
     case 0:
         SpeechManager.shared.speak(_text: "Home tab selected")
+        
     case 1:
-
         SpeechManager.shared.speak(_text: "Mapview selected")
+        
     case 2:
         SpeechManager.shared.speak(_text: "Objects detection selected")
 
     case 3:
         SpeechManager.shared.speak(_text: "Settings selected")
+
+
     default:
         SpeechManager.shared.speak(_text: "Tab selected")
     }

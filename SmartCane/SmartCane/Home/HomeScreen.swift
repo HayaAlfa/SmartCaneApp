@@ -89,6 +89,14 @@ struct HomeScreen: View {
                 .padding()
                 
   
+
+                // MARK: - Test Speech Button
+                // Example button for testing speech functionality
+                Button("Speak") {
+                    SpeechManager.shared.speak(_text:"Welcome to Smart Cane. Navigation assistance activated.")
+                }
+                .padding(.top, 30)
+                
                 // MARK: - Spacer
                 // Pushes all content to the top of the screen
                 Spacer()
@@ -172,7 +180,7 @@ struct HomeButtonView: View {
     // MARK: - Properties
     let title: String        // Text displayed on the button
     let systemImage: String  // SF Symbol icon name
-    
+
     // MARK: - View Body
     // This defines the visual appearance of the button view
     var body: some View {
@@ -184,7 +192,7 @@ struct HomeButtonView: View {
                 .scaledToFit()                  // Maintains aspect ratio
                 .frame(width: 40, height: 40)   // Fixed size for consistency
                 .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
-            
+
             // MARK: - Title Text
             // Button title text with accessibility-friendly font
             Text(title)
@@ -198,3 +206,5 @@ struct HomeButtonView: View {
         )
     }
 }
+
+

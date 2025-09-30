@@ -220,10 +220,12 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
     
     // Handle incoming data from ESP32
     private func handleIncomingData(_ message: String) {
+
         // Expected format: "OBSTACLE:distance:direction:confidence"
         if message.hasPrefix("OBSTACLE:") {
             let components = message.dropFirst(9).split(separator: ":")
             if components.count >= 3 {
+
                 let distance = Int(components[0]) ?? 0
                 let direction = String(components[1])
                 let confidence = Double(components[2]) ?? 0.0
@@ -285,5 +287,4 @@ struct ESP32SmartCane: Identifiable, Equatable {
 extension Notification.Name {
     static let obstacleDetected = Notification.Name("obstacleDetected")
 }
-
 
