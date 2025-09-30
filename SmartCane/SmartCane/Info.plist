@@ -4,5 +4,23 @@
 <dict>
 	<key>UILaunchScreen</key>
 	<false/>
+	
+	<!-- Bluetooth Permission Keys -->
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>SmartCane needs Bluetooth to connect to your SmartCane device for obstacle detection and navigation assistance.</string>
+	
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>SmartCane needs Bluetooth to communicate with your SmartCane device.</string>
+	
+	<!-- Camera Permission (already being used) -->
+	<key>NSCameraUsageDescription</key>
+	<string>SmartCane needs camera access to detect and identify obstacles in your path.</string>
+	
+	<!-- Location Permission (already being used) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SmartCane needs your location to save obstacle locations and provide navigation assistance.</string>
+	
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>SmartCane needs your location to track obstacles and provide continuous navigation assistance.</string>
 </dict>
 </plist>

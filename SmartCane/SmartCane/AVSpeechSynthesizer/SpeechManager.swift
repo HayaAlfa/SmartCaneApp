@@ -35,7 +35,8 @@ class SpeechManager {
     func speak(_text: String, language: String = "en-US", rate: Float = 0.5) {
         // Check if voice feedback is enabled in user settings
         // If disabled, don't speak anything (respects user preference)
-        let voiceEnabled = UserDefaults.standard.bool(forKey: "voiceFeedbackEnabled")
+        // Default to true if not set (first launch)
+        let voiceEnabled = UserDefaults.standard.object(forKey: "voiceFeedbackEnabled") as? Bool ?? true
         guard voiceEnabled else { return }
         
         // Create a speech utterance (the text to be spoken)

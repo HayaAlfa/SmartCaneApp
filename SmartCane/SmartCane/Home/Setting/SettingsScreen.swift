@@ -23,16 +23,10 @@ struct SettingsScreen: View {
     @State private var notificationsEnabled = false      // Whether notifications are allowed
     @State private var locationServicesEnabled = false   // Whether location services are active
     @State private var bluetoothEnabled = false          // Whether bluetooth is connected
-    @State private var bluetoothConnectionState: BluetoothConnectionState = .disconnected
     @State private var showingBluetoothDevices = false
-    @State private var selectedDevice: MockBluetoothDevice?
     
-    // Mock ESP32 SmartCane devices
-    @State private var availableDevices: [MockBluetoothDevice] = [
-        MockBluetoothDevice(name: "SmartCane-Pro", deviceId: "SC-001", signalStrength: 85, macAddress: "AA:BB:CC:DD:EE:01", firmwareVersion: "1.2.0"),
-        MockBluetoothDevice(name: "SmartCane-Basic", deviceId: "SC-002", signalStrength: 72, macAddress: "AA:BB:CC:DD:EE:02", firmwareVersion: "1.1.0"),
-        MockBluetoothDevice(name: "SmartCane-Plus", deviceId: "SC-003", signalStrength: 90, macAddress: "AA:BB:CC:DD:EE:03", firmwareVersion: "1.3.0")
-    ]
+    // Real ESP32 Bluetooth Manager
+    @StateObject private var btManager = ESP32BluetoothManager()
     
     // MARK: - Main Body
     // This defines the main user interface of the settings screen
@@ -121,12 +115,12 @@ struct SettingsScreen: View {
                         
                         // Bluetooth toggle
                         Toggle("", isOn: $bluetoothEnabled)
-                            .onChange(of: bluetoothEnabled) { _, newValue in
-                                if !newValue {
-                                    // If Bluetooth is disabled, disconnect SmartCane
-                                    disconnectDevice()
-                                }
+                        .onChange(of: bluetoothEnabled) { _, newValue in
+                            if !newValue {
+                                // If Bluetooth is disabled, disconnect SmartCane
+                                btManager.disconnect()
                             }
+                        }
                         
                         // Button to open bluetooth settings
                         Button("Settings") {
@@ -140,17 +134,17 @@ struct SettingsScreen: View {
                     VStack(spacing: 12) {
                         HStack {
                             Image(systemName: "cane")
-                                .foregroundColor(bluetoothConnectionState.color)
+                                .foregroundColor(btManager.connectionState.color)
                                 .frame(width: 24)
                             
                             VStack(alignment: .leading) {
                                 Text("SmartCane Device")
                                     .font(.body)
-                                Text(bluetoothConnectionState.displayText)
+                                Text(btManager.connectionState.displayText)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 
-                                if let device = selectedDevice {
+                                if let device = btManager.connectedDevice {
                                     Text(device.name)
                                         .font(.caption2)
                                         .foregroundColor(.blue)
@@ -161,21 +155,21 @@ struct SettingsScreen: View {
                             
                             // Connection button
                             Button(action: {
-                                if bluetoothConnectionState == .connected {
-                                    disconnectDevice()
+                                if btManager.connectionState == .connected {
+                                    btManager.disconnect()
                                 } else {
                                     showingBluetoothDevices = true
                                 }
                             }) {
-                                Text(bluetoothConnectionState.buttonText)
+                                Text(btManager.connectionState.buttonText)
                                     .font(.caption)
-                                    .foregroundColor(bluetoothConnectionState.buttonColor)
+                                    .foregroundColor(btManager.connectionState.buttonColor)
                             }
-                            .disabled(bluetoothConnectionState == .connecting)
+                            .disabled(btManager.connectionState == .connecting)
                         }
                         
                         // Connection progress indicator
-                        if bluetoothConnectionState == .connecting {
+                        if btManager.connectionState == .connecting {
                             HStack {
                                 ProgressView()
                                     .scaleEffect(0.8)
@@ -186,11 +180,11 @@ struct SettingsScreen: View {
                         }
                         
                         // Signal strength indicator
-                        if bluetoothConnectionState == .connected, let device = selectedDevice {
+                        if btManager.connectionState == .connected, let device = btManager.connectedDevice {
                             HStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right")
                                     .foregroundColor(.green)
-                                Text("Signal: \(device.signalStrength)%")
+                                Text("RSSI: \(device.rssi) dBm")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -205,10 +199,10 @@ struct SettingsScreen: View {
             }
             .sheet(isPresented: $showingBluetoothDevices) {
                 BluetoothDeviceListView(
-                    devices: availableDevices,
+                    devices: btManager.discoveredDevices,
                     bluetoothEnabled: bluetoothEnabled,
                     onDeviceSelected: { device in
-                        connectToDevice(device)
+                        btManager.connectToDevice(device)
                         showingBluetoothDevices = false
                     }
                 )
@@ -255,127 +249,14 @@ struct SettingsScreen: View {
         }
     }
     
-    // MARK: - Bluetooth Connection Methods
-    
-    // Connect to selected ESP32 SmartCane device
-    private func connectToDevice(_ device: MockBluetoothDevice) {
-        // Check if Bluetooth is enabled first
-        guard bluetoothEnabled else {
-            print("❌ Cannot connect to SmartCane: Bluetooth is disabled")
-            return
-        }
-        
-        selectedDevice = device
-        bluetoothConnectionState = .connecting
-        
-        print("🔗 Connecting to ESP32 SmartCane: \(device.name)")
-        print("🔗 MAC Address: \(device.macAddress)")
-        print("🔗 Service UUID: \(MockBluetoothDevice.serviceUUID)")
-        print("🔗 Characteristic UUID: \(MockBluetoothDevice.characteristicUUID)")
-        
-        // Simulate ESP32 connection process
-        // In real implementation, this would use Core Bluetooth to:
-        // 1. Scan for device with matching MAC address
-        // 2. Connect to the ESP32 BLE peripheral
-        // 3. Discover services and characteristics
-        // 4. Subscribe to notifications for obstacle detection data
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            bluetoothConnectionState = .connected
-            print("✅ Successfully connected to ESP32 SmartCane")
-        }
-    }
-    
-    // Disconnect from current SmartCane device
-    private func disconnectDevice() {
-        bluetoothConnectionState = .disconnected
-        selectedDevice = nil
-        print("🔌 Disconnected from SmartCane device")
-    }
 }
 
-// MARK: - Supporting Data Structures
-
-// Bluetooth connection states
-enum BluetoothConnectionState {
-    case disconnected
-    case connecting
-    case connected
-    
-    var displayText: String {
-        switch self {
-        case .disconnected:
-            return "Not Connected"
-        case .connecting:
-            return "Connecting..."
-        case .connected:
-            return "Connected"
-        }
-    }
-    
-    var buttonText: String {
-        switch self {
-        case .disconnected:
-            return "Connect"
-        case .connecting:
-            return "Connecting..."
-        case .connected:
-            return "Disconnect"
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .disconnected:
-            return .gray
-        case .connecting:
-            return .orange
-        case .connected:
-            return .green
-        }
-    }
-    
-    var buttonColor: Color {
-        switch self {
-        case .disconnected:
-            return .blue
-        case .connecting:
-            return .gray
-        case .connected:
-            return .red
-        }
-    }
-}
-
-// ESP32 SmartCane device model
-struct MockBluetoothDevice: Identifiable {
-    let id = UUID()
-    let name: String
-    let deviceId: String
-    let signalStrength: Int
-    let macAddress: String
-    let firmwareVersion: String
-    let isESP32: Bool
-    
-    // ESP32-specific service UUIDs (typical for ESP32 BLE)
-    static let serviceUUID = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E") // Nordic UART Service
-    static let characteristicUUID = CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E") // RX Characteristic
-    
-    init(name: String, deviceId: String, signalStrength: Int, macAddress: String = "", firmwareVersion: String = "1.0.0") {
-        self.name = name
-        self.deviceId = deviceId
-        self.signalStrength = signalStrength
-        self.macAddress = macAddress.isEmpty ? "ESP32-\(deviceId)" : macAddress
-        self.firmwareVersion = firmwareVersion
-        self.isESP32 = true
-    }
-}
 
 // Bluetooth device list view
 struct BluetoothDeviceListView: View {
-    let devices: [MockBluetoothDevice]
+    let devices: [ESP32SmartCane]
     let bluetoothEnabled: Bool
-    let onDeviceSelected: (MockBluetoothDevice) -> Void
+    let onDeviceSelected: (ESP32SmartCane) -> Void
     
     var body: some View {
         NavigationView {
@@ -385,21 +266,15 @@ struct BluetoothDeviceListView: View {
                         HStack {
                             Text(device.name)
                                 .font(.headline)
-                            if device.isESP32 {
-                                Image(systemName: "cpu")
-                                    .foregroundColor(.blue)
-                                    .font(.caption)
-                            }
+                            Image(systemName: "cpu")
+                                .foregroundColor(.blue)
+                                .font(.caption)
                         }
-                        Text("ID: \(device.deviceId)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        Text("MAC: \(device.macAddress)")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                        Text("FW: \(device.firmwareVersion)")
-                            .font(.caption2)
-                            .foregroundColor(.blue)
+                        if let peripheral = device.peripheral {
+                            Text("ID: \(peripheral.identifier.uuidString.prefix(8))...")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                     }
                     
                     Spacer()
@@ -407,8 +282,8 @@ struct BluetoothDeviceListView: View {
                     VStack(alignment: .trailing) {
                         HStack {
                             Image(systemName: "antenna.radiowaves.left.and.right")
-                                .foregroundColor(signalColor(for: device.signalStrength))
-                            Text("\(device.signalStrength)%")
+                                .foregroundColor(signalColor(for: device.rssi))
+                            Text("\(device.rssi) dBm")
                                 .font(.caption)
                         }
                         
@@ -427,11 +302,11 @@ struct BluetoothDeviceListView: View {
         }
     }
     
-    private func signalColor(for strength: Int) -> Color {
-        switch strength {
-        case 80...100:
+    private func signalColor(for rssi: Int) -> Color {
+        switch rssi {
+        case -50...0:
             return .green
-        case 60...79:
+        case -70 ..< -50:
             return .orange
         default:
             return .red
