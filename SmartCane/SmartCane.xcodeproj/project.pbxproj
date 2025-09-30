@@ -20,22 +20,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-		A816AAD72E7B1B8900142CFE /* Exceptions for "SmartCane" folder in "SmartCane" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-				PhotoPicker.swift,
-				SavedLocationsView.swift,
-			);
-			target = A8748BBD2E622A6600900D08 /* SmartCane */;
-		};
-
 		AD0662D42E88DD61008EB128 /* Exceptions for "SmartCane" folder in "SmartCane" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-
+				PhotoPicker.swift,
 			);
 			target = A8748BBD2E622A6600900D08 /* SmartCane */;
 		};
@@ -45,11 +34,7 @@
 		A8748BC02E622A6600900D08 /* SmartCane */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-
-				A816AAD72E7B1B8900142CFE /* Exceptions for "SmartCane" folder in "SmartCane" target */,
-
 				AD0662D42E88DD61008EB128 /* Exceptions for "SmartCane" folder in "SmartCane" target */,
-
 			);
 			path = SmartCane;
 			sourceTree = "<group>";
@@ -350,9 +335,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartCane/Info.plist;
-
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to capture photos of receipts.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires access to your location to provide navigation and obstacle guidance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -386,9 +369,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartCane/Info.plist;
-
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to the camera to capture photos of receipts.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app requires access to your location to provide navigation and obstacle guidance.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
