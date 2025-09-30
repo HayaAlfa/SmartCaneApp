@@ -27,6 +27,9 @@
 				Info.plist,
 				PhotoPicker.swift,
 				SavedLocationsView.swift,
+			);
+			target = A8748BBD2E622A6600900D08 /* SmartCane */;
+		};
 
 		AD0662D42E88DD61008EB128 /* Exceptions for "SmartCane" folder in "SmartCane" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;

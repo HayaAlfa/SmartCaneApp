@@ -196,7 +196,7 @@ struct SettingsScreen: View {
                 
                 // ✅ MARK: - Data & Logs Section
                 Section("Data & Logs") {
-                    NavigationLink(destination: ExportLogs(logs: dataService.obstacleLogs)) {
+                    NavigationLink(destination: ExportLogs(logs: ObstacleLog.sampleData)) {
                         Label("Export Logs (CSV)", systemImage: "square.and.arrow.up")
                     }
                     
