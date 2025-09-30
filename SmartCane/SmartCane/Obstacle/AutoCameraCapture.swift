@@ -113,3 +113,5 @@ extension AutoCameraCapture: AVCapturePhotoCaptureDelegate {
         }
     }
 }
+
+

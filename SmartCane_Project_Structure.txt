@@ -1,7 +1,7 @@
 SMARTCANE PROJECT STRUCTURE SUMMARY
 =====================================
 
-Total Count: 62 Classes & Structs
+Total Count: 64 Classes & Structs
 
 =====================================
 🏗️ CORE APP ARCHITECTURE (3)
@@ -46,7 +46,7 @@ Map Views:
   📁 File: SavedLocationsView.swift
 
 =====================================
-🤖 AI & OBJECT DETECTION (8)
+🤖 AI & OBJECT DETECTION (10)
 =====================================
 
 Core AI Components:
@@ -62,6 +62,12 @@ Core AI Components:
 Detection Views & Components:
 • ObjectDetectionView (struct) - Main interface for camera/photo-based obstacle detection with classification results display.
   📁 File: ObjectDetectionView.swift
+
+• WarningTestView (struct) - Integrated test interface that combines sensor signals with vision detection to generate unified warnings.
+  📁 File: WarningTestView.swift
+
+• AutoCameraCapture (class) - Automatic camera capture manager for background photo capture without user interaction.
+  📁 File: AutoCameraCapture.swift
 
 • DirectionTestView (struct) - Debug view for testing ESP32 signal parsing with manual input validation.
   📁 File: DirectionTestView.swift
@@ -261,8 +267,8 @@ UI Components:
 📊 PROJECT STATISTICS
 =====================================
 
-• Total Classes: 12 (Managers, Services, Loggers)
-• Total Structs: 47 (Views, Data Models, UI Components)  
+• Total Classes: 13 (Managers, Services, Loggers)
+• Total Structs: 48 (Views, Data Models, UI Components)  
 • Total Enums: 3 (Configuration, States, Themes)
 • Lines of Code: ~3,000+ lines across all files
 • Architecture: MVVM pattern with SwiftUI views and ObservableObject managers
@@ -289,6 +295,8 @@ AI & Object Detection:
 • ObstacleClassifierManager.swift - AI manager
 • SensorSignalProcessor.swift - Signal processor
 • ObjectDetectionView.swift - Detection UI & models
+• WarningTestView.swift - Warning test interface (combines sensor + vision)
+• AutoCameraCapture.swift - Automatic camera capture manager
 • DirectionTestView.swift - Debug interface
 • Obstacle.swift - Obstacle data model
 • PhotoPicker.swift - Camera picker
@@ -317,3 +325,96 @@ Utilities & Helpers:
 
 =====================================
 This structure shows a well-organized accessibility-focused iOS app with comprehensive Bluetooth integration, AI-powered obstacle detection, and robust location management capabilities!
+
+=====================================
+📝 TASK 5.3: MOCK REPLAY MODE PLAN
+=====================================
+
+OBJECTIVE:
+Create a prototype "replay mode" that simulates playing back test logs of sensor and vision data for debugging and evaluation using mock data and print statements.
+
+IMPLEMENTATION APPROACH:
+Instead of real logging infrastructure, use mock data and print statements to demonstrate the replay concept quickly.
+
+PHASE 1: Mock Test Session Data
+--------------------------------
+• Create MockTestSession struct with hardcoded test data
+• Define MockTestEvent with timestamp, event type, and data
+• Pre-populate 3 mock sessions:
+  - "Morning Walk Test" (5 sensor events, 3 vision detections)
+  - "Indoor Navigation" (8 sensor events, 4 vision detections)
+  - "Outdoor Obstacle Course" (12 sensor events, 6 vision detections)
+
+PHASE 2: Mock Logging in WarningTestView
+----------------------------------------
+• Add print statements for all events:
+  - "📝 LOG: Sensor signal received - [signal] at [timestamp]"
+  - "📝 LOG: Camera captured image at [timestamp]"
+  - "📝 LOG: Vision classified as [result] with [confidence]% at [timestamp]"
+  - "📝 LOG: Warning generated - [warning] at [timestamp]"
+• Add session start/stop buttons (print only, no real logging)
+• Console output shows all "logged" events in real-time
+
+PHASE 3: Mock Replay Mode View
+-------------------------------
+• Create new MockReplayView SwiftUI component
+• Display list of mock test sessions
+• Show session metadata (name, event count, timestamp)
+• Select session to "replay"
+• Print replay events to console one by one
+
+PHASE 4: Mock Replay Controls
+------------------------------
+• Play button: Start replaying events
+• Progress bar: Show replay timeline
+• Event display: Show current event being replayed
+• Speed control: Adjust delay between events (0.5s, 1s, 2s)
+• Print statements simulate event replay
+
+MOCK DATA STRUCTURE:
+-------------------
+struct MockTestSession {
+    let id: UUID
+    let sessionName: String
+    let startTime: Date
+    let eventCount: Int
+    let events: [MockTestEvent]
+}
+
+struct MockTestEvent {
+    let timestamp: Date
+    let eventType: String  // "SENSOR", "VISION", "WARNING"
+    let data: String
+}
+
+BENEFITS:
+---------
+✅ Fast implementation (no complex storage)
+✅ Easy testing via Xcode console
+✅ Demonstrates replay concept
+✅ No storage/performance issues
+✅ Can be upgraded to real logging later
+
+USER WORKFLOW:
+--------------
+1. Test: Use WarningTestView normally, see print statements
+2. Browse: Go to MockReplayView, see mock sessions
+3. Replay: Select session, watch events "replay"
+4. Verify: Console shows all replay events with timing
+
+FILES TO CREATE:
+----------------
+• MockReplayView.swift - Replay UI with session list
+• MockTestSession.swift - Mock data models
+• (Optional) TestSessionLogger.swift - Print statement wrapper
+
+INTEGRATION:
+------------
+• Add MockReplayView to MainTabView or WarningTestView
+• Link from Settings or Object Detection tab
+• Minimal changes to existing code
+
+STATUS: PLANNING COMPLETE - READY FOR IMPLEMENTATION
+DUE DATE: 09/28/2025
+
+=====================================
