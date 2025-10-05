@@ -31,7 +31,7 @@ class SmartCaneDataService: ObservableObject {
     
     // MARK: - Insert log into Supabase
     @MainActor
-    func saveObstacleLog(_ obstacle: ObstacleLog) async {
+    func saveObstacleLog(_ obstacle: ObstacleLog) async throws{
         do {
             let insert = ObstacleLogInsert(
                 device_id: obstacle.deviceId ?? "cane-001",
@@ -54,6 +54,7 @@ class SmartCaneDataService: ObservableObject {
             await fetchObstacleLogs(deviceId: currentDeviceFilter)
         } catch {
             print("❌ Insert failed: \(error)")
+            throw error
         }
     }
     
@@ -152,4 +153,5 @@ class SmartCaneDataService: ObservableObject {
         let message = phrases.joined(separator: ", ")
         SpeechManager.shared.speak(_text: message)
     }
+
 }

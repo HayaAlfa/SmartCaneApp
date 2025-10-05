@@ -233,28 +233,21 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
 
                 print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
 
-                // Create ObstacleLog directly
-                let log = ObstacleLog(
-                    deviceId: "SmartCane_001",
-                    obstacleType: "Obstacle",                 // or map direction/type
-                    distanceCm: distance,
-                    confidenceScore: confidence,
-                    sensorType: "ultrasonic",
-                    severityLevel: 1,
-                    latitude: nil,
-                    longitude: nil
-                )
-
-                // Save to Supabase (or notify ViewModel)
                 Task {
-                    await SmartCaneDataService().saveObstacleLog(log)
+                    await Pipeline().handleIncomingObstacle(distance: distance,
+                                                            direction: direction,
+                                                            confidence: confidence)
                 }
-
-                // Optionally notify UI
+//
+//                // Optionally notify UI
                 NotificationCenter.default.post(
                     name: .obstacleDetected,
                     object: nil,
-                    userInfo: ["log": log]
+                    userInfo: [
+                        "distance": distance,
+                        "direction": direction,
+                        "confidence": confidence
+                    ]
                 )
             }
         }

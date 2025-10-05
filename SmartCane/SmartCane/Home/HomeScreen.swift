@@ -86,16 +86,13 @@ struct HomeScreen: View {
                                             SpeechManager.shared.speak(_text: "Obstacle logs selected")
                                         })
      
-                }
-                .padding()
-                
-  
+                    NavigationLink(destination: LiveScreen()) {
+                        Label("Live Mode", systemImage: "antenna.radiowaves.left.and.right")
+                    }
 
-                // MARK: - Test Speech Button
-                // Example button for testing speech functionality
-                Button("Speak") {
-                    SpeechManager.shared.speak(_text:"Welcome to Smart Cane. Navigation assistance activated.")
                 }
+                
+   
                 .padding(.top, 30)
                 
                 // MARK: - Spacer

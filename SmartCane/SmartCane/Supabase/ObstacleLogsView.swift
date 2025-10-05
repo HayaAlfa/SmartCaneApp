@@ -1,51 +1,89 @@
 //
-//  Untitled.swift
+//  ObstacleLogsView.swift
 //  SmartCane
 //
 //  Created by Haya Alfakieh on 9/21/25.
 //
+
 import SwiftUI
 
 struct ObstacleLogsView: View {
     @StateObject private var dataService = SmartCaneDataService()
+    @State private var isLoading = true
+    @State private var appError: AppError?
+    @State private var showConfirm = false        // for clear button alert
     
     var body: some View {
-        VStack {
-            Button("➕ Add Test Log") {
-                Task {
-                    let newLog = ObstacleLog(
-                        deviceId: "cane-001",
-                        obstacleType: "Wall",
-                        distanceCm: 120,
-                        confidenceScore: 0.95,
-                        sensorType: "ultrasonic",
-                        severityLevel: 2,
-                        latitude: 25.7617,
-                        longitude: -80.1918
-                    )
-                    await dataService.saveObstacleLog(newLog)
+        ZStack {
+            VStack {
+                Button("➕ Add Test Log") {
+                    Task {
+                        await Pipeline().handleIncomingObstacle(
+                            distance: 120,
+                            direction: "front",
+                            confidence: 0.95
+                        )
+                    }
+                }
+                .padding(.vertical)
+
+                List(dataService.obstacleLogs) { log in
+                    VStack(alignment: .leading) {
+                        Text(log.obstacleType)
+                            .font(.headline)
+                        Text(
+                            (log.createdAt ?? log.timestamp)?
+                                .formatted(date: .abbreviated, time: .shortened) ?? "—"
+                        )
+                        .font(.subheadline)
+                        Text("Device: \(log.deviceId ?? "Unknown")")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
                 }
             }
-            .padding(.vertical)
+            .navigationTitle("Obstacle Logs")
 
-            List(dataService.obstacleLogs) { log in
-                VStack(alignment: .leading) {
-                    Text(log.obstacleType)
-                        .font(.headline)
-                    // Show createdAt if available, else fallback to timestamp
-                    Text(
-                        (log.createdAt ?? log.timestamp)?.formatted(date: .abbreviated, time: .shortened) ?? "—"
-                    )
-                        .font(.subheadline)
-                    Text("Device: \(log.deviceId ?? "Unknown")")
-                        .font(.caption)
-                        .foregroundColor(.gray)
+            .task {
+                await loadLogs()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .obstacleDetected)) { _ in
+                Task { @MainActor in
+                    await dataService.fetchObstacleLogs()
                 }
+            }
+            
+            // 🔄 loading overlay
+            if isLoading {
+                ProgressView("Loading obstacle logs…")
+                    .padding()
+                    .background(.ultraThinMaterial)
+                    .cornerRadius(12)
+            }
+            
+            // ⚠️ simple error banner
+            if let err = appError {
+                VStack {
+                    Spacer()
+                    Text(err.localizedDescription)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.red.opacity(0.8))
+                        .foregroundColor(.white)
+                }
+                .transition(.move(edge: .bottom))
             }
         }
-        .navigationTitle("Obstacle Logs")
-        .task {
+    }
+    
+    // MARK: - Helpers
+    private func loadLogs() async {
+        isLoading = true
+        defer { isLoading = false }
+        do {
             await dataService.fetchObstacleLogs()
+        } catch {
+            appError = .database("Could not fetch obstacle logs. Check your connection.")
         }
     }
 }
