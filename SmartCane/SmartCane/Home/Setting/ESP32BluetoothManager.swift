@@ -42,7 +42,8 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
         guard centralManager.state == .poweredOn else { return }
         
         print("🔍 Starting scan for ESP32 SmartCane devices...")
-        centralManager.scanForPeripherals(withServices: [Self.serviceUUID], options: nil)
+        // Temporarily scan for ALL devices to debug
+        centralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
     }
     
     /// Stop scanning for devices
@@ -116,11 +117,31 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
-        // Check if this is a SmartCane device
-        guard peripheral.name?.contains("SmartCane") == true else { return }
+        // Debug: Print ALL discovered devices
+        print("📡 Discovered device: \(peripheral.name ?? "Unknown") - RSSI: \(RSSI)")
+        print("   Advertisement data: \(advertisementData)")
+        
+        // Check if device advertises Nordic UART Service
+        let serviceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
+        let hasNordicUART = serviceUUIDs?.contains(Self.serviceUUID) ?? false
+        
+        // Check if this is a SmartCane device (by name OR by service UUID)
+        let hasSmartCaneName = peripheral.name?.contains("SmartCane") == true
+        
+        if !hasSmartCaneName && !hasNordicUART {
+            print("   ❌ Not a SmartCane device (name doesn't contain 'SmartCane' and no Nordic UART service)")
+            return
+        }
+        
+        if hasNordicUART {
+            print("   ✅ Nordic UART Service found! This is likely a SmartCane device")
+        }
+        if hasSmartCaneName {
+            print("   ✅ SmartCane device found by name!")
+        }
         
         let device = ESP32SmartCane(
-            name: peripheral.name ?? "Unknown SmartCane",
+            name: peripheral.name ?? "SmartCane Mock",
             peripheral: peripheral,
             rssi: RSSI.intValue
         )
@@ -134,6 +155,9 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("✅ Connected to ESP32 SmartCane: \(peripheral.name ?? "Unknown")")
+        
+        // Stop scanning once connected to save battery
+        stopScanning()
         
         connectedPeripheral = peripheral
         peripheral.delegate = self
@@ -153,6 +177,10 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
         if let error = error {
             print("❌ Disconnection error: \(error)")
         }
+        
+        // Optionally restart scanning after disconnection
+        // Uncomment the line below if you want auto-reconnect capability
+        // startScanning()
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
