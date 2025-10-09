@@ -10,6 +10,9 @@ struct WarningTestView: View {
     @State private var currentObstacle: Obstacle?
     @State private var capturedImage: UIImage?
     @State private var currentSignal: String = ""
+    @State private var bluetoothSignal: String = ""
+    @State private var lastReceivedTime: Date?
+    @State private var processStartTime: Date?
     private let sensorProcessor = SensorSignal()
     private let autoCamera = AutoCameraCapture.shared
     
@@ -23,7 +26,7 @@ struct WarningTestView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.orange)
                     
-                    Text("Waring Test")
+                    Text("Warning Test")
                         .font(.title2)
                         .fontWeight(.bold)
                     
@@ -33,87 +36,69 @@ struct WarningTestView: View {
                 }
                 .padding(.top, 10)
                 
-                //using Warning section
-                VStack(spacing: 15) {
-                    Text("Valid ESP32 Signal Input")
+                // Manual Signal Input section
+                VStack(spacing: 10) {
+                    Text("Manual Signal Input")
                         .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
                     
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("F:30")
-                                .font(.system(.body, design: .monospaced))
-                                .fontWeight(.bold)
-                            Text("Front obstacle 30cm")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
+                    HStack(spacing: 10) {
+                        TextField("e.g. F:20, L:15, STOP", text: $signalText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .onSubmit {
+                                parseSignal()
+                            }
                         
-                        HStack {
-                            Text("L:20")
-                                .font(.system(.body, design: .monospaced))
-                                .fontWeight(.bold)
-                            Text("Left obstacle 20cm")
-                                .font(.caption)
-                                .foregroundColor(.gray)
+                        Button("Send") {
+                            parseSignal()
                         }
-                        
-                        HStack {
-                            Text("R:15")
-                                .font(.system(.body, design: .monospaced))
-                                .fontWeight(.bold)
-                            Text("Right obstacle 15cm")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        HStack {
-                            Text("STOP")
-                                .font(.system(.body, design: .monospaced))
-                                .fontWeight(.bold)
-                            Text("Stop immediately")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        HStack {
-                            Text("CLEAR")
-                                .font(.system(.body, design: .monospaced))
-                                .fontWeight(.bold)
-                            Text("Path is clear")
-                                .font(.caption)
-                                .foregroundColor(.gray)
-                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 8)
+                        .background(signalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isProcessing ? Color.gray : Color.orange)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                        .disabled(signalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isProcessing)
                     }
-                    .padding()
                     .padding(.horizontal)
                 }
                 
-                // Signal input section
-                VStack(spacing: 15) {
-                    Text("ESP32 Signal Input")
+                // Bluetooth Signal Display section
+                VStack(spacing: 10) {
+                    Text("Bluetooth Signal Received")
                         .font(.headline)
-                    
-                    TextField("Enter signal text from ESP32...", text: $signalText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
-                        .onSubmit {
-                            // Process signal when user presses return
-                            // TRIGGER POINT 1: Return key press
-                            parseSignal()
-                        }
                     
-                    Button("Produce warning") {
-                        // TRIGGER POINT 2: Button click
-                        parseSignal()
+                    VStack(alignment: .leading, spacing: 8) {
+                        if bluetoothSignal.isEmpty {
+                            Text("No signal received yet")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .italic()
+                        } else {
+                            HStack {
+                                Text("Signal:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(bluetoothSignal)
+                                    .font(.system(.body, design: .monospaced))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.blue)
+                            }
+                            
+                            if let time = lastReceivedTime {
+                                Text("Received: \(time.formatted(date: .omitted, time: .standard))")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
-                    .background(isProcessing ? Color.gray : Color.orange)
-                    .foregroundColor(.white)
+                    .background(Color.blue.opacity(0.05))
                     .cornerRadius(10)
                     .padding(.horizontal)
-                    .disabled(signalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isProcessing)
-                    
                 }
                 
                 // Processing indicator
@@ -128,46 +113,91 @@ struct WarningTestView: View {
                     .padding()
                 }
                 
-                //Warning output section
-                if showingWarning {
-                    VStack(spacing: 15) {
-                        Text("Warning Output")
-                            .font(.headline)
-                        
-                        Text(currentWarning)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                            .padding()
-                            .background(Color.red.opacity(0.1))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
-                        
-                        // Show obstacle details if available
-                        if let obstacle = currentObstacle {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Detected Obstacle:")
-                                    .font(.headline)
-                                Text("Type: \(obstacle.type)")
-                                Text("Distance: \(String(format: "%.1f", obstacle.distance)) cm")
-                                Text("Detected: \(obstacle.detectedAt.formatted())")
+                // Warning Output section
+                VStack(spacing: 10) {
+                    Text("Warning Output")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                    
+                    if showingWarning {
+                        VStack(spacing: 12) {
+                            // Warning message
+                            Text(currentWarning)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.red.opacity(0.1))
+                                .cornerRadius(10)
+                            
+                            // Show obstacle details if available
+                            if let obstacle = currentObstacle {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("Detected Obstacle:")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                    
+                                    HStack {
+                                        Text("Type:")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(obstacle.type)
+                                            .font(.body)
+                                            .fontWeight(.medium)
+                                    }
+                                    
+                                    HStack {
+                                        Text("Distance:")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text("\(String(format: "%.1f", obstacle.distance)) cm")
+                                            .font(.body)
+                                            .fontWeight(.medium)
+                                    }
+                                    
+                                    HStack {
+                                        Text("Detected:")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                        Text(obstacle.detectedAt.formatted(date: .omitted, time: .standard))
+                                            .font(.caption)
+                                    }
+                                }
+                                .padding()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color.blue.opacity(0.05))
+                                .cornerRadius(10)
                             }
+                        }
+                        .padding(.horizontal)
+                    } else {
+                        Text("No warning generated yet")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .italic()
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
-                            .background(Color.blue.opacity(0.1))
+                            .background(Color.gray.opacity(0.05))
                             .cornerRadius(10)
                             .padding(.horizontal)
-                        }
                     }
                 }
                 }
                 .padding(.bottom, 50) // Extra padding at bottom for keyboard
             }
+            .navigationTitle("Warning Test")
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                autoCamera.startSession()
+                // Camera session will start only when needed (not immediately)
+                setupBluetoothListener()
             }
             .onDisappear {
+                // Stop camera if it's running
                 autoCamera.stopSession()
+                removeBluetoothListener()
             }
             .onChange(of: autoCamera.capturedImage) { _, newImage in
                 print("📸 onChange triggered, newImage: \(newImage != nil ? "exists" : "nil")")
@@ -180,6 +210,70 @@ struct WarningTestView: View {
     }
     
     // MARK: - Helper Methods
+    
+    private func setupBluetoothListener() {
+        NotificationCenter.default.addObserver(
+            forName: .obstacleDetected,
+            object: nil,
+            queue: .main
+        ) { notification in
+            if let rawMessage = notification.userInfo?["rawMessage"] as? String {
+                self.bluetoothSignal = rawMessage
+                self.lastReceivedTime = Date()
+                
+                // Automatically process the Bluetooth signal
+                self.processBluetoothSignal(rawMessage)
+            }
+        }
+    }
+    
+    private func removeBluetoothListener() {
+        NotificationCenter.default.removeObserver(self, name: .obstacleDetected, object: nil)
+    }
+    
+    private func processBluetoothSignal(_ signal: String) {
+        print(String(repeating: "-", count: 60))
+        processStartTime = Date()
+        print("📡 Processing Bluetooth signal: \(signal)")
+        
+        // Process the signal same way as manual input
+        currentSignal = signal
+        isProcessing = true
+        showingWarning = false
+        currentObstacle = nil
+        
+        // Start camera session
+        print("📸 Starting camera session...")
+        autoCamera.startSession()
+        
+        // Wait a moment for camera to initialize, then capture
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("📸 Calling autoCamera.capturePhoto()...")
+            self.autoCamera.capturePhoto()
+            
+            // Wait for photo capture and then process
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if let image = self.autoCamera.capturedImage {
+                    print("📸 Photo captured, processing...")
+                    self.capturedImage = image
+                    self.processCapturedImage()
+                } else {
+                    print("❌ No image captured after 2 seconds")
+                    self.isProcessing = false
+                    
+                    // Still show warning without image classification
+                    let warning = self.sensorProcessor.receiveSignal(signal)
+                    self.currentWarning = warning
+                    self.showingWarning = true
+                    
+                    // Stop camera session
+                    self.autoCamera.stopSession()
+                    
+                    self.printTotalTime()
+                }
+            }
+        }
+    }
     
     private func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -199,31 +293,45 @@ struct WarningTestView: View {
             return
         }
         
+        print(String(repeating: "-", count: 60))
+        processStartTime = Date()
+        print("📝 Processing Manual signal: \(signal)")
+        
         // Valid signal received - trigger auto camera capture
-        print("📸 Valid signal received: \(signal) - triggering auto camera capture")
         currentSignal = signal // Store the signal for later processing
         isProcessing = true
         showingWarning = false
         currentObstacle = nil
         
-        // Auto-capture photo
-        print("📸 Calling autoCamera.capturePhoto()...")
-        autoCamera.capturePhoto()
-        
         // Clear the input field
         signalText = ""
         
-        // Wait for photo capture and then process
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            if let image = self.autoCamera.capturedImage {
-                print("📸 Photo captured, processing...")
-                self.capturedImage = image
-                self.processCapturedImage()
-            } else {
-                print("❌ No image captured after 2 seconds")
-                self.isProcessing = false
-                self.currentWarning = "Failed to capture image"
-                self.showingWarning = true
+        // Start camera session
+        print("📸 Starting camera session...")
+        autoCamera.startSession()
+        
+        // Wait a moment for camera to initialize, then capture
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("📸 Calling autoCamera.capturePhoto()...")
+            self.autoCamera.capturePhoto()
+            
+            // Wait for photo capture and then process
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if let image = self.autoCamera.capturedImage {
+                    print("📸 Photo captured, processing...")
+                    self.capturedImage = image
+                    self.processCapturedImage()
+                } else {
+                    print("❌ No image captured after 2 seconds")
+                    self.isProcessing = false
+                    self.currentWarning = "Failed to capture image"
+                    self.showingWarning = true
+                    
+                    // Stop camera session
+                    self.autoCamera.stopSession()
+                    
+                    self.printTotalTime()
+                }
             }
         }
     }
@@ -261,6 +369,13 @@ struct WarningTestView: View {
                 self.showingWarning = true
                 
                 print("✅ Obstacle created: \(objectType) at \(distance) cm")
+                
+                // Stop camera session after processing is complete
+                print("📸 Stopping camera session...")
+                self.autoCamera.stopSession()
+                
+                // Print total time
+                self.printTotalTime()
             }
         }
     }
@@ -280,6 +395,16 @@ struct WarningTestView: View {
         let obstacleName = obstacleType.lowercased()
         return baseWarning.replacingOccurrences(of: "an obstacle", with: "a \(obstacleName)")
                           .replacingOccurrences(of: "obstacle", with: obstacleName)
+    }
+    
+    private func printTotalTime() {
+        guard let startTime = processStartTime else { return }
+        
+        let endTime = Date()
+        let totalTime = endTime.timeIntervalSince(startTime)
+        
+        print("⏱️  Total time for this process: \(String(format: "%.2f", totalTime)) seconds")
+        print(String(repeating: "-", count: 60))
     }
 }
 

@@ -1,420 +1,221 @@
-SMARTCANE PROJECT STRUCTURE SUMMARY
+SMARTCANE PROJECT STRUCTURE
+============================
+
+Total: 39 Swift Files
+
+=====================================
+🏗️ CORE APP ARCHITECTURE
 =====================================
 
-Total Count: 64 Classes & Structs
-
-=====================================
-🏗️ CORE APP ARCHITECTURE (3)
-=====================================
-
-App Entry Point:
-• SmartCaneApp (struct) - Main app entry point that initializes the SwiftUI application and sets MainTabView as the root view.
+• SmartCaneApp (struct) - Main app entry point that initializes the SwiftUI application.
   📁 File: SmartCaneApp.swift
 
-Navigation & UI Structure:
-• MainTabView (struct) - Root tab view containing all 5 main app sections (Home, Map, Saved Locations, Object Detection, Profile).
+• MainTabView (struct) - Root tab view containing 4 main app sections (Home, Map, Detection, Settings).
   📁 File: MainTabView.swift
 
-Theme & Configuration:
-• Theme (enum) - Centralized color scheme and visual theme configuration for consistent branding throughout the app.
+• Theme (enum) - Centralized color scheme and visual theme configuration for consistent branding.
   📁 File: Theme.swift
 
-=====================================
-🗣️ VOICE & ACCESSIBILITY (2)
-=====================================
-
-Speech Management:
-• SpeechManager (class) - Singleton class that handles text-to-speech functionality with user preference checking for accessibility features.
-  📁 File: SpeechManager.swift
-
-• SpeechService (class) - Alternative simpler speech service that provides basic text-to-speech without user preference validation.
-  📁 File: SpeechService.swift
-
-=====================================
-🗺️ LOCATION & MAPPING (3)
-=====================================
-
-Location Services:
-• LocationManager (class) - CoreLocation wrapper that manages GPS tracking, permissions, and user location updates with delegate pattern.
-  📁 File: LocationManager.swift
-
-Map Views:
-• MapView (struct) - Main map interface with search functionality, pin placement, and saved location display using MapKit.
-  📁 File: MapView.swift
-
-• SavedLocation (struct) - Data model for storing user-saved locations with GPS coordinates, names, addresses, and notes.
-  📁 File: SavedLocationsView.swift
-
-=====================================
-🤖 AI & OBJECT DETECTION (10)
-=====================================
-
-Core AI Components:
-• ObstacleClassifierManager (class) - Singleton that loads and manages CoreML model for obstacle detection with Vision framework integration.
-  📁 File: ObstacleClassifierManager.swift
-
-• SensorSignal (class) - Processes raw ESP32 Bluetooth signals and converts them into readable obstacle warnings and directions.
-  📁 File: SensorSignalProcessor.swift
-
-• Obstacle (struct) - Data model for detected obstacles with GPS coordinates, type, and detection timestamp.
-  📁 File: Obstacle.swift
-
-Detection Views & Components:
-• ObjectDetectionView (struct) - Main interface for camera/photo-based obstacle detection with classification results display.
-  📁 File: ObjectDetectionView.swift
-
-• WarningTestView (struct) - Integrated test interface that combines sensor signals with vision detection to generate unified warnings.
-  📁 File: WarningTestView.swift
-
-• AutoCameraCapture (class) - Automatic camera capture manager for background photo capture without user interaction.
-  📁 File: AutoCameraCapture.swift
-
-• DirectionTestView (struct) - Debug view for testing ESP32 signal parsing with manual input validation.
-  📁 File: DirectionTestView.swift
-
-• DetectionRecord (struct) - Data model for storing detection history with metadata and confidence scores.
-  📁 File: ObjectDetectionView.swift
-
-• DetectionRecordMetadata (struct) - Additional metadata structure for detection records with extended information.
-  📁 File: ObjectDetectionView.swift
-
-• CameraView (struct) - UIViewControllerRepresentable wrapper for native iOS camera integration.
-  📁 File: ObjectDetectionView.swift
-
-=====================================
-📡 BLUETOOTH & HARDWARE (4)
-=====================================
-
-Bluetooth Management:
-• ESP32BluetoothManager (class) - CoreBluetooth manager for real ESP32 device communication with service discovery and data handling.
-  📁 File: ESP32BluetoothManager.swift
-
-• ESP32SmartCane (struct) - Data model representing ESP32 SmartCane devices with connection status and device information.
-  📁 File: ESP32BluetoothManager.swift
-
-Bluetooth UI Components:
-• BluetoothConnectionState (enum) - Connection state enumeration (disconnected, connecting, connected) for Bluetooth device status.
-  📁 File: ESP32BluetoothManager.swift
-
-• MockBluetoothDevice (struct) - Mock device model for testing Bluetooth connection UI with ESP32-specific properties.
-  📁 File: SettingsScreen.swift
-
-=====================================
-🏠 HOME & NAVIGATION (8)
-=====================================
-
-Home Screen Components:
-• HomeScreen (struct) - Main home interface with quick access buttons to all app features and voice feedback.
-  📁 File: HomeScreen.swift
-
-• HomeButton (struct) - Reusable button component for home screen navigation with consistent styling.
-  📁 File: HomeScreen.swift
-
-• HomeButtonView (struct) - Enhanced button view with icon and text for home screen feature access.
-  📁 File: HomeScreen.swift
-
-Routes & Navigation:
-• MyRoutesView (struct) - Interface for managing saved routes with search and organization features.
-  📁 File: MyRoutesView.swift
-
-• SavedRoute (struct) - Data model for user-saved navigation routes with waypoints and metadata.
-  📁 File: MyRoutesView.swift
-
-• RouteRowView (struct) - Individual route display component for the routes list interface.
-  📁 File: MyRoutesView.swift
-
-• AddRouteView (struct) - Form interface for creating and saving new navigation routes.
-  📁 File: MyRoutesView.swift
-
-• SearchBar (struct) - Reusable search input component used across multiple views.
-  📁 File: MyRoutesView.swift
-
-=====================================
-📍 LOCATION MANAGEMENT (4)
-=====================================
-
-Location Views:
-• SavedLocationsView (struct) - Main interface for viewing, searching, and managing saved locations with real-time updates.
-  📁 File: SavedLocationsView.swift
-
-• SavedLocationRow (struct) - Individual location display component with map navigation and deletion functionality.
-  📁 File: SavedLocationsView.swift
-
-• AddLocationView (struct) - Form interface for adding new saved locations with GPS coordinates and notes.
-  📁 File: AddLocationView.swift
-
-• LocationMapView (struct) - Dedicated map view for location selection and preview functionality.
-  📁 File: MapView.swift
-
-=====================================
-⚙️ SETTINGS & CONFIGURATION (15)
-=====================================
-
-Main Settings:
-• SettingsScreen (struct) - Central settings interface with device permissions, Bluetooth status, and app configuration options.
-  📁 File: SettingsScreen.swift
-
-• BluetoothDeviceListView (struct) - Device selection interface for connecting to ESP32 SmartCane devices.
-  📁 File: SettingsScreen.swift
-
-• NotificationSettingsView (struct) - Notification preferences and quiet hours configuration interface.
-  📁 File: NotificationSettingsView.swift
-
-Privacy & Permissions:
-• PrivacySettingsView (struct) - Privacy controls and data usage information interface.
-  📁 File: PrivacySettingsView.swift
-
-• DataUsageView (struct) - Data usage statistics and management interface.
-  📁 File: PrivacySettingsView.swift
-
-• DataUsageItem (struct) - Individual data usage item display component.
-  📁 File: PrivacySettingsView.swift
-
-• LocationPermissionsView (struct) - Location permission status and management interface.
-  📁 File: PrivacySettingsView.swift
-
-• CameraPermissionsView (struct) - Camera permission status and management interface.
-  📁 File: PrivacySettingsView.swift
-
-• BluetoothPermissionsView (struct) - Bluetooth permission status and management interface.
-  📁 File: PrivacySettingsView.swift
-
-Legal & About:
-• PrivacyPolicyView (struct) - Privacy policy display interface with legal information.
-  📁 File: PrivacySettingsView.swift
-
-• TermsOfServiceView (struct) - Terms of service display interface with legal agreements.
-  📁 File: PrivacySettingsView.swift
-
-• AboutView (struct) - App information, features, and team details interface.
-  📁 File: AboutView.swift
-
-• FeatureRow (struct) - Individual feature description component for about page.
-  📁 File: AboutView.swift
-
-• TechRow (struct) - Technology stack information display component.
-  📁 File: AboutView.swift
-
-• TeamMemberRow (struct) - Team member information display component.
-  📁 File: AboutView.swift
-
-• ContactRow (struct) - Contact information display component.
-  📁 File: AboutView.swift
-
-• LegalRow (struct) - Legal information display component.
-  📁 File: AboutView.swift
-
-Sound Settings:
-• QuietHoursView (struct) - Quiet hours configuration interface for notification scheduling.
-  📁 File: NotificationSettingsView.swift
-
-• SoundSettingsView (struct) - Sound and voice feedback configuration interface.
-  📁 File: NotificationSettingsView.swift
-
-=====================================
-👤 USER PROFILE (2)
-=====================================
-
-Profile Management:
-• ProfileView (struct) - User profile interface with account information and app statistics.
-  📁 File: ProfileView.swift
-
-• EditProfileView (struct) - Profile editing form for updating user information and preferences.
-  📁 File: EditProfileView.swift
-
-=====================================
-🔧 UTILITIES & HELPERS (11)
-=====================================
-
-Network & Data:
-• NetworkManager (class) - Basic networking manager with dummy JSON data for API simulation.
-  📁 File: NetworkManager.swift
-
-• ObstacleData (struct) - Network data model for obstacle information from API responses.
-  📁 File: NetworkManager.swift
-
-• UserData (struct) - Network data model for user information from API responses.
-  📁 File: NetworkManager.swift
-
-• NetworkDemoView (struct) - Demo interface for testing network functionality.
-  📁 File: NetworkDemoView.swift
-
-Logging & Events:
-• ObstacleLogger (class) - Event logging system for obstacle detection with persistent storage.
-  📁 File: ObstacleLogger.swift
-
-• ObstacleEvent (struct) - Log event data model for obstacle detection tracking.
-  📁 File: ObstacleLogger.swift
-
-Configuration:
 • AppKeys (enum) - UserDefaults key constants for app configuration and preferences.
   📁 File: AppKeys.swift
 
-UI Components:
+• ContentView (struct) - Legacy content view (may be deprecated).
+  📁 File: ContentView.swift
+
+=====================================
+🗣️ VOICE & ACCESSIBILITY
+=====================================
+
+• SpeechManager (class) - Singleton class that handles text-to-speech functionality with user preference checking.
+  📁 File: AVSpeechSynthesizer/SpeechManager.swift
+
+• SpeechService (class) - Alternative simpler speech service that provides basic text-to-speech without user preference validation.
+  📁 File: AVSpeechSynthesizer/SpeechService.swift
+
+=====================================
+🗺️ LOCATION & MAPPING
+=====================================
+
+• LocationManager (class) - CoreLocation wrapper that manages GPS tracking, permissions, and user location updates.
+  📁 File: Map/LocationManager.swift
+
+• MapView (struct) - Main map interface with search functionality, pin placement, and saved location display.
+  📁 File: Map/MapView.swift
+
+• SavedLocation (struct) - Data model for storing user-saved locations with GPS coordinates, names, addresses, and notes.
+  📁 File: Home/SavedLocationsView.swift
+
+=====================================
+🤖 AI & OBJECT DETECTION
+=====================================
+
+• ObstacleClassifierManager (class) - Singleton that loads and manages CoreML model for obstacle detection.
+  📁 File: Obstacle/ObstacleClassifierManager.swift
+
+• SensorSignalProcessor (class) - Processes raw ESP32 Bluetooth signals and converts them into readable obstacle warnings.
+  📁 File: Obstacle/SensorSignalProcessor.swift
+
+• Obstacle (struct) - Data model for detected obstacles with GPS coordinates, type, and detection timestamp.
+  📁 File: Obstacle/Obstacle.swift
+
+• ObjectDetectionView (struct) - Main interface for camera/photo-based obstacle detection with classification results display.
+  📁 File: Obstacle/ObjectDetectionView.swift
+
+• WarningTestView (struct) - Integrated test interface that combines sensor signals with vision detection to generate unified warnings.
+  📁 File: Obstacle/WarningTestView.swift
+
+• AutoCameraCapture (class) - Automatic camera capture manager for background photo capture without user interaction.
+  📁 File: Obstacle/AutoCameraCapture.swift
+
 • PhotoPicker (struct) - UIViewControllerRepresentable wrapper for photo library access.
+  📁 File: Obstacle/PhotoPicker.swift
+
+• ObstacleClassifier.mlpackage - CoreML model package for obstacle classification with trained weights.
+  📁 File: Obstacle/ObstacleClassifier.mlpackage/
+
+=====================================
+📡 BLUETOOTH & HARDWARE
+=====================================
+
+• ESP32BluetoothManager (class) - CoreBluetooth manager for real ESP32 device communication with service discovery and data handling.
+  📁 File: Home/Setting/ESP32BluetoothManager.swift
+
+• ESP32SmartCane (struct) - Data model representing ESP32 SmartCane devices with connection status and device information.
+  📁 File: Home/Setting/ESP32BluetoothManager.swift
+
+• BluetoothConnectionState (enum) - Connection state enumeration (disconnected, connecting, connected) for Bluetooth device status.
+  📁 File: Home/Setting/ESP32BluetoothManager.swift
+
+=====================================
+🏠 HOME & NAVIGATION
+=====================================
+
+• HomeScreen (struct) - Main home interface with quick access buttons to all app features and voice feedback.
+  📁 File: Home/HomeScreen.swift
+
+• ProfileView (struct) - User profile interface with account information and app statistics.
+  📁 File: Home/ProfileView.swift
+
+• EditProfileView (struct) - Profile editing form for updating user information and preferences.
+  📁 File: Home/EditProfileView.swift
+
+• MyRoutesView (struct) - Interface for managing saved routes with search and organization features.
+  📁 File: Home/MyRoutesView.swift
+
+• SavedRoute (struct) - Data model for user-saved navigation routes with waypoints and metadata.
+  📁 File: Home/MyRoutesView.swift
+
+• RouteRowView (struct) - Individual route display component for the routes list interface.
+  📁 File: Home/MyRoutesView.swift
+
+• SavedLocationsView (struct) - Main interface for viewing, searching, and managing saved locations with real-time updates.
+  📁 File: Home/SavedLocationsView.swift
+
+• SavedLocationRow (struct) - Individual location display component with map navigation and deletion functionality.
+  📁 File: Home/SavedLocationsView.swift
+
+• AddLocationView (struct) - Form interface for adding new saved locations with GPS coordinates and notes.
+  📁 File: Home/Setting/AddLocationView.swift
+
+=====================================
+⚙️ SETTINGS & CONFIGURATION
+=====================================
+
+• SettingsScreen (struct) - Central settings interface with device permissions, Bluetooth status, and app configuration options.
+  📁 File: Home/Setting/SettingsScreen.swift
+
+• NotificationSettingsView (struct) - Notification preferences and quiet hours configuration interface.
+  📁 File: Home/Setting/NotificationSettingsView.swift
+
+• PrivacySettingsView (struct) - Privacy controls and data usage information interface.
+  📁 File: Home/Setting/PrivacySettingsView.swift
+
+• AboutView (struct) - App information, features, and team details interface.
+  📁 File: Home/Setting/AboutView.swift
+
+• FeatureRow (struct) - Individual feature description component for about page.
+  📁 File: Home/Setting/AboutView.swift
+
+• TechRow (struct) - Technology stack information display component.
+  📁 File: Home/Setting/AboutView.swift
+
+=====================================
+📊 DATA & NETWORKING
+=====================================
+
+• NetworkManager (class) - Basic networking manager with dummy JSON data for API simulation.
+  📁 File: Networking/NetworkManager.swift
+
+• NetworkDemoView (struct) - Demo interface for testing network functionality.
+  📁 File: Networking/NetworkDemoView.swift
+
+• Pipeline (class) - Main pipeline for handling incoming obstacle data and saving to Supabase.
+  📁 File: Networking/Pipeline.swift
+
+• AppError (enum) - Unified app error type for consistent error handling.
+  📁 File: Networking/Pipeline.swift
+
+• SmartCaneDataService (class) - Service for managing Supabase database operations.
+  📁 File: Supabase/SmartCaneDataService.swift
+
+• SupabaseClient (class) - Supabase client configuration and setup.
+  📁 File: Supabase/SupabaseClient.swift
+
+=====================================
+🗄️ DATA MODELS
+=====================================
+
+• ObstacleLog (struct) - Data model for obstacle detection logs stored in Supabase.
+  📁 File: Supabase/ObstacleLog.swift
+
+• DeviceStatus (struct) - Device status model for ESP32 SmartCane device information.
+  📁 File: Supabase/SmartCaneModels.swift
+
+• ObstacleLogsView (struct) - View for displaying and managing obstacle logs from Supabase.
+  📁 File: Supabase/ObstacleLogsView.swift
+
+• ObstacleLogger (class) - Event logging system for obstacle detection with persistent storage.
+  📁 File: Logging/ObstacleLogger.swift
+
+• ObstacleEvent (struct) - Log event data model for obstacle detection tracking.
+  📁 File: Logging/ObstacleLogger.swift
+
+• ExportLogs (struct) - View for exporting obstacle logs to CSV format.
+  📁 File: Logging/ExportLogs.swift
+
+=====================================
+🎥 LIVE & TESTING
+=====================================
+
+• LiveScreen (struct) - Live mode interface for real-time obstacle detection testing.
+  📁 File: LiveScreen.swift
+
+• PhotoPicker (struct) - Alternative photo picker implementation.
   📁 File: PhotoPicker.swift
 
-• SimpleButtonStyle (struct) - Custom button styling for consistent UI appearance.
-  📁 File: ObjectDetectionView.swift
-
-• PrimaryButtonStyle (struct) - Primary action button styling for important UI elements.
-  📁 File: MyRoutesView.swift
-
-• DemoButtonStyle (struct) - Demo-specific button styling for testing interfaces.
-  📁 File: NetworkDemoView.swift
-
 =====================================
-📊 PROJECT STATISTICS
+📡 nRF CONNECT APP SETUP
 =====================================
 
-• Total Classes: 13 (Managers, Services, Loggers)
-• Total Structs: 48 (Views, Data Models, UI Components)  
-• Total Enums: 3 (Configuration, States, Themes)
-• Lines of Code: ~3,000+ lines across all files
-• Architecture: MVVM pattern with SwiftUI views and ObservableObject managers
+1. Install nRF Connect app on Android device from Play Store
 
-=====================================
-📁 FILE STRUCTURE SUMMARY
-=====================================
+2. Configure the app:
+   - Service UUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
+   - TX Characteristic: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
+   - RX Characteristic: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
 
-Core App Files:
-• SmartCaneApp.swift - Main app entry point
-• MainTabView.swift - Tab navigation
-• Theme.swift - App theming
-• AppKeys.swift - Configuration keys
+3. Message format to send:
+   - Format: "F:20", "L:20", "R:20", "B:20" (F=front, L=left, R=right, B=back)
+   - Example: "F:20" for front obstacle at 20cm
 
-Voice & Accessibility:
-• SpeechManager.swift - TTS manager
-• SpeechService.swift - TTS service
+4. Connect iPhone to MacBook:
+   - Connect iPhone to MacBook via USB cable
+   - Open Xcode on MacBook
+   - Run the SmartCane app on iPhone from Xcode
+   - Check Xcode console to see printed messages when signals are received
 
-Location & Mapping:
-• LocationManager.swift - GPS manager
-• MapView.swift - Map interface & location models
-
-AI & Object Detection:
-• ObstacleClassifierManager.swift - AI manager
-• SensorSignalProcessor.swift - Signal processor
-• ObjectDetectionView.swift - Detection UI & models
-• WarningTestView.swift - Warning test interface (combines sensor + vision)
-• AutoCameraCapture.swift - Automatic camera capture manager
-• DirectionTestView.swift - Debug interface
-• Obstacle.swift - Obstacle data model
-• PhotoPicker.swift - Camera picker
-
-Bluetooth & Hardware:
-• ESP32BluetoothManager.swift - Bluetooth manager & device models
-
-Home & Navigation:
-• HomeScreen.swift - Home interface & buttons
-• SavedLocationsView.swift - Location management & models
-• MyRoutesView.swift - Routes management & models
-• ProfileView.swift - User profile
-• EditProfileView.swift - Profile editing
-
-Settings & Configuration:
-• SettingsScreen.swift - Main settings & Bluetooth UI
-• NotificationSettingsView.swift - Notifications & sound
-• PrivacySettingsView.swift - Privacy & permissions
-• AboutView.swift - App info & team
-• AddLocationView.swift - Add location form
-
-Utilities & Helpers:
-• NetworkManager.swift - Network manager & data models
-• NetworkDemoView.swift - Network demo & button styles
-• ObstacleLogger.swift - Event logging & models
-
-=====================================
-This structure shows a well-organized accessibility-focused iOS app with comprehensive Bluetooth integration, AI-powered obstacle detection, and robust location management capabilities!
-
-=====================================
-📝 TASK 5.3: MOCK REPLAY MODE PLAN
-=====================================
-
-OBJECTIVE:
-Create a prototype "replay mode" that simulates playing back test logs of sensor and vision data for debugging and evaluation using mock data and print statements.
-
-IMPLEMENTATION APPROACH:
-Instead of real logging infrastructure, use mock data and print statements to demonstrate the replay concept quickly.
-
-PHASE 1: Mock Test Session Data
---------------------------------
-• Create MockTestSession struct with hardcoded test data
-• Define MockTestEvent with timestamp, event type, and data
-• Pre-populate 3 mock sessions:
-  - "Morning Walk Test" (5 sensor events, 3 vision detections)
-  - "Indoor Navigation" (8 sensor events, 4 vision detections)
-  - "Outdoor Obstacle Course" (12 sensor events, 6 vision detections)
-
-PHASE 2: Mock Logging in WarningTestView
-----------------------------------------
-• Add print statements for all events:
-  - "📝 LOG: Sensor signal received - [signal] at [timestamp]"
-  - "📝 LOG: Camera captured image at [timestamp]"
-  - "📝 LOG: Vision classified as [result] with [confidence]% at [timestamp]"
-  - "📝 LOG: Warning generated - [warning] at [timestamp]"
-• Add session start/stop buttons (print only, no real logging)
-• Console output shows all "logged" events in real-time
-
-PHASE 3: Mock Replay Mode View
--------------------------------
-• Create new MockReplayView SwiftUI component
-• Display list of mock test sessions
-• Show session metadata (name, event count, timestamp)
-• Select session to "replay"
-• Print replay events to console one by one
-
-PHASE 4: Mock Replay Controls
-------------------------------
-• Play button: Start replaying events
-• Progress bar: Show replay timeline
-• Event display: Show current event being replayed
-• Speed control: Adjust delay between events (0.5s, 1s, 2s)
-• Print statements simulate event replay
-
-MOCK DATA STRUCTURE:
--------------------
-struct MockTestSession {
-    let id: UUID
-    let sessionName: String
-    let startTime: Date
-    let eventCount: Int
-    let events: [MockTestEvent]
-}
-
-struct MockTestEvent {
-    let timestamp: Date
-    let eventType: String  // "SENSOR", "VISION", "WARNING"
-    let data: String
-}
-
-BENEFITS:
----------
-✅ Fast implementation (no complex storage)
-✅ Easy testing via Xcode console
-✅ Demonstrates replay concept
-✅ No storage/performance issues
-✅ Can be upgraded to real logging later
-
-USER WORKFLOW:
---------------
-1. Test: Use WarningTestView normally, see print statements
-2. Browse: Go to MockReplayView, see mock sessions
-3. Replay: Select session, watch events "replay"
-4. Verify: Console shows all replay events with timing
-
-FILES TO CREATE:
-----------------
-• MockReplayView.swift - Replay UI with session list
-• MockTestSession.swift - Mock data models
-• (Optional) TestSessionLogger.swift - Print statement wrapper
-
-INTEGRATION:
-------------
-• Add MockReplayView to MainTabView or WarningTestView
-• Link from Settings or Object Detection tab
-• Minimal changes to existing code
-
-STATUS: PLANNING COMPLETE - READY FOR IMPLEMENTATION
-DUE DATE: 09/28/2025
-
-=====================================
+5. Testing process:
+   - Open nRF Connect app on Android
+   - Connect Android to iPhone via Bluetooth
+   - Send obstacle signals like "F:20", "L:30" from Android
+   - Watch Xcode console on MacBook to see the printed messages
