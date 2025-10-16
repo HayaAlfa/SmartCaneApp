@@ -24,8 +24,12 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     private var centralManager: CBCentralManager!
     private var connectedPeripheral: CBPeripheral?
     
-    // ESP32 Service and Characteristic UUIDs
-    static let serviceUUID = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E") // Nordic UART Service
+    // ESP32 Service and Characteristic UUIDs (from Michelle's ESP32 code)
+    static let serviceUUID = CBUUID(string: "34123456-1234-1234-1234-1234567890AB") // SmartCane Service
+    static let characteristicUUID = CBUUID(string: "34123456-1234-1234-1234-1234567890AC") // SmartCane Characteristic
+    
+    // Legacy Nordic UART Service UUIDs (for nRF Connect testing)
+    static let nordicServiceUUID = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")
     static let rxCharacteristicUUID = CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E") // RX (Write)
     static let txCharacteristicUUID = CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") // TX (Notify)
     
@@ -121,20 +125,24 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
         print("📡 Discovered device: \(peripheral.name ?? "Unknown") - RSSI: \(RSSI)")
         print("   Advertisement data: \(advertisementData)")
         
-        // Check if device advertises Nordic UART Service
+        // Check if device advertises SmartCane Service or Nordic UART Service
         let serviceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
-        let hasNordicUART = serviceUUIDs?.contains(Self.serviceUUID) ?? false
+        let hasSmartCaneService = serviceUUIDs?.contains(Self.serviceUUID) ?? false
+        let hasNordicUART = serviceUUIDs?.contains(Self.nordicServiceUUID) ?? false
         
         // Check if this is a SmartCane device (by name OR by service UUID)
         let hasSmartCaneName = peripheral.name?.contains("SmartCane") == true
         
-        if !hasSmartCaneName && !hasNordicUART {
-            print("   ❌ Not a SmartCane device (name doesn't contain 'SmartCane' and no Nordic UART service)")
+        if !hasSmartCaneName && !hasSmartCaneService && !hasNordicUART {
+            print("   ❌ Not a SmartCane device")
             return
         }
         
+        if hasSmartCaneService {
+            print("   ✅ SmartCane Service found! (ESP32)")
+        }
         if hasNordicUART {
-            print("   ✅ Nordic UART Service found! This is likely a SmartCane device")
+            print("   ✅ Nordic UART Service found! (nRF Connect)")
         }
         if hasSmartCaneName {
             print("   ✅ SmartCane device found by name!")
@@ -162,8 +170,12 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
         connectedPeripheral = peripheral
         peripheral.delegate = self
         
-        // Discover services
-        peripheral.discoverServices([Self.serviceUUID])
+        // Wait a bit for ESP32 to finish setting up services
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            print("🔍 Starting service discovery...")
+            // Discover ALL services (nil = discover all)
+            peripheral.discoverServices(nil)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -193,37 +205,105 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
 extension ESP32BluetoothManager: CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        guard let services = peripheral.services else { return }
+        if let error = error {
+            print("❌ Service discovery error: \(error.localizedDescription)")
+            return
+        }
+        
+        guard let services = peripheral.services else {
+            print("❌ No services found - ESP32 might not have created services yet")
+            print("💡 Retrying service discovery in 2 seconds...")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                peripheral.discoverServices(nil)
+            }
+            return
+        }
+        
+        if services.isEmpty {
+            print("❌ Services array is empty - ESP32 GATT server not ready")
+            print("💡 Retrying service discovery in 2 seconds...")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                peripheral.discoverServices(nil)
+            }
+            return
+        }
+        
+        print("🔍 Found \(services.count) service(s):")
+        for service in services {
+            print("   - Service UUID: \(service.uuid)")
+        }
         
         for service in services {
             if service.uuid == Self.serviceUUID {
-                print("🔍 Discovered ESP32 service")
+                print("✅ Discovered ESP32 SmartCane service")
+                peripheral.discoverCharacteristics([Self.characteristicUUID], for: service)
+            } else if service.uuid == Self.nordicServiceUUID {
+                print("✅ Discovered Nordic UART service (nRF Connect)")
                 peripheral.discoverCharacteristics([Self.rxCharacteristicUUID, Self.txCharacteristicUUID], for: service)
+            } else {
+                // Discover ALL characteristics for unknown services
+                print("🔍 Discovering characteristics for unknown service: \(service.uuid)")
+                peripheral.discoverCharacteristics(nil, for: service)
             }
         }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        guard let characteristics = service.characteristics else { return }
+        if let error = error {
+            print("❌ Characteristic discovery error: \(error.localizedDescription)")
+            return
+        }
+        
+        guard let characteristics = service.characteristics else {
+            print("❌ No characteristics found for service: \(service.uuid)")
+            return
+        }
+        
+        print("🔍 Found \(characteristics.count) characteristic(s) for service \(service.uuid):")
+        for char in characteristics {
+            print("   - Characteristic UUID: \(char.uuid)")
+            print("     Properties: \(char.properties)")
+        }
         
         var rxCharacteristic: CBCharacteristic?
         var txCharacteristic: CBCharacteristic?
+        var smartCaneChar: CBCharacteristic?
         
         for characteristic in characteristics {
-            if characteristic.uuid == Self.rxCharacteristicUUID {
+            // ESP32 SmartCane characteristic (READ | NOTIFY)
+            if characteristic.uuid == Self.characteristicUUID {
+                smartCaneChar = characteristic
+                print("📥 Found SmartCane characteristic (ESP32)")
+                // Subscribe to notifications
+                peripheral.setNotifyValue(true, for: characteristic)
+            }
+            // Nordic UART Service characteristics (for nRF Connect)
+            else if characteristic.uuid == Self.rxCharacteristicUUID {
                 rxCharacteristic = characteristic
                 print("📤 Found RX characteristic (Write)")
             } else if characteristic.uuid == Self.txCharacteristicUUID {
                 txCharacteristic = characteristic
                 print("📥 Found TX characteristic (Notify)")
-                
                 // Subscribe to notifications
                 peripheral.setNotifyValue(true, for: characteristic)
             }
         }
         
-        // Create connected device
-        if let rxChar = rxCharacteristic, let txChar = txCharacteristic {
+        // Create connected device (ESP32 or nRF Connect)
+        if let smartChar = smartCaneChar {
+            // ESP32 SmartCane device
+            connectedDevice = ESP32SmartCane(
+                name: peripheral.name ?? "SmartCane",
+                peripheral: peripheral,
+                rssi: 0,
+                rxCharacteristic: nil,
+                txCharacteristic: smartChar
+            )
+            isConnected = true
+            connectionState = .connected
+            print("✅ ESP32 SmartCane fully connected and ready")
+        } else if let rxChar = rxCharacteristic, let txChar = txCharacteristic {
+            // nRF Connect device
             connectedDevice = ESP32SmartCane(
                 name: peripheral.name ?? "SmartCane",
                 peripheral: peripheral,
@@ -231,10 +311,9 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
                 rxCharacteristic: rxChar,
                 txCharacteristic: txChar
             )
-            
             isConnected = true
             connectionState = .connected
-            print("✅ ESP32 SmartCane fully connected and ready")
+            print("✅ nRF Connect device fully connected and ready")
         }
     }
     
@@ -249,55 +328,155 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
     
     // Handle incoming data from ESP32
     private func handleIncomingData(_ message: String) {
-
-        // Expected format: "OBSTACLE:distance:direction:confidence"
-        if message.hasPrefix("OBSTACLE:") {
-            let components = message.dropFirst(9).split(separator: ":")
-            if components.count >= 3 {
-
-                let distance = Int(components[0]) ?? 0
-                let direction = String(components[1])
-                let confidence = Double(components[2]) ?? 0.0
-
-                print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
-
-                Task {
-                    await Pipeline().handleIncomingObstacle(distance: distance,
-                                                            direction: direction,
-                                                            confidence: confidence)
-                }
-//
-//                // Optionally notify UI
-                NotificationCenter.default.post(
-                    name: .obstacleDetected,
-                    object: nil,
-                    userInfo: [
-                        "distance": distance,
-                        "direction": direction,
-                        "confidence": confidence
-                    ]
-                )
-            }
+        print("📥 Raw message received: \(message)")
+        
+        // Try to parse as JSON first (ESP32 format)
+        if let jsonData = message.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] {
+            handleJSONFormat(json)
+            return
         }
-
-        print("📥 Raw message from ESP32: \(message)")
         
-        // Use SensorSignalProcessor to parse the message
-        let sensorProcessor = SensorSignal()
-        let parsedResult = sensorProcessor.receiveSignal(message)
+        // Try simple format (nRF Connect: "F:20", "L:20", etc.)
+        if message.contains(":") && message.count < 10 {
+            handleSimpleFormat(message)
+            return
+        }
         
-        print("📝 Parsed result: \(parsedResult)")
+        // Try OBSTACLE format: "OBSTACLE:distance:direction:confidence"
+        if message.hasPrefix("OBSTACLE:") {
+            handleObstacleFormat(message)
+            return
+        }
         
-        // Post notification with parsed result
+        print("⚠️ Unknown message format: \(message)")
+    }
+    
+    // Handle JSON format from ESP32: {"cm":-1.0,"ir":0,"zone":0,"buzz":0,"mot":0}
+    private func handleJSONFormat(_ json: [String: Any]) {
+        guard let cm = json["cm"] as? Double else {
+            print("❌ Invalid JSON format - missing 'cm' field")
+            return
+        }
+        
+        let ir = json["ir"] as? Int ?? 0
+        let zone = json["zone"] as? Int ?? 0
+        let buzz = json["buzz"] as? Int ?? 0
+        let mot = json["mot"] as? Int ?? 0
+        
+        // Skip if no obstacle detected (cm < 0 means timeout, zone 0 means no obstacle)
+        if cm < 0 || (zone == 0 && ir == 0) {
+            print("📊 ESP32 Status: cm=\(cm), ir=\(ir), zone=\(zone), buzz=\(buzz), mot=\(mot)% - No obstacle")
+            return
+        }
+        
+        let distance = Int(cm)
+        
+        // Determine direction based on zone
+        let direction: String
+        switch zone {
+        case 1: direction = "left"
+        case 2: direction = "front"
+        case 3: direction = "right"
+        default: direction = "front"
+        }
+        
+        // Calculate confidence based on IR sensor and motor intensity
+        let confidence = ir == 1 ? 0.95 : Double(mot) / 100.0
+        
+        print("🚧 ESP32 Obstacle: \(distance)cm, zone=\(zone) (\(direction)), ir=\(ir), mot=\(mot)%")
+        
+        Task {
+            await Pipeline().handleIncomingObstacle(distance: distance,
+                                                    direction: direction,
+                                                    confidence: confidence)
+        }
+        
         NotificationCenter.default.post(
             name: .obstacleDetected,
             object: nil,
             userInfo: [
-                "rawMessage": message,
-                "parsedResult": parsedResult
+                "distance": distance,
+                "direction": direction,
+                "confidence": confidence,
+                "ir": ir,
+                "zone": zone,
+                "buzz": buzz,
+                "mot": mot,
+                "json": json
             ]
         )
-
+    }
+    
+    // Handle simple format from nRF Connect: "F:20", "L:20", "R:20", "B:20"
+    private func handleSimpleFormat(_ message: String) {
+        let components = message.split(separator: ":")
+        guard components.count == 2,
+              let directionChar = components[0].first,
+              let distance = Int(components[1]) else {
+            print("❌ Invalid simple format")
+            return
+        }
+        
+        let direction: String
+        switch directionChar {
+        case "F", "f": direction = "front"
+        case "L", "l": direction = "left"
+        case "R", "r": direction = "right"
+        case "B", "b": direction = "back"
+        default: direction = "front"
+        }
+        
+        let confidence = 0.85
+        
+        print("🚧 nRF Connect Obstacle: \(distance)cm, \(direction)")
+        
+        Task {
+            await Pipeline().handleIncomingObstacle(distance: distance,
+                                                    direction: direction,
+                                                    confidence: confidence)
+        }
+        
+        NotificationCenter.default.post(
+            name: .obstacleDetected,
+            object: nil,
+            userInfo: [
+                "distance": distance,
+                "direction": direction,
+                "confidence": confidence
+            ]
+        )
+    }
+    
+    // Handle OBSTACLE format: "OBSTACLE:distance:direction:confidence"
+    private func handleObstacleFormat(_ message: String) {
+        let components = message.dropFirst(9).split(separator: ":")
+        guard components.count >= 3 else {
+            print("❌ Invalid OBSTACLE format")
+            return
+        }
+        
+        let distance = Int(components[0]) ?? 0
+        let direction = String(components[1])
+        let confidence = Double(components[2]) ?? 0.0
+        
+        print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
+        
+        Task {
+            await Pipeline().handleIncomingObstacle(distance: distance,
+                                                    direction: direction,
+                                                    confidence: confidence)
+        }
+        
+        NotificationCenter.default.post(
+            name: .obstacleDetected,
+            object: nil,
+            userInfo: [
+                "distance": distance,
+                "direction": direction,
+                "confidence": confidence
+            ]
+        )
     }
 
 }
