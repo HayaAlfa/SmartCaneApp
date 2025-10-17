@@ -3,8 +3,8 @@ import SwiftUI
 struct ProfileView: View {
     @State private var showingEditProfile = false
     @State private var showingAbout = false
-    @State private var userName = "John Doe"
-    @State private var userEmail = "john.doe@example.com"
+    @State private var userName: String = ""
+    @State private var userEmail: String = ""
     @State private var userPhone = "+1 (555) 123-4567"
     
     var body: some View {
@@ -16,11 +16,11 @@ struct ProfileView: View {
                         .font(.system(size: 80))
                         .foregroundColor(.blue)
                     
-                    Text(userName)
+                    Text(userName.isEmpty ? "Username" : userName)
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text(userEmail)
+                    Text(userEmail.isEmpty ? "Email" : userEmail)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
@@ -65,16 +65,26 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadCurrentUser()
+            }
             .sheet(isPresented: $showingEditProfile) {
-                EditProfileView(
-                    userName: $userName,
-                    userEmail: $userEmail,
-                    userPhone: $userPhone
-                )
+                EditProfileView ()
+                    
+                    
+                    
             }
             .sheet(isPresented: $showingAbout) {
                 AboutView()
             }
+        }
+    }
+    // MARK: - Load current user credentials
+    private func loadCurrentUser() {
+        if let user = supabase.auth.currentUser {
+            userEmail = user.email ?? ""
+            userName = UserDefaults.standard.string(forKey: "username") ?? ""
+            userPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
         }
     }
 }

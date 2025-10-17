@@ -1,65 +1,53 @@
 import SwiftUI
+import Supabase
 
 struct EditProfileView: View {
-    // MARK: - Properties
-    // @Binding creates a two-way connection with the parent view's data
-    // Changes here will update the parent view, and vice versa
-    @Binding var userName: String      // User's display name
-    @Binding var userEmail: String     // User's email address
-    @Binding var userPhone: String     // User's phone number
+    // MARK: - Observed ViewModel
+    @StateObject private var authVM = AuthViewModel()
     
     // MARK: - Environment
-    // @Environment provides access to the current view's environment
-    @Environment(\.dismiss) private var dismiss  // Used to close the sheet
+    @Environment(\.dismiss) private var dismiss
     
-    // MARK: - State Properties
-    // @State properties are used for temporary data while editing
-    // These are separate from the binding properties to allow for "Cancel" functionality
-    @State private var tempUserName: String = ""    // Temporary copy of user name
-    @State private var tempUserEmail: String = ""   // Temporary copy of user email
-    @State private var tempUserPhone: String = ""   // Temporary copy of user phone
+    // MARK: - State for temporary editing
+    @State private var tempUsername: String = ""
+    @State private var tempEmail: String = ""
+    @State private var tempPhone: String = ""
+    @State private var errorMessage: String?
+    @State private var isSaving = false
     
     var body: some View {
         NavigationView {
             Form {
-                // MARK: - Personal Information Section
-                // Main form section for user details
                 Section("Personal Information") {
-                    // MARK: - Name Input Field
-                    // Text field for editing user's full name
-                    TextField("Full Name", text: $tempUserName)
-                        .textContentType(.name)  // iOS will suggest names from contacts
+                    TextField("Username", text: $tempUsername)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
                     
-                    // MARK: - Email Input Field
-                    // Text field for editing user's email address
-                    TextField("Email", text: $tempUserEmail)
-                        .textContentType(.emailAddress)  // iOS will suggest emails
-                        .keyboardType(.emailAddress)     // Show email keyboard
-                        .autocapitalization(.none)       // Don't auto-capitalize emails
+                    TextField("Email", text: $tempEmail)
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .disabled(true) // email can't be edited
                     
-                    // MARK: - Phone Input Field
-                    // Text field for editing user's phone number
-                    TextField("Phone Number", text: $tempUserPhone)
-                        .textContentType(.telephoneNumber)  // iOS will suggest phone numbers
-                        .keyboardType(.phonePad)            // Show phone number keyboard
+                    TextField("Phone Number", text: $tempPhone)
+                        .keyboardType(.phonePad)
                 }
                 
-                // MARK: - Profile Picture Section
-                // Section for managing profile picture (currently just a placeholder)
+                if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                }
+                
                 Section("Profile Picture") {
                     HStack {
-                        // MARK: - Current Profile Picture
-                        // Display the current profile picture (using SF Symbols for now)
                         Image(systemName: "person.circle.fill")
                             .font(.system(size: 60))
                             .foregroundColor(.blue)
                         
-                        // MARK: - Profile Picture Info
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Profile Picture")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
-                            
                             Text("Tap to change")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
@@ -67,74 +55,65 @@ struct EditProfileView: View {
                         
                         Spacer()
                         
-                        // MARK: - Change Picture Button
-                        // Button to change profile picture (placeholder functionality)
                         Button("Change") {
-                            // In a real app, this would open photo picker
-                            // For now, it's just a placeholder
+                            // Add photo picker here
                         }
                         .foregroundColor(.blue)
                     }
                     .padding(.vertical, 8)
                 }
             }
-            .navigationTitle("Edit Profile")  // Navigation bar title
-            .navigationBarTitleDisplayMode(.inline)  // Inline title style
+            .navigationTitle("Edit Profile")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    // MARK: - Cancel Button
-                    // Button to discard changes and return to original values
-                    Button("Cancel") {
-                        dismiss()  // Close the sheet without saving
-                    }
+                    Button("Cancel") { dismiss() }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    // MARK: - Save Button
-                    // Button to apply changes and update the parent view
                     Button("Save") {
-                        saveChanges()  // Call the save function
+                        Task { await saveProfile() }
                     }
-                    .disabled(tempUserName.isEmpty || tempUserEmail.isEmpty)  // Disable if required fields are empty
+                    .disabled(tempUsername.isEmpty || isSaving)
                 }
             }
             .onAppear {
-                // MARK: - View Setup
-                // This runs when the view appears on screen
-                // Copy the current values to temporary variables
-                tempUserName = userName
-                tempUserEmail = userEmail
-                tempUserPhone = userPhone
+                // Load current credentials from Supabase
+                if let user = supabase.auth.currentUser {
+                    tempEmail = user.email ?? ""
+                    tempUsername = UserDefaults.standard.string(forKey: "username") ?? ""
+                    tempPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
+                }
             }
         }
     }
     
-    // MARK: - Helper Methods
-    
-    // MARK: - Save Changes Function
-    // Updates the parent view with the edited values
-    private func saveChanges() {
-        // Update the binding properties with the temporary values
-        userName = tempUserName
-        userEmail = tempUserEmail
-        userPhone = tempUserPhone
+    // MARK: - Save profile to Supabase / local storage
+    private func saveProfile() async {
+        guard let user = supabase.auth.currentUser else { return }
+        isSaving = true
+        defer { isSaving = false }
         
-        // In a real app, you would save to a backend service here
-        // For example:
-        // UserService.shared.updateProfile(name: userName, email: userEmail, phone: userPhone)
-        
-        // Close the sheet
-        dismiss()
+        do {
+            // Save username locally for now
+            UserDefaults.standard.set(tempUsername, forKey: "username")
+            UserDefaults.standard.set(tempPhone, forKey: "phone")
+            
+            // Optionally update a Supabase table like "profiles" for extra fields
+            let updateData = ProfileUpdate(username: tempUsername, phone: tempPhone)
+            try await supabase
+                .from("profiles")
+                .update(updateData) // ✅ Works
+                .eq("id", value: user.id)
+                .execute()
+            
+            dismiss()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
-
-// MARK: - Preview
-// Shows the view in Xcode's canvas for design purposes
-// We use .constant() to create binding values for the preview
-#Preview {
-    EditProfileView(
-        userName: .constant("John Doe"),
-        userEmail: .constant("john@example.com"),
-        userPhone: .constant("+1 (555) 123-4567")
-    )
+struct ProfileUpdate: Encodable {
+    let username: String
+    let phone: String
 }

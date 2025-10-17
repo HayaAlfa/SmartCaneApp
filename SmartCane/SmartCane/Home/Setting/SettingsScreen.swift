@@ -13,6 +13,13 @@ import CoreBluetooth      // For real Bluetooth functionality
 // This screen provides app configuration options and user preferences
 // It allows users to customize their experience with the SmartCane app
 struct SettingsScreen: View {
+    private let onSignOut: () async -> Void
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
+    init(onSignOut: @escaping () async -> Void = {}) {
+        self.onSignOut = onSignOut
+    }
+
     // MARK: - App Storage Properties
     // @AppStorage automatically saves/loads values from UserDefaults
     // This ensures user preferences persist between app launches
@@ -116,12 +123,12 @@ struct SettingsScreen: View {
                         
                         // Bluetooth toggle
                         Toggle("", isOn: $bluetoothEnabled)
-                        .onChange(of: bluetoothEnabled) { _, newValue in
-                            if !newValue {
-                                // If Bluetooth is disabled, disconnect SmartCane
-                                btManager.disconnect()
+                            .onChange(of: bluetoothEnabled) { newValue in
+                                if !newValue {
+                                    // If Bluetooth is disabled, disconnect SmartCane
+                                    btManager.disconnect()
+                                }
                             }
-                        }
                         
                         // Button to open bluetooth settings
                         Button("Settings") {
@@ -205,6 +212,17 @@ struct SettingsScreen: View {
                         // TODO: implement persistence clear
                     } label: {
                         Label("Clear Logs", systemImage: "trash")
+                    }
+                }
+
+                Section("Account") {
+                    Button(role: .destructive) {
+                        Task {
+                            await authViewModel.signOut()
+                            await onSignOut()
+                        }
+                    } label: {
+                        Text("Sign Out")
                     }
                 }
 
@@ -334,6 +352,3 @@ struct BluetoothDeviceListView: View {
 
 // MARK: - Preview
 // Shows the view in Xcode's canvas for design purposes
-#Preview {
-    SettingsScreen()
-}

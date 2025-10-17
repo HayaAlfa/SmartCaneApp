@@ -13,6 +13,14 @@ import SwiftUI
 struct MainTabView: View {
     // MARK: - State Properties
     // Tracks which tab is currently selected (0 = Home, 1 = Map, 2 = Detection)
+    @Binding var isAuthenticated: Bool   // ✅ added to handle logout
+    private let onSignOut: () async -> Void
+
+    init(isAuthenticated: Binding<Bool>, onSignOut: @escaping () async -> Void = {}) {
+        self._isAuthenticated = isAuthenticated
+        self.onSignOut = onSignOut
+    }
+
     @State private var selectedTab = 0
     
     // MARK: - Main Body
@@ -50,8 +58,7 @@ struct MainTabView: View {
                 }
                 .tag(2)  // Unique identifier for this tab
 
-
-            SettingsScreen()
+            SettingsScreen(onSignOut: onSignOut)
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
@@ -62,8 +69,8 @@ struct MainTabView: View {
         }
         // MARK: - Tab Change Handler
         // This triggers whenever user switches to a different tab
-        .onChange(of: selectedTab) {
-            speakTabChange(selectedTab)  // Provide voice feedback for tab changes
+        .onChange(of: selectedTab) { newTab in
+            speakTabChange(newTab)  // Provide voice feedback for tab changes
         }
         // MARK: - Visual Styling
         .tint(Theme.brand)      // Use app's brand color for selected tab
@@ -73,11 +80,12 @@ struct MainTabView: View {
 
 // MARK: - Preview
 // Shows the view in Xcode's canvas for design purposes
-#Preview {MainTabView()}
+#Preview { MainTabView(isAuthenticated: .constant(true)) }
 #Preview("Dark Mode") {
-    MainTabView()
-        .preferredColorScheme(.dark)  // Test how it looks in dark mode
+    MainTabView(isAuthenticated: .constant(true))
+        .preferredColorScheme(.dark)
 }
+
 
 // MARK: - Tab Change Voice Feedback
 // This function provides voice feedback when user switches tabs

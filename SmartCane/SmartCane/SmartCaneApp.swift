@@ -12,16 +12,22 @@ import SwiftUI
 // The @main attribute tells SwiftUI this is where the app starts
 @main
 struct SmartCaneApp: App {
-    // MARK: - App Body
-    // This defines the main scene of the application
-    // A Scene represents a part of the app's user interface
+    @StateObject private var authViewModel = AuthViewModel()
+
+
     var body: some Scene {
-        // WindowGroup creates the main window for the app
-        // This is where the primary user interface is displayed
         WindowGroup {
-            // MainTabView is the root view that contains all the app's tabs
-            // This provides the bottom tab navigation between different screens
-            MainTabView()
+            if authViewModel.isAuthenticated {
+                MainTabView(isAuthenticated: .constant(false))
+                    .environmentObject(authViewModel)
+                    .task { await authViewModel.restoreSession() }
+                
+            } else {
+                AuthView()
+                    .environmentObject(authViewModel)
+                    .task { await authViewModel.restoreSession() }
+            }
+            
         }
     }
 }

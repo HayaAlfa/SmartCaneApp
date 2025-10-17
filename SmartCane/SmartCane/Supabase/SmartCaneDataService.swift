@@ -9,6 +9,17 @@ import Foundation
 import Supabase
 import PostgREST
 
+enum SmartCaneDataServiceError: LocalizedError {
+    case notAuthenticated
+
+    var errorDescription: String? {
+        switch self {
+        case .notAuthenticated:
+            return "You need to be signed in to manage obstacle logs."
+        }
+    }
+}
+
 class SmartCaneDataService: ObservableObject {
     @Published var obstacleLogs: [ObstacleLog] = []
     
@@ -31,72 +42,70 @@ class SmartCaneDataService: ObservableObject {
     
     // MARK: - Insert log into Supabase
     @MainActor
-    func saveObstacleLog(_ obstacle: ObstacleLog) async throws{
-        do {
-            let insert = ObstacleLogInsert(
-                device_id: obstacle.deviceId ?? "cane-001",
-                obstacle_type: obstacle.obstacleType,
-                distance_cm: obstacle.distanceCm,
-                confidence_score: obstacle.confidenceScore,
-                sensor_type: obstacle.sensorType,
-                latitude: obstacle.latitude,
-                longitude: obstacle.longitude,
-                severity_level: obstacle.severityLevel,
-                user_id: obstacle.userId
-            )
-            
-            try await supabase
-                .from("obstacle_logs")
-                .insert(insert)
-                .execute()
-            
-            print("✅ Obstacle log inserted!")
-            await fetchObstacleLogs(deviceId: currentDeviceFilter)
-        } catch {
-            print("❌ Insert failed: \(error)")
-            throw error
+    func saveObstacleLog(_ obstacle: ObstacleLog) async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            print("❌ No logged-in user")
+            throw SmartCaneDataServiceError.notAuthenticated
         }
+        
+        let insert = ObstacleLogInsert(
+            device_id: obstacle.deviceId ?? "cane-001",
+            obstacle_type: obstacle.obstacleType,
+            distance_cm: obstacle.distanceCm,
+            confidence_score: obstacle.confidenceScore,
+            sensor_type: obstacle.sensorType,
+            latitude: obstacle.latitude,
+            longitude: obstacle.longitude,
+            severity_level: obstacle.severityLevel,
+            user_id: userId // ✅ Tie log to the logged-in user
+        )
+        
+        try await supabase
+            .from("obstacle_logs")
+            .insert(insert)
+            .execute()
+        
+        print("✅ Obstacle log inserted!")
+        try await fetchObstacleLogs(deviceId: currentDeviceFilter)
     }
-    
-    // MARK: - Fetch logs from Supabase
+
     @MainActor
-    func fetchObstacleLogs(deviceId: String? = nil) async {
-        do {
-            if deviceId != currentDeviceFilter {
-                currentDeviceFilter = deviceId
-                resetAnnouncementTracking()
-            }
-
-            var query = supabase
-                .from("obstacle_logs")
-                .select()
-            
-            if let id = deviceId, !id.isEmpty {
-                query = query.eq("device_id", value: id)
-            }
-            
-            let logs: [ObstacleLog] = try await query
-                .execute()
-                .value
-            
-            let logKeys = logs.map(announcementKey(for:))
-            let newLogs: [ObstacleLog]
-            if hasLoadedInitialLogs {
-                newLogs = zip(logs, logKeys)
-                    .filter { !announcedObstacleKeys.contains($0.1) }
-                    .map { $0.0 }
-            } else {
-                newLogs = []
-                hasLoadedInitialLogs = true
-            }
-            logKeys.forEach { announcedObstacleKeys.insert($0) }
-
-            newLogs.forEach { announceObstacleLog($0) }
-            self.obstacleLogs = logs
-            print("✅ Loaded obstacle logs: \(logs.count)")
-        } catch {
-            print("❌ Error fetching logs: \(error)")
+    func fetchObstacleLogs(deviceId: String? = nil) async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            throw SmartCaneDataServiceError.notAuthenticated
         }
+
+        if deviceId != currentDeviceFilter {
+            currentDeviceFilter = deviceId
+            resetAnnouncementTracking()
+        }
+
+        var query = supabase
+            .from("obstacle_logs")
+            .select()
+            .eq("user_id", value: userId) // ✅ Only this user's logs
+
+        if let id = deviceId, !id.isEmpty {
+            query = query.eq("device_id", value: id)
+        }
+        
+        let logs: [ObstacleLog] = try await query.execute().value
+
+        let logKeys = logs.map(announcementKey(for:))
+        let newLogs: [ObstacleLog]
+        if hasLoadedInitialLogs {
+            newLogs = zip(logs, logKeys)
+                .filter { !announcedObstacleKeys.contains($0.1) }
+                .map { $0.0 }
+        } else {
+            newLogs = []
+            hasLoadedInitialLogs = true
+        }
+        logKeys.forEach { announcedObstacleKeys.insert($0) }
+
+        newLogs.forEach { announceObstacleLog($0) }
+        self.obstacleLogs = logs
+        print("✅ Loaded obstacle logs: \(logs.count)")
     }
 
     // MARK: - Announcement Helpers

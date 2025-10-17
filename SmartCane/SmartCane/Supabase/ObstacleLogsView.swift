@@ -8,22 +8,21 @@
 import SwiftUI
 
 struct ObstacleLogsView: View {
-    @StateObject private var dataService = SmartCaneDataService()
+    @StateObject private var dataService: SmartCaneDataService
     @State private var isLoading = true
     @State private var appError: AppError?
     @State private var showConfirm = false        // for clear button alert
+
+    init() {
+        let sharedService = SmartCaneDataService()
+        _dataService = StateObject(wrappedValue: sharedService)
+    }
     
     var body: some View {
         ZStack {
             VStack {
                 Button("➕ Add Test Log") {
-                    Task {
-                        await Pipeline().handleIncomingObstacle(
-                            distance: 120,
-                            direction: "front",
-                            confidence: 0.95
-                        )
-                    }
+                    Task { await addTestLog() }
                 }
                 .padding(.vertical)
 
@@ -49,7 +48,7 @@ struct ObstacleLogsView: View {
             }
             .onReceive(NotificationCenter.default.publisher(for: .obstacleDetected)) { _ in
                 Task { @MainActor in
-                    await dataService.fetchObstacleLogs()
+                    try? await dataService.fetchObstacleLogs()
                 }
             }
             
@@ -77,13 +76,28 @@ struct ObstacleLogsView: View {
     }
     
     // MARK: - Helpers
+    @MainActor
     private func loadLogs() async {
         isLoading = true
         defer { isLoading = false }
         do {
-            await dataService.fetchObstacleLogs()
+            try await dataService.fetchObstacleLogs()
+        } catch SmartCaneDataServiceError.notAuthenticated {
+            appError = .database("Please sign in to view your obstacle logs.")
+            dataService.obstacleLogs = []
         } catch {
-            appError = .database("Could not fetch obstacle logs. Check your connection.")
+            appError = .database("Could not fetch obstacle logs. \(error.localizedDescription)")
         }
+    }
+
+    @MainActor
+    private func addTestLog() async {
+        let pipeline = Pipeline(dataService: dataService)
+        await pipeline.handleIncomingObstacle(
+            distance: 120,
+            direction: "front obstacle",
+            confidence: 0.95
+        )
+        appError = pipeline.appError
     }
 }

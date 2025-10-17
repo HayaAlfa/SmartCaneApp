@@ -15,33 +15,49 @@ final class Pipeline: ObservableObject {
     @Published var appError: AppError?
 
     private let speech = SpeechManager.shared
-    private let dataService = SmartCaneDataService()
+    private let dataService: SmartCaneDataService
+
+    init(dataService: SmartCaneDataService = SmartCaneDataService()) {
+        self.dataService = dataService
+    }
 
     // MARK: - Handle Incoming Obstacle
     func handleIncomingObstacle(distance: Int,
                                 direction: String,
                                 confidence: Double) async {
+        guard let user = supabase.auth.currentUser else {
+            appError = .database("You must be signed in to record obstacle logs.")
+            return
+        }
+
         isSaving = true
         defer { isSaving = false }
 
         // 1️⃣ Build log model
         let log = ObstacleLog(
+            id: nil,
             deviceId: "SmartCane_001",
+            userId: user.id,
             obstacleType: direction,
             distanceCm: distance,
             confidenceScore: confidence,
             sensorType: "ultrasonic",
-            severityLevel: 1,
             latitude: nil,
-            longitude: nil
+            longitude: nil,
+            timestamp: Date(),
+            userVerified: nil,
+            severityLevel: 1,
+            createdAt: nil
         )
 
         // 2️⃣ Save to Supabase with retry
         do {
             try await saveLogWithRetry(log)
             print("✅ Saved obstacle log to Supabase")
+            NotificationCenter.default.post(name: .obstacleDetected, object: nil)
             // 3️⃣ Voice feedback
             speech.speak(_text: "Obstacle \(direction) at \(distance) centimeters away.")
+            appError = nil
         } catch {
             print("❌ Save failed: \(error.localizedDescription)")
             appError = .database("Could not save to Supabase. Check your connection.")
