@@ -194,28 +194,36 @@ Total: 39 Swift Files
   📁 File: PhotoPicker.swift
 
 =====================================
-📡 nRF CONNECT APP SETUP
+📡 BLUETOOTH CONNECTION SETUP
 =====================================
 
-1. Install nRF Connect app on Android device from Play Store
+The iOS app now supports TWO connection types:
 
-2. Configure the app:
+1. ESP32 SmartCane (Michelle's hardware):
+   - Service UUID: 34123456-1234-1234-1234-123456789AAB
+   - Characteristic UUID: 34123456-1234-1234-1234-123456789AAC
+   - Message format: JSON {"cm":17.4,"ir":1,"alert":1,"buzz":1,"mot":70}
+   - Device name: "SmartCane"
+
+2. nRF Connect App (for testing):
    - Service UUID: 6E400001-B5A3-F393-E0A9-E50E24DCCA9E
    - TX Characteristic: 6E400003-B5A3-F393-E0A9-E50E24DCCA9E
    - RX Characteristic: 6E400002-B5A3-F393-E0A9-E50E24DCCA9E
-
-3. Message format to send:
-   - Format: "F:20", "L:20", "R:20", "B:20" (F=front, L=left, R=right, B=back)
+   - Message format: "F:20", "L:20", "R:20", "B:20"
    - Example: "F:20" for front obstacle at 20cm
 
-4. Connect iPhone to MacBook:
-   - Connect iPhone to MacBook via USB cable
-   - Open Xcode on MacBook
-   - Run the SmartCane app on iPhone from Xcode
-   - Check Xcode console to see printed messages when signals are received
+Testing with nRF Connect:
+1. Install nRF Connect app on Android device
+2. Configure with Nordic UART Service UUIDs above
+3. Connect iPhone to MacBook via USB
+4. Run SmartCane app from Xcode
+5. Send messages like "F:20", "L:30" from Android
+6. Watch Xcode console for printed messages
 
-5. Testing process:
-   - Open nRF Connect app on Android
-   - Connect Android to iPhone via Bluetooth
-   - Send obstacle signals like "F:20", "L:30" from Android
-   - Watch Xcode console on MacBook to see the printed messages
+Testing with ESP32:
+1. Flash Michelle's code to ESP32
+2. Power on ESP32
+3. Open SmartCane app on iPhone
+4. Connect to "SmartCane" device in Settings
+5. ESP32 sends JSON automatically when obstacles detected
+6. Watch Xcode console for messages
