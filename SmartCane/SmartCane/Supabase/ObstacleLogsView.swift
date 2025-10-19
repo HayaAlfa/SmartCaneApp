@@ -99,5 +99,6 @@ struct ObstacleLogsView: View {
             confidence: 0.95
         )
         appError = Pipeline.shared.appError
+
     }
 }

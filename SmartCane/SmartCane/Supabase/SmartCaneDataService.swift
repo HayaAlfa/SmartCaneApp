@@ -67,6 +67,7 @@ class SmartCaneDataService: ObservableObject {
         
         print("✅ Obstacle log inserted!")
         // Note: Pipeline will handle notification and refresh
+
     }
 
     @MainActor
