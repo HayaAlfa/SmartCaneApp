@@ -13,6 +13,7 @@ struct WarningTestView: View {
     @State private var bluetoothSignal: String = ""
     @State private var lastReceivedTime: Date?
     @State private var processStartTime: Date?
+    @State private var isProcessingImage = false
     private let sensorProcessor = SensorSignal()
     private let autoCamera = AutoCameraCapture.shared
     
@@ -192,20 +193,14 @@ struct WarningTestView: View {
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 // Camera session will start only when needed (not immediately)
-                setupBluetoothListener()
+                // Bluetooth listener removed - not needed for manual input
             }
             .onDisappear {
                 // Stop camera if it's running
                 autoCamera.stopSession()
-                removeBluetoothListener()
+                // Bluetooth listener removed - not needed for manual input
             }
-            .onChange(of: autoCamera.capturedImage) { _, newImage in
-                print("📸 onChange triggered, newImage: \(newImage != nil ? "exists" : "nil")")
-                if let image = newImage {
-                    capturedImage = image
-                    processCapturedImage()
-                }
-            }
+            // onChange removed - using manual delay instead to prevent double processing
         }
     }
     
@@ -217,6 +212,8 @@ struct WarningTestView: View {
             object: nil,
             queue: .main
         ) { notification in
+            // Only process if this is a real Bluetooth signal (has rawMessage)
+            // Skip if this is just a notification from manual input processing
             if let rawMessage = notification.userInfo?["rawMessage"] as? String {
                 self.bluetoothSignal = rawMessage
                 self.lastReceivedTime = Date()
@@ -338,7 +335,12 @@ struct WarningTestView: View {
     
     private func processCapturedImage() {
         guard let image = capturedImage else { return }
+        guard !isProcessingImage else { 
+            print("🔍 Already processing image, skipping...")
+            return 
+        }
         
+        isProcessingImage = true
         print("🔍 Processing captured image...")
         
         // Extract distance from the stored signal
@@ -370,12 +372,31 @@ struct WarningTestView: View {
                 
                 print("✅ Obstacle created: \(objectType) at \(distance) cm")
                 
+                // Save to Supabase using Pipeline
+                Task {
+                    await Pipeline.shared.handleIncomingObstacle(
+                        distance: Int(distance),
+                        direction: self.extractDirectionFromSignal(self.currentSignal),
+                        obstacleType: objectType,  // AI-classified obstacle type
+                        confidence: confidence
+                    )
+                    
+                    if let error = Pipeline.shared.appError {
+                        print("❌ Failed to save to Supabase: \(error.localizedDescription)")
+                    } else {
+                        print("✅ Saved to Supabase successfully")
+                    }
+                }
+                
                 // Stop camera session after processing is complete
                 print("📸 Stopping camera session...")
                 self.autoCamera.stopSession()
                 
                 // Print total time
                 self.printTotalTime()
+                
+                // Reset processing flag
+                self.isProcessingImage = false
             }
         }
     }
@@ -388,6 +409,14 @@ struct WarningTestView: View {
             }
         }
         return 30.0 // Default distance if not found
+    }
+    
+    private func extractDirectionFromSignal(_ signal: String) -> String {
+        if signal.hasPrefix("F:") { return "front" }
+        if signal.hasPrefix("L:") { return "left" }
+        if signal.hasPrefix("R:") { return "right" }
+        if signal.hasPrefix("B:") { return "back" }
+        return "front" // default
     }
     
     private func integrateObstacleType(baseWarning: String, obstacleType: String) -> String {

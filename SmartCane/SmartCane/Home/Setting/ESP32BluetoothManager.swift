@@ -33,6 +33,64 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     static let rxCharacteristicUUID = CBUUID(string: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E") // RX (Write)
     static let txCharacteristicUUID = CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E") // TX (Notify)
     
+    // MARK: - Camera + AI Classification for Bluetooth
+    private func processBluetoothObstacleWithCamera(distance: Int, direction: String, confidence: Double) async {
+        print("📸 Starting camera + AI classification for Bluetooth obstacle...")
+        
+        // Import the camera and AI components
+        let autoCamera = AutoCameraCapture.shared
+        
+        // Start camera session
+        print("📸 Starting camera session...")
+        autoCamera.startSession()
+        
+        // Wait for camera to initialize, then capture
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+        print("📸 Calling autoCamera.capturePhoto()...")
+        autoCamera.capturePhoto()
+        
+        // Wait for photo capture and then process
+        try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
+        
+        if let image = autoCamera.capturedImage {
+            print("📸 Photo captured, processing with AI...")
+            
+            // Use AI to classify the obstacle
+            await withCheckedContinuation { continuation in
+                ObstacleClassifierManager.shared.classify(image: image) { result, aiConfidence in
+                    Task { @MainActor in
+                        let objectType = result.isEmpty ? "unknown obstacle" : result
+                        print("✅ AI Classification result: \(objectType) (\(aiConfidence))")
+                        
+                        // Save to Supabase with AI-classified type
+                        await Pipeline.shared.handleIncomingObstacle(
+                            distance: distance,
+                            direction: direction,
+                            obstacleType: objectType,  // AI-classified type
+                            confidence: aiConfidence
+                        )
+                        
+                        // Stop camera session
+                        print("📸 Stopping camera session...")
+                        autoCamera.stopSession()
+                        
+                        continuation.resume()
+                    }
+                }
+            }
+        } else {
+            print("❌ No image captured after 2 seconds")
+            // Fallback: save with generic type
+            await Pipeline.shared.handleIncomingObstacle(
+                distance: distance,
+                direction: direction,
+                obstacleType: "obstacle",  // Generic fallback
+                confidence: confidence
+            )
+            autoCamera.stopSession()
+        }
+    }
+    
     // MARK: - Initialization
     override init() {
         super.init()
@@ -121,10 +179,6 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         
-        // Debug: Print ALL discovered devices
-        print("📡 Discovered device: \(peripheral.name ?? "Unknown") - RSSI: \(RSSI)")
-        print("   Advertisement data: \(advertisementData)")
-        
         // Check if device advertises SmartCane Service or Nordic UART Service
         let serviceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
         let hasSmartCaneService = serviceUUIDs?.contains(Self.serviceUUID) ?? false
@@ -133,8 +187,29 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
         // Check if this is a SmartCane device (by name OR by service UUID)
         let hasSmartCaneName = peripheral.name?.contains("SmartCane") == true
         
+        // Only log devices that have services or are SmartCane devices
+        let services = serviceUUIDs?.map { $0.uuidString }.joined(separator: ", ") ?? "none"
+        
+        // Skip logging devices with no services and no SmartCane connection
+        if !hasSmartCaneName && !hasSmartCaneService && !hasNordicUART && services == "none" {
+            return
+        }
+        
+        // Determine device type based on services
+        let deviceName = peripheral.name ?? "Unknown"
+        let deviceType: String
+        if hasNordicUART {
+            deviceType = "nRF Connect"
+        } else if hasSmartCaneService || hasSmartCaneName {
+            deviceType = "SmartCane"
+        } else {
+            deviceType = deviceName
+        }
+        
+        // Clean, short device discovery log
+        print("📡 \(deviceType) - Services: \(services)")
+        
         if !hasSmartCaneName && !hasSmartCaneService && !hasNordicUART {
-            print("   ❌ Not a SmartCane device")
             return
         }
         
@@ -228,10 +303,7 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
             return
         }
         
-        print("🔍 Found \(services.count) service(s):")
-        for service in services {
-            print("   - Service UUID: \(service.uuid)")
-        }
+        // Services found - logging removed for cleaner output
         
         for service in services {
             if service.uuid == Self.serviceUUID {
@@ -242,7 +314,6 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
                 peripheral.discoverCharacteristics([Self.rxCharacteristicUUID, Self.txCharacteristicUUID], for: service)
             } else {
                 // Discover ALL characteristics for unknown services
-                print("🔍 Discovering characteristics for unknown service: \(service.uuid)")
                 peripheral.discoverCharacteristics(nil, for: service)
             }
         }
@@ -259,11 +330,7 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
             return
         }
         
-        print("🔍 Found \(characteristics.count) characteristic(s) for service \(service.uuid):")
-        for char in characteristics {
-            print("   - Characteristic UUID: \(char.uuid)")
-            print("     Properties: \(char.properties)")
-        }
+        // Characteristics found - logging removed for cleaner output
         
         var rxCharacteristic: CBCharacteristic?
         var txCharacteristic: CBCharacteristic?
@@ -386,26 +453,14 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 ESP32 Obstacle: \(distance)cm, zone=\(zone) (\(direction)), ir=\(ir), mot=\(mot)%")
         
+        // Trigger camera + AI classification for Bluetooth signals
         Task {
-            await Pipeline().handleIncomingObstacle(distance: distance,
-                                                    direction: direction,
-                                                    confidence: confidence)
+            await processBluetoothObstacleWithCamera(
+                distance: distance,
+                direction: direction,
+                confidence: confidence
+            )
         }
-        
-        NotificationCenter.default.post(
-            name: .obstacleDetected,
-            object: nil,
-            userInfo: [
-                "distance": distance,
-                "direction": direction,
-                "confidence": confidence,
-                "ir": ir,
-                "zone": zone,
-                "buzz": buzz,
-                "mot": mot,
-                "json": json
-            ]
-        )
     }
     
     // Handle simple format from nRF Connect: "F:20", "L:20", "R:20", "B:20"
@@ -431,21 +486,16 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 nRF Connect Obstacle: \(distance)cm, \(direction)")
         
+        // Trigger camera + AI classification for nRF Connect signals
         Task {
-            await Pipeline().handleIncomingObstacle(distance: distance,
-                                                    direction: direction,
-                                                    confidence: confidence)
+            await processBluetoothObstacleWithCamera(
+                distance: distance,
+                direction: direction,
+                confidence: confidence
+            )
         }
         
-        NotificationCenter.default.post(
-            name: .obstacleDetected,
-            object: nil,
-            userInfo: [
-                "distance": distance,
-                "direction": direction,
-                "confidence": confidence
-            ]
-        )
+        // Note: Pipeline handles notifications, no need to post here
     }
     
     // Handle OBSTACLE format: "OBSTACLE:distance:direction:confidence"
@@ -463,20 +513,13 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
         
         Task {
-            await Pipeline().handleIncomingObstacle(distance: distance,
-                                                    direction: direction,
-                                                    confidence: confidence)
+            await Pipeline.shared.handleIncomingObstacle(distance: distance,
+                                                        direction: direction,
+                                                        obstacleType: "obstacle",  // Generic type for ESP32
+                                                        confidence: confidence)
         }
         
-        NotificationCenter.default.post(
-            name: .obstacleDetected,
-            object: nil,
-            userInfo: [
-                "distance": distance,
-                "direction": direction,
-                "confidence": confidence
-            ]
-        )
+        // Note: Pipeline handles notifications, no need to post here
     }
 
 }

@@ -13,7 +13,7 @@ import SwiftUI
 struct HomeScreen: View {
     @Binding var selectedTab: Int
     @StateObject private var recognizer = SpeechRecognizer()
-    @State private var navigateToObstacleLogs = false
+    // Removed navigateToObstacleLogs - no longer needed
     @State private var navigateToNavigation = false
     
     
@@ -152,8 +152,7 @@ struct HomeScreen: View {
                     // MARK: - Spacer
                     // Pushes all content to the top of the screen
                     Spacer()
-                NavigationLink(destination: ObstacleLogsView(),
-                                               isActive: $navigateToObstacleLogs) { EmptyView() }
+                // Removed duplicate ObstacleLogsView NavigationLink
 
                 NavigationLink(destination: LiveScreen(),
                                                isActive: $navigateToNavigation) { EmptyView() }
@@ -165,8 +164,8 @@ struct HomeScreen: View {
             .onChange(of: recognizer.transcript) { newValue in
                 let transcript = newValue.lowercased()
                 if transcript.contains("open obstacle logs") {
-                    navigateToObstacleLogs = true
-                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
+                    // Obstacle logs can be accessed via the button on home screen
+                    SpeechManager.shared.speak(_text: "Obstacle logs available on home screen")
                 } else if transcript.contains("start navigation") {
                     navigateToNavigation = true
                     SpeechManager.shared.speak(_text: "Starting navigation")

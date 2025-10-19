@@ -92,12 +92,12 @@ struct ObstacleLogsView: View {
 
     @MainActor
     private func addTestLog() async {
-        let pipeline = Pipeline(dataService: dataService)
-        await pipeline.handleIncomingObstacle(
+        await Pipeline.shared.handleIncomingObstacle(
             distance: 120,
-            direction: "front obstacle",
+            direction: "front",
+            obstacleType: "test obstacle",  // Test obstacle type
             confidence: 0.95
         )
-        appError = pipeline.appError
+        appError = Pipeline.shared.appError
     }
 }
