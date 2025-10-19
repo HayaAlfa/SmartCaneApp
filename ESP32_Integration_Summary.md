@@ -149,3 +149,4 @@ The app now connects to:
 
 Your iOS SmartCane app is now **fully compatible** with Michelle's ESP32 code! The app intelligently detects which device is connected (ESP32 or nRF Connect) and parses the appropriate message format automatically.
 
+

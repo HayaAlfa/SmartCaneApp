@@ -29,7 +29,7 @@ struct SettingsScreen: View {
     // These properties track the current status of various device services
     @State private var notificationsEnabled = false      // Whether notifications are allowed
     @State private var locationServicesEnabled = false   // Whether location services are active
-    @State private var bluetoothEnabled = false          // Whether bluetooth is connected
+    @AppStorage("bluetoothEnabled") private var bluetoothEnabled = false  // Persistent Bluetooth state
     @State private var showingBluetoothDevices = false
 
     
@@ -124,7 +124,10 @@ struct SettingsScreen: View {
                         // Bluetooth toggle
                         Toggle("", isOn: $bluetoothEnabled)
                             .onChange(of: bluetoothEnabled) { newValue in
-                                if !newValue {
+                                if newValue {
+                                    // If Bluetooth is enabled, start scanning
+                                    btManager.startScanning()
+                                } else {
                                     // If Bluetooth is disabled, disconnect SmartCane
                                     btManager.disconnect()
                                 }
@@ -260,8 +263,8 @@ struct SettingsScreen: View {
         // Check location permission status (simplified for demo)
         locationServicesEnabled = true // In a real app, check actual permission status
         
-        // Check bluetooth status (simplified for demo)
-        bluetoothEnabled = false // In a real app, check actual bluetooth status
+        // Bluetooth status is now persistent via @AppStorage
+        // No need to reset it here
     }
     
     // Open iOS Settings app to notification permissions

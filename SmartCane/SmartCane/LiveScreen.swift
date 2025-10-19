@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LiveScreen: View {
-    @StateObject private var pipeline = Pipeline()
+    @StateObject private var pipeline = Pipeline.shared
 
     var body: some View {
         ZStack {
@@ -21,6 +21,7 @@ struct LiveScreen: View {
                         await pipeline.handleIncomingObstacle(
                             distance: 125,
                             direction: "front",
+                            obstacleType: "simulated obstacle",
                             confidence: 0.95
                         )
                     }
@@ -37,7 +38,7 @@ struct LiveScreen: View {
             }
         }
         // ⚠️ show error alerts if something fails
-        .alert(item: $pipeline.appError) { err in
+        .alert(item: $pipeline.appError) { (err: AppError) in
             Alert(
                 title: Text("Error"),
                 message: Text(err.localizedDescription),

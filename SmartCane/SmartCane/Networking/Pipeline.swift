@@ -10,6 +10,9 @@ import AVFoundation
 
 @MainActor
 final class Pipeline: ObservableObject {
+    // MARK: - Singleton
+    static let shared = Pipeline()
+    
     // Published properties for UI feedback
     @Published var isSaving = false
     @Published var appError: AppError?
@@ -17,13 +20,14 @@ final class Pipeline: ObservableObject {
     private let speech = SpeechManager.shared
     private let dataService: SmartCaneDataService
 
-    init(dataService: SmartCaneDataService = SmartCaneDataService()) {
+    private init(dataService: SmartCaneDataService = SmartCaneDataService()) {
         self.dataService = dataService
     }
 
     // MARK: - Handle Incoming Obstacle
     func handleIncomingObstacle(distance: Int,
                                 direction: String,
+                                obstacleType: String,
                                 confidence: Double) async {
         guard let user = supabase.auth.currentUser else {
             appError = .database("You must be signed in to record obstacle logs.")
@@ -38,7 +42,7 @@ final class Pipeline: ObservableObject {
             id: nil,
             deviceId: "SmartCane_001",
             userId: user.id,
-            obstacleType: direction,
+            obstacleType: obstacleType,  // Now saves AI-classified type instead of direction
             distanceCm: distance,
             confidenceScore: confidence,
             sensorType: "ultrasonic",

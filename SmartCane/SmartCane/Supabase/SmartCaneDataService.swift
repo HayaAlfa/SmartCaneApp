@@ -66,7 +66,8 @@ class SmartCaneDataService: ObservableObject {
             .execute()
         
         print("✅ Obstacle log inserted!")
-        try await fetchObstacleLogs(deviceId: currentDeviceFilter)
+        // Note: Pipeline will handle notification and refresh
+
     }
 
     @MainActor

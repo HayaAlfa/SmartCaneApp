@@ -99,13 +99,13 @@ struct ObstacleLogsView: View {
 
     @MainActor
     private func addTestLog() async {
-        let pipeline = Pipeline(dataService: dataService)
-        await pipeline.handleIncomingObstacle(
+        await Pipeline.shared.handleIncomingObstacle(
             distance: 120,
-            direction: "front obstacle",
+            direction: "front",
+            obstacleType: "test obstacle",  // Test obstacle type
             confidence: 0.95
         )
-        appError = pipeline.appError
+        appError = Pipeline.shared.appError
         
         if let lastObstacle = dataService.obstacleLogs.first {
             let obstacleDescription = "\(lastObstacle.obstacleType) detected at \(lastObstacle.createdAt?.formatted(date: .omitted, time: .shortened) ?? "unknown time")"
@@ -114,5 +114,6 @@ struct ObstacleLogsView: View {
             }
             print("🗂️ Saved for Siri: \(obstacleDescription)")
         }
+
     }
 }

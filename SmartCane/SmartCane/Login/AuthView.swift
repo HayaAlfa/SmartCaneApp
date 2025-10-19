@@ -84,6 +84,7 @@ struct AuthView: View {
         }
         .padding()
         .fullScreenCover(isPresented: $viewModel.isAuthenticated) {
+
             MainTabView(isAuthenticated: $viewModel.isAuthenticated) {
                 await viewModel.signOut()
             }

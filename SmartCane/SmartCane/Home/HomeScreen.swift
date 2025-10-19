@@ -13,17 +13,21 @@ import SwiftUI
 struct HomeScreen: View {
     @Binding var selectedTab: Int
     @StateObject private var recognizer = SpeechRecognizer()
+    
     @AppStorage("OpenObstacleLogFromSiri", store: AppGroup.userDefaults) private var openObstacleLogFromSiri = false
     @AppStorage("OpenMyRoutesFromSiri") private var openMyRoutesFromSiri = false
     @EnvironmentObject private var authViewModel: AuthViewModel
-
+    
     @State private var navigateToObstacleLogs = false
+    
+    // Removed navigateToObstacleLogs - no longer needed
+    
     @State private var navigateToNavigation = false
     @State private var navigateToMyRoutes = false
-
+    
     
     @Environment(\.scenePhase) private var scenePhase
-
+    
     
     // MARK: - Main Body
     // This defines the main user interface of the home screen
@@ -145,7 +149,7 @@ struct HomeScreen: View {
                     SpeechManager.shared.speak(_text: "Opening obstacle logs")
                 }
                 .padding(.top, 30)
-
+                
                 // --- Centered Live Mode Button ---
                 VStack {
                     NavigationLink(destination: LiveScreen()) {
@@ -157,77 +161,77 @@ struct HomeScreen: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 18)
-
+                
                 // --- Centered Voice Command Section ---
-//                VStack {
-//                    Text("🎤 Say a command")
-//                        .font(.title3)
-//                        .foregroundColor(.secondary)
-//                        .frame(maxWidth: .infinity)
-//                        .multilineTextAlignment(.center)
-//                }
+                //                VStack {
+                //                    Text("🎤 Say a command")
+                //                        .font(.title3)
+                //                        .foregroundColor(.secondary)
+                //                        .frame(maxWidth: .infinity)
+                //                        .multilineTextAlignment(.center)
+                //                }
                 // The rest of the VStack for transcript and mic button...
-//                VStack {
-//                    Text(recognizer.transcript)
-//                        .padding()
-//                        .frame(maxWidth: .infinity)
-//                        .background(Color.gray.opacity(0.2))
-//                        .cornerRadius(10)
-//                        .padding(.horizontal)
-//                    HStack {
-//                        Spacer()
-//                        ZStack {
-//                            Circle()
-//                                .fill(Theme.brand)
-//                                .frame(width: 72, height: 72)
-//                                .shadow(radius: 5)
-//                            Button(action: {
-//                                try? recognizer.startRecording()
-//                            }) {
-//                                Image(systemName: "mic.fill")
-//                                    .font(.system(size: 34))
-//                                    .foregroundColor(.white)
-//                                    .accessibility(label: Text("Start voice command recording"))
-//                            }
-//                            .buttonStyle(PlainButtonStyle())
-//                        }
-//                        Spacer()
-//                    }
-//                    Button("Stop") {
-//                        recognizer.stopRecording()
-//                    }
-//                    .buttonStyle(.bordered)
-//                }
+                //                VStack {
+                //                    Text(recognizer.transcript)
+                //                        .padding()
+                //                        .frame(maxWidth: .infinity)
+                //                        .background(Color.gray.opacity(0.2))
+                //                        .cornerRadius(10)
+                //                        .padding(.horizontal)
+                //                    HStack {
+                //                        Spacer()
+                //                        ZStack {
+                //                            Circle()
+                //                                .fill(Theme.brand)
+                //                                .frame(width: 72, height: 72)
+                //                                .shadow(radius: 5)
+                //                            Button(action: {
+                //                                try? recognizer.startRecording()
+                //                            }) {
+                //                                Image(systemName: "mic.fill")
+                //                                    .font(.system(size: 34))
+                //                                    .foregroundColor(.white)
+                //                                    .accessibility(label: Text("Start voice command recording"))
+                //                            }
+                //                            .buttonStyle(PlainButtonStyle())
+                //                        }
+                //                        Spacer()
+                //                    }
+                //                    Button("Stop") {
+                //                        recognizer.stopRecording()
+                //                    }
+                //                    .buttonStyle(.bordered)
+                //                }
                 .padding(.bottom, 30)
-                    
-                    
-                    // MARK: - Spacer
-                    // Pushes all content to the top of the screen
-                    Spacer()
-                NavigationLink(destination: ObstacleLogsView(),
-                                               isActive: $navigateToObstacleLogs) { EmptyView() }
-
+                
+                
+                // MARK: - Spacer
+                // Pushes all content to the top of the screen
+                Spacer()
+                // Removed duplicate ObstacleLogsView NavigationLink
+                
                 NavigationLink(destination: LiveScreen(),
-                                               isActive: $navigateToNavigation) { EmptyView() }
+                               isActive: $navigateToNavigation) { EmptyView() }
                 NavigationLink(destination: MyRoutesView(), isActive: $navigateToMyRoutes) { EmptyView() }
-
-                }
-                .padding()
-                .navigationTitle("Home")
-                .navigationBarTitleDisplayMode(.inline)  // Makes title smaller and inline
-//            // 🧠 On transcript change — detect commands
-//            .onChange(of: recognizer.transcript) { newValue in
-//                let transcript = newValue.lowercased()
-//                if transcript.contains("open obstacle logs") {
-//                    navigateToObstacleLogs = true
-//                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
-//                } else if transcript.contains("start navigation") {
-//                    navigateToNavigation = true
-//                    SpeechManager.shared.speak(_text: "Starting navigation")
-//                }
-//              }
-//            
-       
+                
+            }
+            .padding()
+            .navigationTitle("Home")
+            .navigationBarTitleDisplayMode(.inline)  // Makes title smaller and inline
+            
+            //            // 🧠 On transcript change — detect commands
+            //            .onChange(of: recognizer.transcript) { newValue in
+            //                let transcript = newValue.lowercased()
+            //                if transcript.contains("open obstacle logs") {
+            //                    navigateToObstacleLogs = true
+            //                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
+            //                } else if transcript.contains("start navigation") {
+            //                    navigateToNavigation = true
+            //                    SpeechManager.shared.speak(_text: "Starting navigation")
+            //                }
+            //              }
+            //
+            
             .onChange(of: scenePhase) { newPhase in
                 if newPhase == .active {
                     if openObstacleLogFromSiri {
@@ -243,28 +247,97 @@ struct HomeScreen: View {
                     }
                 }
             }
-
+                    
+        // 🧠 On transcript change — detect commands
+            .onChange(of: recognizer.transcript) { newValue in
+                let transcript = newValue.lowercased()
+                if transcript.contains("open obstacle logs") {
+                    // Obstacle logs can be accessed via the button on home screen
+                    SpeechManager.shared.speak(_text: "Obstacle logs available on home screen")
+                } else if transcript.contains("start navigation") {
+                    navigateToNavigation = true
+                    SpeechManager.shared.speak(_text: "Starting navigation")
+                }
             }
-          }
+                    
+                }
+            }
         }
-    
-    
-    // MARK: - Preview
-    // Shows the view in Xcode's canvas for design purposes
-
-    // MARK: - Reusable Home Button Component (with action)
-    // This is a custom button component used for buttons that need custom actions
-    // It provides consistent styling and behavior for all navigation buttons
-    struct HomeButton: View {
-        // MARK: - Properties
-        let title: String        // Text displayed on the button
-        let systemImage: String  // SF Symbol icon name
-        let action: () -> Void   // Function to call when button is tapped
         
-        // MARK: - Button Body
-        // This defines the visual appearance and behavior of the button
-        var body: some View {
-            Button(action: action) {  // Call the action function when tapped
+        
+        // MARK: - Preview
+        // Shows the view in Xcode's canvas for design purposes
+        
+        // MARK: - Reusable Home Button Component (with action)
+        // This is a custom button component used for buttons that need custom actions
+        // It provides consistent styling and behavior for all navigation buttons
+        struct HomeButton: View {
+            // MARK: - Properties
+            let title: String        // Text displayed on the button
+            let systemImage: String  // SF Symbol icon name
+            let action: () -> Void   // Function to call when button is tapped
+            
+            // MARK: - Button Body
+            // This defines the visual appearance and behavior of the button
+            var body: some View {
+                Button(action: action) {  // Call the action function when tapped
+                    VStack {
+                        // MARK: - Icon Display
+                        // SF Symbol icon that represents the button's function
+                        Image(systemName: systemImage)
+                            .resizable()                    // Allows icon to be resized
+                            .scaledToFit()                  // Maintains aspect ratio
+                            .frame(width: 40, height: 40)   // Fixed size for consistency
+                            .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
+                        
+                        // MARK: - Title Text
+                        // Button title text with accessibility-friendly font
+                        Text(title)
+                            .font(.body)                    // Scalable for dynamic type (accessibility)
+                            .multilineTextAlignment(.center) // Centers text for better appearance
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 100)  // Makes button fill available width
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)      // Rounded corners for modern look
+                            .stroke(Color.primary, lineWidth: 1) // Border using system primary color
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())  // Removes default button styling for custom appearance
+            }
+        }
+        struct HomeNavButton<Destination: View>: View {
+            let title: String
+            let systemImage: String
+            let destination: Destination
+            
+            var body: some View {
+                NavigationLink(destination: destination) {
+                    VStack {
+                        Image(systemName: systemImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.primary)
+                        Text(title)
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 100)
+                    .background(RoundedRectangle(cornerRadius: 15).stroke(Color.primary, lineWidth: 1))
+                }
+            }
+        }
+        // MARK: - Home Button View Component (without action)
+        // This is a view-only version of the home button used inside NavigationLinks
+        // It provides the same visual styling but without button functionality
+        struct HomeButtonView: View {
+            // MARK: - Properties
+            let title: String        // Text displayed on the button
+            let systemImage: String  // SF Symbol icon name
+            
+            // MARK: - View Body
+            // This defines the visual appearance of the button view
+            var body: some View {
                 VStack {
                     // MARK: - Icon Display
                     // SF Symbol icon that represents the button's function
@@ -286,62 +359,7 @@ struct HomeScreen: View {
                         .stroke(Color.primary, lineWidth: 1) // Border using system primary color
                 )
             }
-            .buttonStyle(PlainButtonStyle())  // Removes default button styling for custom appearance
         }
-    }
-    struct HomeNavButton<Destination: View>: View {
-        let title: String
-        let systemImage: String
-        let destination: Destination
         
-        var body: some View {
-            NavigationLink(destination: destination) {
-                VStack {
-                    Image(systemName: systemImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 40, height: 40)
-                        .foregroundColor(.primary)
-                    Text(title)
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity, minHeight: 100)
-                .background(RoundedRectangle(cornerRadius: 15).stroke(Color.primary, lineWidth: 1))
-            }
-        }
-    }
-    // MARK: - Home Button View Component (without action)
-    // This is a view-only version of the home button used inside NavigationLinks
-    // It provides the same visual styling but without button functionality
-    struct HomeButtonView: View {
-        // MARK: - Properties
-        let title: String        // Text displayed on the button
-        let systemImage: String  // SF Symbol icon name
-        
-        // MARK: - View Body
-        // This defines the visual appearance of the button view
-        var body: some View {
-            VStack {
-                // MARK: - Icon Display
-                // SF Symbol icon that represents the button's function
-                Image(systemName: systemImage)
-                    .resizable()                    // Allows icon to be resized
-                    .scaledToFit()                  // Maintains aspect ratio
-                    .frame(width: 40, height: 40)   // Fixed size for consistency
-                    .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
-                
-                // MARK: - Title Text
-                // Button title text with accessibility-friendly font
-                Text(title)
-                    .font(.body)                    // Scalable for dynamic type (accessibility)
-                    .multilineTextAlignment(.center) // Centers text for better appearance
-            }
-            .frame(maxWidth: .infinity, minHeight: 100)  // Makes button fill available width
-            .background(
-                RoundedRectangle(cornerRadius: 15)      // Rounded corners for modern look
-                    .stroke(Color.primary, lineWidth: 1) // Border using system primary color
-            )
-        }
-    }
     
+
