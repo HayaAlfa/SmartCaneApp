@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+extension Notification.Name {
+    static let openObstacleLogs = Notification.Name("openObstacleLogs")
+    static let openSettings = Notification.Name("openSettings")
+}

@@ -94,11 +94,19 @@ class AuthViewModel: ObservableObject {
                 if !rawUsername.isEmpty {
                     UserDefaults.standard.set(emailToUse, forKey: "email_for_login_\(rawUsername)")
                     UserDefaults.standard.set(rawUsername, forKey: "username")
-                }
-                await refreshSessionState()
-                errorMessage = nil
-                if username.isEmpty {
                     username = rawUsername
+                } else {
+                    // If no username provided, extract from email or use stored username
+                    let extractedUsername = String(emailToUse.prefix(while: { $0 != "@" }))
+                    UserDefaults.standard.set(extractedUsername, forKey: "username")
+                    username = extractedUsername
+                }
+                
+                await refreshSessionState()
+                
+                errorMessage = nil
+                Task {
+                    await SmartCaneDataService().refreshLastObstacleForSiri()
                 }
             } else {
                 isAuthenticated = false
@@ -127,6 +135,8 @@ class AuthViewModel: ObservableObject {
             if !cachedUsername.isEmpty {
                 UserDefaults.standard.removeObject(forKey: "email_for_login_\(cachedUsername)")
             }
+            UserDefaults.standard.removeObject(forKey: "lastObstacleDescription_\(cachedUsername)")
+
 
             print("👋 Successfully signed out.")
         } catch {
@@ -158,9 +168,19 @@ class AuthViewModel: ObservableObject {
             let session = try await client.auth.session
             if session.user != nil {
                 isAuthenticated = true
-                username = UserDefaults.standard.string(forKey: "username") ?? ""
                 email = session.user.email ?? ""
+                
+                // Try to get username from UserDefaults first
+                if let storedUsername = UserDefaults.standard.string(forKey: "username"), !storedUsername.isEmpty {
+                    username = storedUsername
+                } else if !email.isEmpty {
+                    // If no stored username, extract from email
+                    username = String(email.prefix(while: { $0 != "@" }))
+                    UserDefaults.standard.set(username, forKey: "username")
+                }
+                
                 print("✅ Session restored for:", email)
+                print("✅ Username set to:", username)
             } else {
                 isAuthenticated = false
                 print("❌ No active session found.")

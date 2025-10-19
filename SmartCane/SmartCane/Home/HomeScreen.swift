@@ -13,9 +13,17 @@ import SwiftUI
 struct HomeScreen: View {
     @Binding var selectedTab: Int
     @StateObject private var recognizer = SpeechRecognizer()
+    @AppStorage("OpenObstacleLogFromSiri", store: AppGroup.userDefaults) private var openObstacleLogFromSiri = false
+    @AppStorage("OpenMyRoutesFromSiri") private var openMyRoutesFromSiri = false
+    @EnvironmentObject private var authViewModel: AuthViewModel
+
     @State private var navigateToObstacleLogs = false
     @State private var navigateToNavigation = false
+    @State private var navigateToMyRoutes = false
+
     
+    @Environment(\.scenePhase) private var scenePhase
+
     
     // MARK: - Main Body
     // This defines the main user interface of the home screen
@@ -24,10 +32,44 @@ struct HomeScreen: View {
             VStack(spacing: 20) {
                 // MARK: - Screen Title
                 // Dynamic type makes the title scalable for accessibility
-                let username = UserDefaults.standard.string(forKey: "username") ?? "Guest"
-                Text("Hello, \(username)!")
+                let displayName: String = {
+                    print("🔍 Debug - authViewModel.username: '\(authViewModel.username)'")
+                    print("🔍 Debug - authViewModel.email: '\(authViewModel.email)'")
+                    print("🔍 Debug - UserDefaults username: '\(UserDefaults.standard.string(forKey: "username") ?? "nil")'")
+                    
+                    // Check if username is actually an email (contains @)
+                    if !authViewModel.username.isEmpty && !authViewModel.username.contains("@") {
+                        print("✅ Using authViewModel.username: \(authViewModel.username)")
+                        return authViewModel.username
+                    } else if let storedUsername = UserDefaults.standard.string(forKey: "username"), !storedUsername.isEmpty {
+                        if storedUsername.contains("@") {
+                            // Extract username from stored email
+                            let extracted = String(storedUsername.prefix(while: { $0 != "@" }))
+                            print("✅ Using extracted from stored email: \(extracted)")
+                            return extracted
+                        } else {
+                            print("✅ Using stored username: \(storedUsername)")
+                            return storedUsername
+                        }
+                    } else if !authViewModel.email.isEmpty {
+                        // Extract username from email (part before @)
+                        let extracted = String(authViewModel.email.prefix(while: { $0 != "@" }))
+                        print("✅ Using extracted from email: \(extracted)")
+                        return extracted
+                    } else if !authViewModel.username.isEmpty && authViewModel.username.contains("@") {
+                        // Extract username from authViewModel.username if it's an email
+                        let extracted = String(authViewModel.username.prefix(while: { $0 != "@" }))
+                        print("✅ Using extracted from authViewModel.username: \(extracted)")
+                        return extracted
+                    } else {
+                        print("❌ Using Guest fallback")
+                        return "Guest"
+                    }
+                }()
+                
+                Text("Hello, \(displayName)!")
                     .font(.title) // Dynamic type - scales with user's accessibility settings
-                    .padding(.top)
+                    .padding(.top, 20)
                 
                 // MARK: - Visual Separator
                 // Divider provides visual separation between title and content
@@ -92,6 +134,16 @@ struct HomeScreen: View {
                     })
                     
                 }
+                .navigationDestination(for: String.self) { destination in
+                    if destination == "ObstacleLogs" {
+                        ObstacleLogsView()
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .openObstacleLogs)) { _ in
+                    // Siri intent triggers this notification
+                    navigateToObstacleLogs = true
+                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
+                }
                 .padding(.top, 30)
 
                 // --- Centered Live Mode Button ---
@@ -107,45 +159,45 @@ struct HomeScreen: View {
                 .padding(.top, 18)
 
                 // --- Centered Voice Command Section ---
-                VStack {
-                    Text("🎤 Say a command")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                }
+//                VStack {
+//                    Text("🎤 Say a command")
+//                        .font(.title3)
+//                        .foregroundColor(.secondary)
+//                        .frame(maxWidth: .infinity)
+//                        .multilineTextAlignment(.center)
+//                }
                 // The rest of the VStack for transcript and mic button...
-                VStack {
-                    Text(recognizer.transcript)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(10)
-                        .padding(.horizontal)
-                    HStack {
-                        Spacer()
-                        ZStack {
-                            Circle()
-                                .fill(Theme.brand)
-                                .frame(width: 72, height: 72)
-                                .shadow(radius: 5)
-                            Button(action: {
-                                try? recognizer.startRecording()
-                            }) {
-                                Image(systemName: "mic.fill")
-                                    .font(.system(size: 34))
-                                    .foregroundColor(.white)
-                                    .accessibility(label: Text("Start voice command recording"))
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                        }
-                        Spacer()
-                    }
-                    Button("Stop") {
-                        recognizer.stopRecording()
-                    }
-                    .buttonStyle(.bordered)
-                }
+//                VStack {
+//                    Text(recognizer.transcript)
+//                        .padding()
+//                        .frame(maxWidth: .infinity)
+//                        .background(Color.gray.opacity(0.2))
+//                        .cornerRadius(10)
+//                        .padding(.horizontal)
+//                    HStack {
+//                        Spacer()
+//                        ZStack {
+//                            Circle()
+//                                .fill(Theme.brand)
+//                                .frame(width: 72, height: 72)
+//                                .shadow(radius: 5)
+//                            Button(action: {
+//                                try? recognizer.startRecording()
+//                            }) {
+//                                Image(systemName: "mic.fill")
+//                                    .font(.system(size: 34))
+//                                    .foregroundColor(.white)
+//                                    .accessibility(label: Text("Start voice command recording"))
+//                            }
+//                            .buttonStyle(PlainButtonStyle())
+//                        }
+//                        Spacer()
+//                    }
+//                    Button("Stop") {
+//                        recognizer.stopRecording()
+//                    }
+//                    .buttonStyle(.bordered)
+//                }
                 .padding(.bottom, 30)
                     
                     
@@ -157,24 +209,45 @@ struct HomeScreen: View {
 
                 NavigationLink(destination: LiveScreen(),
                                                isActive: $navigateToNavigation) { EmptyView() }
+                NavigationLink(destination: MyRoutesView(), isActive: $navigateToMyRoutes) { EmptyView() }
+
                 }
                 .padding()
                 .navigationTitle("Home")
                 .navigationBarTitleDisplayMode(.inline)  // Makes title smaller and inline
-            // 🧠 On transcript change — detect commands
-            .onChange(of: recognizer.transcript) { newValue in
-                let transcript = newValue.lowercased()
-                if transcript.contains("open obstacle logs") {
-                    navigateToObstacleLogs = true
-                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
-                } else if transcript.contains("start navigation") {
-                    navigateToNavigation = true
-                    SpeechManager.shared.speak(_text: "Starting navigation")
+//            // 🧠 On transcript change — detect commands
+//            .onChange(of: recognizer.transcript) { newValue in
+//                let transcript = newValue.lowercased()
+//                if transcript.contains("open obstacle logs") {
+//                    navigateToObstacleLogs = true
+//                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
+//                } else if transcript.contains("start navigation") {
+//                    navigateToNavigation = true
+//                    SpeechManager.shared.speak(_text: "Starting navigation")
+//                }
+//              }
+//            
+       
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .active {
+                    if openObstacleLogFromSiri {
+                        navigateToObstacleLogs = true
+                        openObstacleLogFromSiri = false
+                        SpeechManager.shared.speak(_text: "Obstacle log opened.")
+                    } else if openMyRoutesFromSiri {
+                        navigateToMyRoutes = true
+                        openMyRoutesFromSiri = false
+                        SpeechManager.shared.speak(_text: "Opening my routes.")
+                    } else {
+                        SpeechManager.shared.speak(_text: "SmartCane is open. Say a command to begin.")
+                    }
                 }
-              }
+            }
+
+            }
           }
         }
-    }
+    
     
     // MARK: - Preview
     // Shows the view in Xcode's canvas for design purposes
@@ -272,4 +345,3 @@ struct HomeScreen: View {
         }
     }
     
-

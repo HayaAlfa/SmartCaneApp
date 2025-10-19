@@ -49,6 +49,13 @@ struct ObstacleLogsView: View {
             .onReceive(NotificationCenter.default.publisher(for: .obstacleDetected)) { _ in
                 Task { @MainActor in
                     try? await dataService.fetchObstacleLogs()
+                    if let latest = dataService.obstacleLogs.first {
+                             let type = latest.obstacleType
+                             let time = latest.createdAt?.formatted(date: .omitted, time: .shortened) ?? "just now"
+                             let spokenText = "Obstacle detected: \(type), at \(time)."
+                             SpeechManager.shared.speak(_text: spokenText)
+                             print("🔊 Speaking: \(spokenText)")
+                         }
                 }
             }
             
@@ -99,5 +106,13 @@ struct ObstacleLogsView: View {
             confidence: 0.95
         )
         appError = pipeline.appError
+        
+        if let lastObstacle = dataService.obstacleLogs.first {
+            let obstacleDescription = "\(lastObstacle.obstacleType) detected at \(lastObstacle.createdAt?.formatted(date: .omitted, time: .shortened) ?? "unknown time")"
+            if let username = UserDefaults.standard.string(forKey: "username") {
+                UserDefaults.standard.set(obstacleDescription, forKey: "lastObstacleDescription_\(username)")
+            }
+            print("🗂️ Saved for Siri: \(obstacleDescription)")
+        }
     }
 }

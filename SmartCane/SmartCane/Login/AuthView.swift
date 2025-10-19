@@ -36,7 +36,7 @@ struct AuthView: View {
                         .cornerRadius(8)
                 } else {
                     // Login mode: username only
-                    TextField("Username", text: $viewModel.username)
+                    TextField("Email", text: $viewModel.username)
                         .autocapitalization(.none)
                         .padding()
                         .background(Color(.secondarySystemBackground))

@@ -73,6 +73,8 @@ final class Pipeline: ObservableObject {
             } catch {
                 if attempt == 3 { throw error }
                 try? await Task.sleep(nanoseconds: 400_000_000) // 0.4s delay before retry
+                SpeechManager.shared.speak(_text: "Obstacle detected ahead.")
+
             }
         }
     }

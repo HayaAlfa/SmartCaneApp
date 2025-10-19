@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 // MARK: - Main App Entry Point
 // This is the main entry point of the SmartCane iOS application
 // The @main attribute tells SwiftUI this is where the app starts
@@ -26,6 +25,7 @@ struct SmartCaneApp: App {
                 AuthView()
                     .environmentObject(authViewModel)
                     .task { await authViewModel.restoreSession() }
+                   
             }
             
         }

@@ -89,7 +89,10 @@ class SmartCaneDataService: ObservableObject {
             query = query.eq("device_id", value: id)
         }
         
-        let logs: [ObstacleLog] = try await query.execute().value
+        let logs: [ObstacleLog] = try await query
+            .order("created_at", ascending: false) // ✅ newest first
+            .execute()
+            .value
 
         let logKeys = logs.map(announcementKey(for:))
         let newLogs: [ObstacleLog]
@@ -162,5 +165,45 @@ class SmartCaneDataService: ObservableObject {
         let message = phrases.joined(separator: ", ")
         SpeechManager.shared.speak(_text: message)
     }
+    
+    @MainActor
+    func refreshLastObstacleForSiri() async {
+        guard let userId = supabase.auth.currentUser?.id else { return }
+        
+        do {
+            // Get only the latest obstacle for this user
+            let latest: [ObstacleLog] = try await supabase
+                .from("obstacle_logs")
+                .select()
+                .eq("user_id", value: userId)
+                .order("created_at", ascending: false)
+                .limit(1)
+                .execute()
+                .value
+            
+            if let newest = latest.first {
+                        let obstacleType = newest.obstacleType.capitalized
+                        let formattedTime = newest.createdAt?.formatted(date: .omitted, time: .shortened)
+                            ?? newest.timestamp?.formatted(date: .omitted, time: .shortened)
+                            ?? "an unknown time"
+                        
+                        // ✅ Full spoken phrase for Siri
+                        let sentence = "\(obstacleType) detected at \(formattedTime)."
+                        
+                        // Save per-user Siri key
+                        let username = UserDefaults.standard.string(forKey: "username") ?? "unknown"
+                        UserDefaults.standard.set(sentence, forKey: "lastObstacleDescription_\(username)")
+                        
+                        print("✅ Siri cache refreshed for \(username): \(sentence)")
+                    } else {
+                        let username = UserDefaults.standard.string(forKey: "username") ?? "unknown"
+                        UserDefaults.standard.removeObject(forKey: "lastObstacleDescription_\(username)")
+                        print("⚠️ No obstacles found for \(username)")
+                    }
+                } catch {
+                    print("❌ Failed to refresh Siri cache:", error.localizedDescription)
+                }
+    }
+
 
 }
