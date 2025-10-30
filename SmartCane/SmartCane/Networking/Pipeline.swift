@@ -57,10 +57,11 @@ final class Pipeline: ObservableObject {
         // 2️⃣ Save to Supabase with retry
         do {
             try await saveLogWithRetry(log)
-            print("✅ Saved obstacle log to Supabase")
+            // Saved obstacle log
             NotificationCenter.default.post(name: .obstacleDetected, object: nil)
-            // 3️⃣ Voice feedback
-            speech.speak(_text: "Obstacle \(direction) at \(distance) centimeters away.")
+            // 3️⃣ Voice feedback: replace only the type, keep original phrasing
+            let spokenType = obstacleType.isEmpty ? "Obstacle" : obstacleType
+            speech.speak(_text: "\(spokenType) \(direction) at \(distance) centimeters away.")
             appError = nil
         } catch {
             print("❌ Save failed: \(error.localizedDescription)")

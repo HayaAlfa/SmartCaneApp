@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AVFAudio
 import CoreBluetooth
 import Combine
 import SwiftUI
@@ -37,6 +38,34 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     private var isProcessingObstacle = false
     private var isInCooldown = false
     private let processingQueue = DispatchQueue(label: "obstacle.processing", qos: .userInitiated)
+    private var isScreenOn = true
+
+    private func startCooldown() {
+        self.processingQueue.async {
+            self.isProcessingObstacle = false
+            self.isInCooldown = true
+            print("🔓 Processing lock released - starting 10-second cooldown")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+                self.processingQueue.async {
+                    self.isInCooldown = false
+                    print("✅ Cooldown period ended - ready for next obstacle")
+                }
+            }
+        }
+    }
+
+    private func speakObstacle(distance: Int) {
+        DispatchQueue.main.async {
+            // Ensure speaker route when speaking warnings
+            do {
+                let session = AVAudioSession.sharedInstance()
+                try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker])
+                try session.setActive(true, options: .notifyOthersOnDeactivation)
+            } catch { }
+            print("🔊 (BG/NoCam) Speaking obstacle ahead: \(distance)cm")
+            SpeechManager.shared.speak(_text: "Obstacle ahead \(distance) centimeters")
+        }
+    }
     
     // MARK: - Cooldown Check Helper
     private func canProcessObstacle() -> Bool {
@@ -77,17 +106,17 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
                         let objectType = result.isEmpty ? "unknown obstacle" : result
                         print("✅ AI Classification result: \(objectType) (\(aiConfidence))")
                         
-                        // Save to Supabase with AI-classified type
+                        // Stop camera session before speaking/logging to avoid audio route conflicts
+                        print("📸 Stopping camera session...")
+                        autoCamera.stopSession()
+                        
+                        // Save to Supabase with AI-classified type (this will speak via Pipeline)
                         await Pipeline.shared.handleIncomingObstacle(
                             distance: distance,
                             direction: direction,
                             obstacleType: objectType,  // AI-classified type
                             confidence: aiConfidence
                         )
-                        
-                        // Stop camera session
-                        print("📸 Stopping camera session...")
-                        autoCamera.stopSession()
                         
                         // Release processing lock and start cooldown
                         self.processingQueue.async {
@@ -139,8 +168,19 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     // MARK: - Initialization
     override init() {
         super.init()
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        // Use state restoration so Bluetooth can continue delivering events in background
+        centralManager = CBCentralManager(
+            delegate: self,
+            queue: nil,
+            options: [CBCentralManagerOptionRestoreIdentifierKey: "com.smartcane.central"]
+        )
+        // Screen state detection
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
+
+    @objc private func appDidEnterBackground() { isScreenOn = false }
+    @objc private func appWillEnterForeground() { isScreenOn = true }
     
     // MARK: - Public Methods
     
@@ -148,7 +188,7 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     func startScanning() {
         guard centralManager.state == .poweredOn else { return }
         
-        print("🔍 Starting scan for ESP32 SmartCane devices...")
+            // Starting scan for ESP32 SmartCane devices
         // Temporarily scan for ALL devices to debug
         centralManager.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
     }
@@ -156,7 +196,7 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     /// Stop scanning for devices
     func stopScanning() {
         centralManager.stopScan()
-        print("🛑 Stopped scanning")
+        // Stopped scanning
     }
     
     /// Connect to a specific ESP32 SmartCane device
@@ -220,6 +260,18 @@ extension ESP32BluetoothManager: CBCentralManagerDelegate {
         default:
             print("⚠️ Bluetooth state: \(central.state)")
         }
+    }
+
+    // Background restoration handler (enables delivery in background)
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+        // Restoring Bluetooth state in background/launch
+        if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral], let first = peripherals.first {
+            connectedPeripheral = first
+            connectedPeripheral?.delegate = self
+            // Restored peripheral: \(first.identifier)
+        }
+        // Resume scanning to continue receiving obstacle signals
+        startScanning()
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -466,7 +518,7 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
             return
         }
         
-        print("⚠️ Unknown message format: \(message)")
+        // Unknown message: \(message)
     }
     
     // Handle JSON format from ESP32: {"cm":-1.0,"ir":0,"zone":0,"buzz":0,"mot":0}
@@ -503,23 +555,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 ESP32 Obstacle: \(distance)cm, zone=\(zone) (\(direction)), ir=\(ir), mot=\(mot)%")
         
-        // Only trigger camera + AI classification if obstacle is within 100cm
         if distance <= 100 {
             if canProcessObstacle() {
-                print("📸 Obstacle within 100cm - activating camera + AI classification")
-                Task {
-                    await processBluetoothObstacleWithCamera(
-                        distance: distance,
-                        direction: direction,
-                        confidence: confidence
-                    )
+                if isScreenOn {
+                    print("📸 Obstacle within 100cm - activating camera + AI classification")
+                    Task { await processBluetoothObstacleWithCamera(distance: distance, direction: direction, confidence: confidence) }
+                } else {
+                    print("🔊 Screen off/background — speaking obstacle without camera, starting cooldown")
+                    processingQueue.async { self.isProcessingObstacle = true }
+                    speakObstacle(distance: distance)
+                    startCooldown()
                 }
             } else {
-                if isProcessingObstacle {
-                    print("⚠️ Already processing obstacle - skipping new signal")
-                } else if isInCooldown {
-                    print("⏳ Still in 10-second cooldown period - skipping new signal")
-                }
+                if isProcessingObstacle { print("⚠️ Already processing obstacle - skipping new signal") }
+                else if isInCooldown { print("⏳ Still in 10-second cooldown period - skipping new signal") }
             }
         } else {
             print("📏 Obstacle at \(distance)cm - too far, skipping camera activation")
@@ -563,23 +612,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 Real ESP32 Obstacle: cm1=\(cm1), cm2=\(cm2), avg=\(averageDistance)cm, zone=\(zone) (\(direction)), ir=\(ir), mot=\(mot)%")
         
-        // Only trigger camera + AI classification if obstacle is within 100cm
         if distance <= 100 {
             if canProcessObstacle() {
-                print("📸 Obstacle within 100cm - activating camera + AI classification")
-                Task {
-                    await processBluetoothObstacleWithCamera(
-                        distance: distance,
-                        direction: direction,
-                        confidence: confidence
-                    )
+                if isScreenOn {
+                    print("📸 Obstacle within 100cm - activating camera + AI classification")
+                    Task { await processBluetoothObstacleWithCamera(distance: distance, direction: direction, confidence: confidence) }
+                } else {
+                    print("🔊 Screen off/background — speaking obstacle without camera, starting cooldown")
+                    processingQueue.async { self.isProcessingObstacle = true }
+                    speakObstacle(distance: distance)
+                    startCooldown()
                 }
             } else {
-                if isProcessingObstacle {
-                    print("⚠️ Already processing obstacle - skipping new signal")
-                } else if isInCooldown {
-                    print("⏳ Still in 10-second cooldown period - skipping new signal")
-                }
+                if isProcessingObstacle { print("⚠️ Already processing obstacle - skipping new signal") }
+                else if isInCooldown { print("⏳ Still in 10-second cooldown period - skipping new signal") }
             }
         } else {
             print("📏 Obstacle at \(distance)cm - too far, skipping camera activation")
@@ -609,23 +655,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 nRF Connect Obstacle: \(distance)cm, \(direction)")
         
-        // Only trigger camera + AI classification if obstacle is within 100cm
         if distance <= 100 {
             if canProcessObstacle() {
-                print("📸 Obstacle within 100cm - activating camera + AI classification")
-                Task {
-                    await processBluetoothObstacleWithCamera(
-                        distance: distance,
-                        direction: direction,
-                        confidence: confidence
-                    )
+                if isScreenOn {
+                    print("📸 Obstacle within 100cm - activating camera + AI classification")
+                    Task { await processBluetoothObstacleWithCamera(distance: distance, direction: direction, confidence: confidence) }
+                } else {
+                    print("🔊 Screen off/background — speaking obstacle without camera, starting cooldown")
+                    processingQueue.async { self.isProcessingObstacle = true }
+                    speakObstacle(distance: distance)
+                    startCooldown()
                 }
             } else {
-                if isProcessingObstacle {
-                    print("⚠️ Already processing obstacle - skipping new signal")
-                } else if isInCooldown {
-                    print("⏳ Still in 10-second cooldown period - skipping new signal")
-                }
+                if isProcessingObstacle { print("⚠️ Already processing obstacle - skipping new signal") }
+                else if isInCooldown { print("⏳ Still in 10-second cooldown period - skipping new signal") }
             }
         } else {
             print("📏 Obstacle at \(distance)cm - too far, skipping camera activation")
@@ -647,24 +690,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         let confidence = Double(components[2]) ?? 0.0
         
         print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
-        
-        // Only trigger camera + AI classification if obstacle is within 100cm
         if distance <= 100 {
             if canProcessObstacle() {
-                print("📸 Obstacle within 100cm - activating camera + AI classification")
-                Task {
-                    await processBluetoothObstacleWithCamera(
-                        distance: distance,
-                        direction: direction,
-                        confidence: confidence
-                    )
+                if isScreenOn {
+                    print("📸 Obstacle within 100cm - activating camera + AI classification")
+                    Task { await processBluetoothObstacleWithCamera(distance: distance, direction: direction, confidence: confidence) }
+                } else {
+                    print("🔊 Screen off/background — speaking obstacle without camera, starting cooldown")
+                    processingQueue.async { self.isProcessingObstacle = true }
+                    speakObstacle(distance: distance)
+                    startCooldown()
                 }
             } else {
-                if isProcessingObstacle {
-                    print("⚠️ Already processing obstacle - skipping new signal")
-                } else if isInCooldown {
-                    print("⏳ Still in 10-second cooldown period - skipping new signal")
-                }
+                if isProcessingObstacle { print("⚠️ Already processing obstacle - skipping new signal") }
+                else if isInCooldown { print("⏳ Still in 10-second cooldown period - skipping new signal") }
             }
         } else {
             print("📏 Obstacle at \(distance)cm - too far, skipping camera activation")

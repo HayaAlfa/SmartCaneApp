@@ -100,7 +100,7 @@ struct HomeScreen: View {
                     
                     // MARK: - My Routes Button
                     // Button to manage saved familiar routes
-                    NavigationLink(destination: MyRoutesView()) {
+                    NavigationLink(destination: MyRoutesView(selectedTab: $selectedTab)) {
                         HomeButtonView(
                             title: "My Routes",
                             systemImage: "map.circle.fill"  // Route/map icon for saved routes
@@ -212,7 +212,7 @@ struct HomeScreen: View {
                 
                 NavigationLink(destination: LiveScreen(),
                                isActive: $navigateToNavigation) { EmptyView() }
-                NavigationLink(destination: MyRoutesView(), isActive: $navigateToMyRoutes) { EmptyView() }
+                NavigationLink(destination: MyRoutesView(selectedTab: $selectedTab), isActive: $navigateToMyRoutes) { EmptyView() }
                 
             }
             .padding()

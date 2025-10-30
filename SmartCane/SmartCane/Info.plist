@@ -2,15 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>The microphone is needed to recognize your voice commands. </string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>This app uses speech recognition to let you control features by voice.</string>
 	<key>SUPABASE_KEY</key>
 	<string>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3cGlzcHVycXlia3NtZmF4aHl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyMTg1MDQsImV4cCI6MjA3Mzc5NDUwNH0.gLfKTC2rZPPpeef8Dp7I6ViH9sl_3gPDR0X42bspuBY</string>
 	<key>SUPABASE_URL</key>
 	<string>https://jwpispurqybksmfaxhyw.supabase.co</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+		<string>processing</string>
+		<string>location</string>
+		<string>bluetooth-central</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to provide walking navigation and show your current position on the map.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>SmartCane needs background location to continue navigation with the screen off.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>SmartCane uses Bluetooth to receive cane obstacle signals, including in background.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>SmartCane needs speech recognition to let you say “start” or “cancel”.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>SmartCane uses the microphone to listen for navigation commands like “start” or “cancel”.</string>
 </dict>
 </plist>

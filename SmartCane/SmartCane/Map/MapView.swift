@@ -1,39 +1,403 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import AVFoundation
+import Speech
+import MediaPlayer
+import UserNotifications
+import os.log
 
 // MARK: - Notification Extension
 extension Notification.Name {
     static let locationsUpdated = Notification.Name("locationsUpdated")
 }
 
+// MARK: - MapView Search
+private extension MapView {
+    func performSearch() {
+        guard !searchText.isEmpty else { return }
+        // update history (dedup and cap to 5) and persist
+        var newHistory = searchHistory.filter { $0.caseInsensitiveCompare(searchText) != .orderedSame }
+        newHistory.insert(searchText, at: 0)
+        if newHistory.count > 5 { newHistory = Array(newHistory.prefix(5)) }
+        searchHistory = newHistory
+        saveSearchHistory()
+        var request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = searchText
+        request.region = testRegion
+        MKLocalSearch(request: request).start { response, error in
+            if let error = error {
+                print("🔎 Search error: \(error.localizedDescription)")
+                return
+            }
+            let results = response?.mapItems ?? []
+            DispatchQueue.main.async {
+                self.searchResults = results
+                if let first = results.first {
+                    let coord = first.placemark.coordinate
+                    self.testRegion = MKCoordinateRegion(
+                        center: coord,
+                        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                    )
+                }
+            }
+        }
+    }
+    
+    func loadSearchHistory() {
+        if let saved = UserDefaults.standard.array(forKey: searchHistoryDefaultsKey) as? [String] {
+            searchHistory = Array(saved.prefix(5))
+        }
+    }
+    
+    func saveSearchHistory() {
+        UserDefaults.standard.set(Array(searchHistory.prefix(5)), forKey: searchHistoryDefaultsKey)
+    }
+}
+
+// MARK: - Map Annotation Item
+struct MapAnnotationItem: Identifiable {
+    let id: String
+    let coordinate: CLLocationCoordinate2D
+    let title: String
+    let subtitle: String?
+    let type: AnnotationType
+    let savedLocation: SavedLocation?
+    
+    enum AnnotationType {
+        case savedLocation
+        case navigation
+    }
+}
+
 struct MapView: View {
     @StateObject private var locationManager = LocationManager()
-    @State private var searchText = ""
-    @State private var searchResults: [MKMapItem] = []
-    @State private var isSearching = false
+    @StateObject private var viewModel = NavigationViewModel()
+    
+    // Pin functionality
     @State private var savedLocations: [SavedLocation] = []
     @State private var selectedSavedLocation: SavedLocation?
     @State private var showingSavedLocationDetail = false
     @State private var showLocationAlert = false
-    @State private var isPinMode = false
     @State private var tappedCoordinate: CLLocationCoordinate2D?
     @State private var showingSaveLocationSheet = false
-    @State private var isTrackingUser = false
+    @State private var isPinMode = false
     
+    // Navigation state
+    @State private var startText = ""
+    @State private var endText = ""
+    @State private var isNavigationMode = false
+    @State private var mapID = UUID()
+    @State private var testRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    )
+    @State private var showZoomSuccess = false
+ 
+    @State private var searchText = ""
+    @State private var searchResults: [MKMapItem] = []
+    @FocusState private var isSearchFocused: Bool
+    @State private var searchHistory: [String] = []
+    private let searchHistoryDefaultsKey = "MapView.SearchHistory"
+    
+    private var searchOverlay: some View {
+                    VStack(spacing: 8) {
+                        HStack {
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
+                            TextField("Search for places...", text: $searchText)
+                                .textFieldStyle(PlainTextFieldStyle())
+                    .focused($isSearchFocused)
+                                .onSubmit { performSearch() }
+                            if !searchText.isEmpty {
+                                Button("Clear") {
+                                    searchText = ""
+                                    searchResults = []
+                                }
+                                .foregroundColor(.blue)
+                            }
+                        }
+                        .padding(10)
+                        .background(.ultraThinMaterial)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+
+            if isSearchFocused {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(searchHistory.prefix(8).enumerated()), id: \.offset) { _, term in
+                        Button(action: {
+                            searchText = term
+                            isSearchFocused = false
+                            performSearch()
+                        }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .foregroundColor(.gray)
+                                Text(term)
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                                Spacer()
+                            }
+                            .padding(10)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        if term != searchHistory.last { Divider() }
+                    }
+                    if searchHistory.isEmpty {
+                        Text("No recent searches")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(10)
+                    }
+                }
+                .background(.ultraThinMaterial)
+                .cornerRadius(12)
+                .padding(.horizontal)
+            } else if !searchResults.isEmpty {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(Array(searchResults.prefix(5).enumerated()), id: \.offset) { _, item in
+                                    Button(action: {
+                                        let coord = item.placemark.coordinate
+                                        testRegion = MKCoordinateRegion(
+                                            center: coord,
+                                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                                        )
+                                        let temp = SavedLocation(
+                                            name: item.name ?? "Search Result",
+                                            address: item.placemark.title ?? "",
+                                            latitude: coord.latitude,
+                                            longitude: coord.longitude,
+                                            notes: "",
+                                            dateAdded: Date()
+                                        )
+                                        if !savedLocations.contains(where: { $0.latitude == temp.latitude && $0.longitude == temp.longitude }) {
+                                            savedLocations.append(temp)
+                                        }
+                                    }) {
+                                        HStack(alignment: .top, spacing: 8) {
+                                            Image(systemName: "mappin.and.ellipse")
+                                                .foregroundColor(.blue)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(item.name ?? "Unnamed")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.primary)
+                                                Text(item.placemark.title ?? "")
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                                    .lineLimit(2)
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding(10)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    if item != searchResults.last { Divider() }
+                                }
+                            }
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(12)
+                            .padding(.horizontal)
+                        }
+                        Spacer()
+                    }
+    }
+
     var body: some View {
         NavigationView {
             ZStack {
-                mapView
-                searchBar
-                controlButtons
+                // Full screen map in background (single MKMapView for device reliability)
+                UIKitMapView(
+                    region: $testRegion,
+                    annotations: savedLocations,
+                    route: viewModel.route,
+                    onMapTap: { coordinate in
+                        tappedCoordinate = coordinate
+                        showingSaveLocationSheet = true
+                    }
+                )
+                .ignoresSafeArea(.all)
+                .id(mapID) // Force map refresh when ID changes
+                .overlay(
+                    searchOverlay
+                    .padding(.top, 8)
+                    , alignment: .top
+                )
+                // Route is rendered directly inside UIKitMapView now
+                .overlay(
+                    // Success notification
+                    Group {
+                        if showZoomSuccess {
+                            VStack {
+                                HStack {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                        .font(.title2)
+                                    Text("Zoomed to your location!")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                }
+                                .padding()
+                                .background(Color.black.opacity(0.8))
+                                .cornerRadius(10)
+                                .padding(.top, 100)
+                                Spacer()
+                            }
+                        }
+                    }
+                )
+                
+                // Tap handled directly inside UIKitMapView via gesture recognizer for accuracy
+                
+                // Control panel overlay
+                VStack {
+                        // Top section with simple controls
+                        VStack(spacing: 10) {
+                        if isNavigationMode {
+                            // Navigation input boxes
+                            VStack(spacing: 8) {
+                                    
+                                    // Show cancel button when navigating
+                                    if viewModel.isNavigating {
+                                    Button("Cancel") {
+                                        print("🛑 Cancel button tapped (overlay) - clearing route and exiting navigation mode")
+                                            viewModel.clearRoute()
+                                        isNavigationMode = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            // Ensure playback route restored after recording session
+                                            do {
+                                                let session = AVAudioSession.sharedInstance()
+                                                try session.setCategory(.playback, mode: .spokenAudio, options: [.defaultToSpeaker])
+                                                try session.setActive(true, options: .notifyOthersOnDeactivation)
+                                                try session.overrideOutputAudioPort(.speaker)
+                                            } catch { }
+                                            viewModel.speak("Walking navigation cancelled. Route cleared.")
+                                            }
+                                        }
+                                        .font(.title3)
+                                        .bold()
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.red)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
+                                        .accessibilityLabel("Cancel current navigation and start new route")
+                                        .accessibilityHint("Stops current navigation and sets up new route")
+                                    }
+                                
+            }
+            .padding()
+                            .background(Color.black.opacity(0.7))
+            .cornerRadius(15)
+            .padding(.horizontal)
+                        }
+            }
+            
+            Spacer()
+    
+                        // Bottom-right corner buttons
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                                VStack(spacing: 10) {
+                            // Compact Testing/Real mode switch (bottom-right, above pin)
+                            HStack {
+                                Toggle("", isOn: $viewModel.isTestingMode)
+                                    .labelsHidden()
+                                    .toggleStyle(SwitchToggleStyle(tint: .orange))
+                            }
+                            .padding(6)
+                            .background(.ultraThinMaterial)
+                            .cornerRadius(10)
+                            .scaleEffect(0.9)
+                            
+                                    // Pin Mode Button
+                                    Button(action: {
+                                        isPinMode.toggle()
+                                    }) {
+                                        Image(systemName: isPinMode ? "mappin.circle.fill" : "mappin.circle")
+                                            .font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                                            .background(isPinMode ? Color.orange : Color.gray)
+                            .clipShape(Circle())
+                                            .shadow(radius: 3)
+                                    }
+                                    
+                                    // Center Location Button
+                                    Button(action: {
+                                        centerOnCurrentLocation()
+                                    }) {
+                                        Image(systemName: "location.circle.fill")
+                                            .font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                                            .background(Color.blue)
+                            .clipShape(Circle())
+                                            .shadow(radius: 3)
+                                    }
+
+                    
+                }
+                .padding(.trailing, 20)
+                                .padding(.bottom, 100) // Above the instruction area
+                            }
+                        }
+                        
+                        // Bottom section with current instruction
+                    if let step = viewModel.currentInstruction {
+                        Text("Next: \(step)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.black.opacity(0.8))
+                            .foregroundColor(.white)
+                            .cornerRadius(15)
+                            .padding(.horizontal)
+                            .padding(.bottom, 20)
+                            .shadow(color: .black, radius: 3, x: 1, y: 1)
+                    }
+                    
+                    // Voice recognition status indicator (only when screen is on)
+                    if viewModel.isListening {
+                        Text("🎤 Listening...")
+                            .font(.headline)
+                            .foregroundColor(.green)
+                            .padding()
+                            .background(Color.black.opacity(0.8))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                            .padding(.bottom, 20)
+                            .shadow(color: .black, radius: 2, x: 1, y: 1)
+                    }
+                }
             }
             .navigationTitle("Map")
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear(perform: setupView)
-            .onChange(of: showingSaveLocationSheet) { _, newValue in
-                handleSheetChange(newValue)
-            }
+                .onAppear(perform: setupView)
+                .onChange(of: showingSaveLocationSheet) { _, newValue in
+                    handleSheetChange(newValue)
+                }
+                // Zoom background map to route when it becomes available
+                .onChange(of: viewModel.route) { _, newRoute in
+                    if let route = newRoute {
+                        print("🗺️ Route received in MapView – zooming to route bounds")
+                        let bounds = route.polyline.boundingMapRect
+                        let region = MKCoordinateRegion(bounds)
+                        // Add a bit of padding by scaling span smaller
+                        let padded = MKCoordinateRegion(
+                            center: region.center,
+                            span: MKCoordinateSpan(
+                                latitudeDelta: max(region.span.latitudeDelta * 1.2, 0.002),
+                                longitudeDelta: max(region.span.longitudeDelta * 1.2, 0.002)
+                            )
+                        )
+                        testRegion = padded
+                    } else {
+                        print("ℹ️ Route cleared from MapView")
+                    }
+                }
             .sheet(isPresented: $showingSavedLocationDetail) {
                 if let location = selectedSavedLocation {
                     SavedLocationDetailView(location: location)
@@ -42,6 +406,7 @@ struct MapView: View {
             .sheet(isPresented: $showingSaveLocationSheet) {
                 saveLocationSheet
             }
+            
             .alert("Location Access Required", isPresented: $showLocationAlert) {
                 Button("Settings") {
                     if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
@@ -52,161 +417,67 @@ struct MapView: View {
             } message: {
                 Text("Please enable location access to use the location feature.")
             }
-        }
-    }
-    
-    // MARK: - Map View
-    private var mapView: some View {
-        GeometryReader { geometry in
-            Map(coordinateRegion: $locationManager.region, interactionModes: .all, showsUserLocation: true, userTrackingMode: .constant(.none), annotationItems: allMapAnnotations) { location in
-                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)) {
-                    LocationPinView(
-                        location: location,
-                        color: isSearchResultLocation(location) ? .blue : .red,
-                        onTap: {
-                            selectedSavedLocation = location
-                            showingSavedLocationDetail = true
+            .alert(isPresented: $viewModel.showAlert) {
+                Alert(
+                    title: Text("Walking Route Ready"),
+                    message: Text("Walking route from start to destination is set up. Say 'start' or 'cancel', or use the buttons below."),
+                    primaryButton: .default(Text("Start Walking")) {
+                        viewModel.stopListening()
+                        viewModel.startNavigation()
+                    },
+                    secondaryButton: .cancel {
+                        print("🛑 Cancel button tapped (alert) - clearing route and exiting navigation mode")
+                        viewModel.stopListening()
+                        viewModel.clearRoute()
+                        isNavigationMode = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            // Ensure playback route restored (playback category)
+                            do {
+                                let session = AVAudioSession.sharedInstance()
+                                try session.setCategory(.playback, mode: .spokenAudio, options: [])
+                                try session.setActive(true, options: .notifyOthersOnDeactivation)
+                            } catch { }
+                        viewModel.speak("Walking navigation cancelled. Route cleared.")
                         }
-                    )
-                }
-            }
-            .onTapGesture(coordinateSpace: .local) { location in
-                if isPinMode {
-                    handleMapTap(at: location, mapSize: geometry.size)
-                }
-            }
-            .overlay(
-                // Custom user location indicator with direction
-                Group {
-                    if let userLocation = locationManager.currentLocation {
-                        UserLocationIndicatorView(
-                            coordinate: userLocation.coordinate,
-                            heading: locationManager.userHeading,
-                            mapRegion: locationManager.region
-                        )
                     }
-                }
-            )
+                )
+            }
         }
     }
     
     // MARK: - All Map Annotations
-    private var allMapAnnotations: [SavedLocation] {
-        var annotations: [SavedLocation] = []
+    private var allMapAnnotations: [MapAnnotationItem] {
+        var annotations: [MapAnnotationItem] = []
         
         // Add saved locations (these will be red pins)
-        annotations.append(contentsOf: savedLocations)
-        
-        // Add search results (these will be blue pins)
-        for item in searchResults {
-            let searchLocation = SavedLocation(
-                name: item.name ?? "Search Result", 
-                address: item.placemark.title ?? "", 
-                latitude: item.placemark.coordinate.latitude, 
-                longitude: item.placemark.coordinate.longitude, 
-                notes: "", 
-                dateAdded: Date()
-            )
-            annotations.append(searchLocation)
+        for location in savedLocations {
+            annotations.append(MapAnnotationItem(
+                id: location.id.uuidString,
+                coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
+                title: location.name,
+                subtitle: location.address,
+                type: .savedLocation,
+                savedLocation: location
+            ))
         }
         
+        // Add navigation annotations (start/end points)
+        for annotation in viewModel.annotations {
+            annotations.append(MapAnnotationItem(
+                id: annotation.id.uuidString,
+                coordinate: annotation.coordinate,
+                title: annotation.name,
+                subtitle: nil,
+                type: .navigation,
+                savedLocation: nil
+            ))
+        }
+        
+        
+        for annotation in annotations {
+            
+        }
         return annotations
-    }
-    
-    // MARK: - Helper Functions
-    private func isSearchResultLocation(_ location: SavedLocation) -> Bool {
-        // Check if this location is in our search results
-        return searchResults.contains { item in
-            item.placemark.coordinate.latitude == location.latitude &&
-            item.placemark.coordinate.longitude == location.longitude
-        }
-    }
-    
-    // MARK: - Search Bar
-    private var searchBar: some View {
-        VStack {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                
-                TextField("Search for places...", text: $searchText)
-                    .textFieldStyle(PlainTextFieldStyle())
-                    .onSubmit {
-                        performSearch()
-                    }
-                
-                if !searchText.isEmpty {
-                    Button("Clear") {
-                        searchText = ""
-                        searchResults = []
-                    }
-                    .foregroundColor(.blue)
-                }
-            }
-            .padding()
-            .background(.ultraThinMaterial)
-            .cornerRadius(15)
-            .padding(.horizontal)
-            
-            // Show heading info when tracking (similar to Apple Maps)
-            if isTrackingUser && locationManager.isHeadingEnabled {
-                HStack {
-                    Image(systemName: "location.north.line")
-                        .foregroundColor(.blue)
-                        .font(.caption)
-                    
-                    Text("Heading: \(locationManager.getFullHeadingInfo())")
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 4)
-                .background(.ultraThinMaterial)
-                .cornerRadius(8)
-                .padding(.horizontal)
-            }
-            
-            Spacer()
-        }
-        .padding(.top)
-    }
-    
-    // MARK: - Control Buttons
-    private var controlButtons: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                VStack(spacing: 12) {
-                    // Pin button
-                    Button(action: togglePinMode) {
-                        Image(systemName: isPinMode ? "mappin.slash" : "mappin")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(isPinMode ? Color.red : Color.orange)
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
-                    }
-                    
-                    // Location button
-                    Button(action: centerOnUserLocation) {
-                        Image(systemName: "location.fill")
-                            .font(.title2)
-                            .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .background(.blue)
-                            .clipShape(Circle())
-                            .shadow(radius: 5)
-                    }
-                }
-                .padding(.trailing, 20)
-                .padding(.bottom, 100)
-            }
-        }
     }
     
     // MARK: - Save Location Sheet
@@ -216,16 +487,15 @@ struct MapView: View {
                 SaveLocationView(coordinate: coordinate) { savedLocation in
                     savedLocations.append(savedLocation)
                     saveLocationsToUserDefaults()
-                    isPinMode = false
                 }
                 .onAppear {
-                    print("📍 Sheet showing with coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
+                    
                 }
             } else {
                 Text("No coordinate available")
                     .padding()
                     .onAppear {
-                        print("📍 Sheet showing with NO coordinate - tappedCoordinate is nil")
+                        
                     }
             }
         }
@@ -241,8 +511,34 @@ struct MapView: View {
         // Load saved locations
         loadSavedLocations()
         
+        // Set map region to show saved locations
+        if !savedLocations.isEmpty {
+            // Calculate center point from saved locations
+            let avgLat = savedLocations.map { $0.latitude }.reduce(0, +) / Double(savedLocations.count)
+            let avgLon = savedLocations.map { $0.longitude }.reduce(0, +) / Double(savedLocations.count)
+            
+            locationManager.region = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: avgLat, longitude: avgLon),
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            )
+        
+        } else {
+            // Default to San Francisco area if no saved locations
+            locationManager.region = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
+                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            )
+        
+        }
+        
         // Check if we need to center on a specific location
         checkForLocationCenter()
+        
+        // Check for navigation coordinates from My Routes
+        checkForNavigationCoordinates()
+        
+        // Initialize navigation view model
+        viewModel.requestPermission()
         
         // Listen for location updates from other parts of the app
         NotificationCenter.default.addObserver(
@@ -252,76 +548,142 @@ struct MapView: View {
         ) { _ in
             loadSavedLocations()
         }
+
+        // Load persisted search history
+        loadSearchHistory()
     }
     
-    private func handleSheetChange(_ newValue: Bool) {
-        print("📍 showingSaveLocationSheet changed to: \(newValue)")
-        if newValue {
-            if let coord = tappedCoordinate {
-                print("📍 tappedCoordinate when sheet opens: (\(coord.latitude), \(coord.longitude))")
-            } else {
-                print("📍 tappedCoordinate when sheet opens: nil")
+    // MARK: - My Routes Integration
+    private func checkForNavigationCoordinates() {
+        // Check if there are coordinates stored from MyRoutesView
+        let startLat = UserDefaults.standard.double(forKey: "NavigationStartLatitude")
+        let startLon = UserDefaults.standard.double(forKey: "NavigationStartLongitude")
+        let endLat = UserDefaults.standard.double(forKey: "NavigationEndLatitude")
+        let endLon = UserDefaults.standard.double(forKey: "NavigationEndLongitude")
+        let autoStart = UserDefaults.standard.bool(forKey: "AutoStartNavigation")
+        
+        if startLat != 0.0 && startLon != 0.0 && endLat != 0.0 && endLon != 0.0 {
+            print("📍 Navigation coordinates found from My Routes")
+            
+            // Set the coordinates in the text fields
+            startText = "\(startLat),\(startLon)"
+            endText = "\(endLat),\(endLon)"
+            
+            // Switch to navigation mode
+            isNavigationMode = true
+            
+            // Clear the stored coordinates so it doesn't happen again
+            UserDefaults.standard.removeObject(forKey: "NavigationStartLatitude")
+            UserDefaults.standard.removeObject(forKey: "NavigationStartLongitude")
+            UserDefaults.standard.removeObject(forKey: "NavigationEndLatitude")
+            UserDefaults.standard.removeObject(forKey: "NavigationEndLongitude")
+            UserDefaults.standard.removeObject(forKey: "AutoStartNavigation")
+            
+            // Auto-setup the route after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.viewModel.startText = self.startText
+                self.viewModel.endText = self.endText
+                self.viewModel.shouldAutoStartNavigation = autoStart
+                self.viewModel.setupRoute()
             }
         }
     }
     
-    
-    // MARK: - User Location Functions
-    private func centerOnUserLocation() {
-        print("📍 Location button tapped - centering and zooming to user location")
+    // MARK: - Public function to set navigation coordinates (called from MyRoutesView)
+    func setNavigationCoordinates(startLat: Double, startLon: Double, endLat: Double, endLon: Double) {
+        startText = "\(startLat),\(startLon)"
+        endText = "\(endLat),\(endLon)"
+        isNavigationMode = true
         
-        // Check if location permission is granted
+        // Auto-setup the route
+        viewModel.startText = startText
+        viewModel.endText = endText
+        viewModel.setupRoute()
+    }
+    
+    
+    
+    // MARK: - Center on Current Location
+    private func centerOnCurrentLocation() {
+        if locationManager.authorizationStatus == .notDetermined {
+            locationManager.requestLocationPermission()
+            return
+        }
+        
         if locationManager.authorizationStatus != .authorizedWhenInUse && locationManager.authorizationStatus != .authorizedAlways {
-            print("📍 Permission not granted, showing alert")
             showLocationAlert = true
             return
         }
         
-        // Always center and zoom when button is tapped
         centerOnUserLocationWithMaxZoom()
-        print("📍 Centered and zoomed to user location")
     }
     
-    // MARK: - Center on User Location with Maximum Zoom
     private func centerOnUserLocationWithMaxZoom() {
-        print("📍 Centering on user location with maximum zoom")
-        
-        // Check if we have current location
-        if let location = locationManager.currentLocation {
-            print("📍 Using existing location: \(location.coordinate)")
-            // Center map on user location with maximum zoom (very small span)
-            DispatchQueue.main.async {
-                self.locationManager.region = MKCoordinateRegion(
-                    center: location.coordinate,
-                    span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001) // Much more zoomed in
-                )
-                print("📍 Map region updated to: \(self.locationManager.region.center)")
-            }
-        } else {
-            print("📍 No current location, starting location updates")
-            // Start location updates
+        guard let location = locationManager.currentLocation else {
             locationManager.startLocationUpdates()
-            
-            // Wait a bit and try again
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 if let location = self.locationManager.currentLocation {
-                    print("📍 Got location after delay: \(location.coordinate)")
-                    self.locationManager.region = MKCoordinateRegion(
-                        center: location.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001) // Maximum zoom
-                    )
-                    print("📍 Map region updated after delay: \(self.locationManager.region.center)")
+                    self.centerOnLocationWithTwoStep(location)
                 } else {
-                    print("📍 Still no location after delay, using fallback location")
-                    // Use a fallback location (NYC)
-                    self.locationManager.region = MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
-                        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
-                    )
+                    let nycLocation = CLLocation(latitude: 40.7128, longitude: -74.0060)
+                    self.centerOnLocationWithTwoStep(nycLocation)
                 }
+            }
+            return
+        }
+        
+        centerOnLocationWithTwoStep(location)
+    }
+    
+    private func centerOnLocationWithTwoStep(_ location: CLLocation) {
+        print("📍 Using location: \(location.coordinate)")
+        
+        // First jump to a completely different location to make the change visible
+        print("📍 Step 1: Jumping to NYC first...")
+        testRegion = MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
+            span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+        )
+        
+        // Then after a brief delay, zoom to your location
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("📍 Step 2: Now zooming to your location...")
+            let newRegion = MKCoordinateRegion(
+                center: location.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+            
+            print("📍 Setting testRegion to: \(newRegion.center), span: \(newRegion.span)")
+            self.testRegion = newRegion
+            print("📍 testRegion updated successfully")
+            
+            // Show success notification
+            self.showZoomSuccess = true
+            print("📍 Showing success notification")
+            
+            // Hide notification after 2 seconds
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.showZoomSuccess = false
+                print("📍 Hiding success notification")
             }
         }
     }
+    
+    
+    
+    
+    private func handleSheetChange(_ newValue: Bool) {
+        
+        if newValue {
+            if let coord = tappedCoordinate {
+                
+            } else {
+                
+            }
+        }
+    }
+    
+    
     
     
     // MARK: - Check for Location Center
@@ -332,7 +694,7 @@ struct MapView: View {
         let name = UserDefaults.standard.string(forKey: "MapCenterName") ?? ""
         
         if latitude != 0.0 && longitude != 0.0 {
-            print("📍 Centering map on saved location: \(name) at (\(latitude), \(longitude))")
+            
             
             // Center map on the saved location
             locationManager.region = MKCoordinateRegion(
@@ -352,61 +714,26 @@ struct MapView: View {
         if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
            let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
             savedLocations = decoded
-            print("📍 Loaded \(savedLocations.count) saved locations for map pins")
-        }
-    }
-    
-    // MARK: - Search Functionality
-    private func performSearch() {
-        guard !searchText.isEmpty else { return }
-        
-        isSearching = true
-        let request = MKLocalSearch.Request()
-        request.naturalLanguageQuery = searchText
-        request.region = locationManager.region
-        
-        let search = MKLocalSearch(request: request)
-        search.start { response, error in
-            DispatchQueue.main.async {
-                isSearching = false
-                if let error = error {
-                    print("Search error: \(error)")
-                    return
-                }
+            
+            for location in savedLocations {
                 
-                searchResults = response?.mapItems ?? []
-                
-                // Move map to first result
-                if let firstResult = searchResults.first {
-                    let coordinate = firstResult.placemark.coordinate
-                    locationManager.region = MKCoordinateRegion(
-                        center: coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                    )
-                }
             }
+        } else {
+            
         }
     }
     
-    // MARK: - Pin Mode Functions
-    private func togglePinMode() {
-        isPinMode.toggle()
-        print("📍 Pin mode: \(isPinMode ? "ON" : "OFF")")
-    }
     
     private func handleMapTap(at screenLocation: CGPoint, mapSize: CGSize) {
-        // Convert screen tap point to map coordinates
-        let currentRegion = locationManager.region
+        // Simple coordinate conversion
+        let currentRegion = viewModel.region
         
         // Calculate the actual coordinate from the tap point
         let coordinate = convertScreenPointToCoordinate(screenLocation, in: currentRegion, mapSize: mapSize)
         tappedCoordinate = coordinate
         showingSaveLocationSheet = true
         
-        print("📍 Map tapped at screen point: \(screenLocation)")
-        print("📍 Map size: \(mapSize)")
-        print("📍 Converted to coordinate: (\(coordinate.latitude), \(coordinate.longitude))")
-        print("📍 Pin mode: \(isPinMode)")
+        
     }
     
     // Helper function to convert screen point to map coordinate
@@ -630,6 +957,31 @@ struct LocationPinView: View {
     }
 }
 
+// MARK: - Navigation Pin View
+struct NavigationPinView: View {
+    let title: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Title label
+            Text(title)
+                .font(.caption)
+                .fontWeight(.bold)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.ultraThinMaterial)
+                .cornerRadius(4)
+                .foregroundColor(.white)
+            
+            // Pin icon
+            Image(systemName: title == "Start" ? "play.circle.fill" : "flag.circle.fill")
+                .font(.title)
+                .foregroundColor(color)
+        }
+    }
+}
+
 // MARK: - User Location Indicator with Direction
 struct UserLocationIndicatorView: View {
     let coordinate: CLLocationCoordinate2D
@@ -692,6 +1044,172 @@ struct UserLocationIndicatorView: View {
             x: size.width * (0.5 + x),
             y: size.height * (0.5 + y)
         )
+    }
+}
+
+// SmartCaneNavigationViewModel moved to SmartCane/SmartCane/Map/SmartCaneNavigationViewModel.swift
+
+// MARK: - Route Overlay
+struct RouteOverlay: UIViewRepresentable {
+    @Binding var route: MKRoute?
+
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
+        return mapView
+    }
+
+    func updateUIView(_ mapView: MKMapView, context: Context) {
+        mapView.removeOverlays(mapView.overlays)
+        if let route = route {
+            mapView.addOverlay(route.polyline)
+            mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    class Coordinator: NSObject, MKMapViewDelegate {
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            if let polyline = overlay as? MKPolyline {
+                let renderer = MKPolylineRenderer(polyline: polyline)
+                renderer.strokeColor = .systemGreen
+                renderer.lineWidth = 6
+                return renderer
+            }
+            return MKOverlayRenderer()
+        }
+    }
+}
+
+ 
+
+// MARK: - UIKit MKMapView wrapper
+struct UIKitMapView: UIViewRepresentable {
+    @Binding var region: MKCoordinateRegion
+    var annotations: [SavedLocation] = []
+    var route: MKRoute? = nil
+    var onMapTap: ((CLLocationCoordinate2D) -> Void)? = nil
+
+    func makeUIView(context: Context) -> MKMapView {
+        let map = MKMapView(frame: .zero)
+        map.showsUserLocation = true
+        map.isRotateEnabled = true
+        map.isPitchEnabled = true
+        map.isZoomEnabled = true
+        map.isScrollEnabled = true
+        map.isUserInteractionEnabled = true
+        map.delegate = context.coordinator
+        // Add an accurate tap recognizer to convert touch to coordinate
+        let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
+        tap.numberOfTapsRequired = 1
+        tap.numberOfTouchesRequired = 1
+        map.addGestureRecognizer(tap)
+        map.setRegion(region, animated: false)
+        
+        // Add initial annotations
+        let anns = annotations.map { loc -> MKPointAnnotation in
+            let a = MKPointAnnotation()
+            a.title = loc.name
+            a.subtitle = loc.address
+            a.coordinate = CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude)
+            return a
+        }
+        map.addAnnotations(anns)
+        return map
+    }
+
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        // Only set if meaningfully different to avoid animation spam
+        let current = uiView.region
+        let new = region
+        let centerChanged = abs(current.center.latitude - new.center.latitude) > 1e-6 || abs(current.center.longitude - new.center.longitude) > 1e-6
+        let spanChanged = abs(current.span.latitudeDelta - new.span.latitudeDelta) > 1e-6 || abs(current.span.longitudeDelta - new.span.longitudeDelta) > 1e-6
+        if centerChanged || spanChanged {
+            context.coordinator.isProgrammaticChange = true
+            uiView.setRegion(new, animated: true)
+            // Clear the flag shortly after to allow user gestures to update binding
+            DispatchQueue.main.async { context.coordinator.isProgrammaticChange = false }
+        }
+        // Refresh annotations if counts differ (simple heuristic)
+        let nonUser = uiView.annotations.filter { !($0 is MKUserLocation) }
+        if nonUser.count != annotations.count {
+            uiView.removeAnnotations(nonUser)
+            let anns = annotations.map { loc -> MKPointAnnotation in
+                let a = MKPointAnnotation()
+                a.title = loc.name
+                a.subtitle = loc.address
+                a.coordinate = CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude)
+                return a
+            }
+            uiView.addAnnotations(anns)
+        }
+
+        // Update route overlay reliably on device
+        let existingPolylines = uiView.overlays.compactMap { $0 as? MKPolyline }
+        if let route = route {
+            // If no polyline or different, reset
+            if existingPolylines.isEmpty || existingPolylines.first?.pointCount != route.polyline.pointCount {
+                uiView.removeOverlays(uiView.overlays)
+                uiView.addOverlay(route.polyline)
+                // Zoom to route with slight padding
+                let bounds = route.polyline.boundingMapRect
+                let padded = bounds.insetBy(dx: -bounds.size.width * 0.1, dy: -bounds.size.height * 0.1)
+                context.coordinator.isProgrammaticChange = true
+                uiView.setVisibleMapRect(padded, edgePadding: UIEdgeInsets(top: 40, left: 20, bottom: 40, right: 20), animated: true)
+                DispatchQueue.main.async { context.coordinator.isProgrammaticChange = false }
+                print("✅ UIKitMapView: route overlay updated and zoomed (")
+            }
+        } else {
+            if !existingPolylines.isEmpty {
+                uiView.removeOverlays(existingPolylines)
+                print("ℹ️ UIKitMapView: route overlay cleared")
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    class Coordinator: NSObject, MKMapViewDelegate {
+        var parent: UIKitMapView
+        var isProgrammaticChange = false
+        init(parent: UIKitMapView) { self.parent = parent }
+
+        func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+            // If user changed the map (pinch/drag), propagate back into SwiftUI binding
+            if !isProgrammaticChange {
+                let new = mapView.region
+                // Print once to help diagnose device gestures
+                print("🫰 Map regionDidChange (user): center=(\(new.center.latitude), \(new.center.longitude)) span=(\(new.span.latitudeDelta), \(new.span.longitudeDelta))")
+                DispatchQueue.main.async {
+                    self.parent.region = new
+                }
+            }
+        }
+
+        @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+            guard let mapView = gesture.view as? MKMapView else { return }
+            let point = gesture.location(in: mapView)
+            let coord = mapView.convert(point, toCoordinateFrom: mapView)
+            print("📍 Map tap at coordinate: (\(coord.latitude), \(coord.longitude))")
+            if let callback = parent.onMapTap {
+                callback(coord)
+            }
+        }
+
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            if let polyline = overlay as? MKPolyline {
+                let r = MKPolylineRenderer(polyline: polyline)
+                r.strokeColor = .systemGreen
+                r.lineWidth = 6
+                return r
+            }
+            return MKOverlayRenderer()
+        }
     }
 }
 
