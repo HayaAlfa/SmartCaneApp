@@ -51,6 +51,16 @@ struct SettingsScreen: View {
                 Toggle("Enable Voice Feedback", isOn: $voiceFeedbackEnabled)
                         .accessibilityLabel("Voice Feedback Toggle")        // Accessibility label for screen readers
                         .accessibilityHint("Turns speech feedback on or off") // Helpful hint for accessibility
+                        .disabled(UIAccessibility.isVoiceOverRunning)  // Disable when VoiceOver is active
+                        .opacity(UIAccessibility.isVoiceOverRunning ? 0.5 : 1.0)  // Visually indicate it's disabled
+                    
+                    // Show explanation when VoiceOver is active
+                    if UIAccessibility.isVoiceOverRunning {
+                        Text("Voice feedback is disabled when VoiceOver is active to prevent double audio.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical, 4)
+                    }
                 }
                 
                 // MARK: - Device Services Section

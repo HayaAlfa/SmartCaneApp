@@ -24,6 +24,10 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
     private var centralManager: CBCentralManager!
     private var connectedPeripheral: CBPeripheral?
     
+    // Deduplication: Track last processed obstacles to prevent repeated announcements
+    private var lastProcessedObstacle: (distance: Int, direction: String, timestamp: Date)?
+    private let obstacleDeduplicationWindow: TimeInterval = 3.0 // Only process same obstacle once every 3 seconds
+    
     // ESP32 Service and Characteristic UUIDs (from Michelle's ESP32 code)
     static let serviceUUID = CBUUID(string: "34123456-1234-1234-1234-1234567890AB") // SmartCane Service
     static let characteristicUUID = CBUUID(string: "34123456-1234-1234-1234-1234567890AC") // SmartCane Characteristic
@@ -52,6 +56,7 @@ class ESP32BluetoothManager: NSObject, ObservableObject {
         // Wait for photo capture and then process
         try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
         
+        // Handle the obstacle result - only once
         if let image = autoCamera.capturedImage {
             print("📸 Photo captured, processing with AI...")
             
@@ -453,6 +458,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 ESP32 Obstacle: \(distance)cm, zone=\(zone) (\(direction)), ir=\(ir), mot=\(mot)%")
         
+        // Deduplicate: Skip if this is the same obstacle recently processed
+        if let lastObstacle = lastProcessedObstacle {
+            let timeSinceLastObstacle = Date().timeIntervalSince(lastObstacle.timestamp)
+            if timeSinceLastObstacle < obstacleDeduplicationWindow &&
+               lastObstacle.distance == distance &&
+               lastObstacle.direction == direction {
+                print("⏭️ Skipping duplicate obstacle: \(distance)cm \(direction)")
+                return
+            }
+        }
+        
+        // Track this obstacle
+        lastProcessedObstacle = (distance: distance, direction: direction, timestamp: Date())
+        
         // Trigger camera + AI classification for Bluetooth signals
         Task {
             await processBluetoothObstacleWithCamera(
@@ -486,6 +505,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         
         print("🚧 nRF Connect Obstacle: \(distance)cm, \(direction)")
         
+        // Deduplicate: Skip if this is the same obstacle recently processed
+        if let lastObstacle = lastProcessedObstacle {
+            let timeSinceLastObstacle = Date().timeIntervalSince(lastObstacle.timestamp)
+            if timeSinceLastObstacle < obstacleDeduplicationWindow &&
+               lastObstacle.distance == distance &&
+               lastObstacle.direction == direction {
+                print("⏭️ Skipping duplicate obstacle: \(distance)cm \(direction)")
+                return
+            }
+        }
+        
+        // Track this obstacle
+        lastProcessedObstacle = (distance: distance, direction: direction, timestamp: Date())
+        
         // Trigger camera + AI classification for nRF Connect signals
         Task {
             await processBluetoothObstacleWithCamera(
@@ -511,6 +544,20 @@ extension ESP32BluetoothManager: CBPeripheralDelegate {
         let confidence = Double(components[2]) ?? 0.0
         
         print("🚧 Obstacle detected: \(distance)cm, \(direction), \(confidence)%")
+        
+        // Deduplicate: Skip if this is the same obstacle recently processed
+        if let lastObstacle = lastProcessedObstacle {
+            let timeSinceLastObstacle = Date().timeIntervalSince(lastObstacle.timestamp)
+            if timeSinceLastObstacle < obstacleDeduplicationWindow &&
+               lastObstacle.distance == distance &&
+               lastObstacle.direction == direction {
+                print("⏭️ Skipping duplicate obstacle: \(distance)cm \(direction)")
+                return
+            }
+        }
+        
+        // Track this obstacle
+        lastProcessedObstacle = (distance: distance, direction: direction, timestamp: Date())
         
         Task {
             await Pipeline.shared.handleIncomingObstacle(distance: distance,

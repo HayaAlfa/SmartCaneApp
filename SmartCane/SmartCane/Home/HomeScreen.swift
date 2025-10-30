@@ -13,9 +13,11 @@ import SwiftUI
 struct HomeScreen: View {
     @Binding var selectedTab: Int
     @StateObject private var recognizer = SpeechRecognizer()
+    @EnvironmentObject private var dataService: SmartCaneDataService
+
     
     @AppStorage("OpenObstacleLogFromSiri", store: AppGroup.userDefaults) private var openObstacleLogFromSiri = false
-    @AppStorage("OpenMyRoutesFromSiri") private var openMyRoutesFromSiri = false
+    @AppStorage("OpenMyRoutesFromSiri", store: AppGroup.userDefaults) private var openMyRoutesFromSiri = false
     @EnvironmentObject private var authViewModel: AuthViewModel
     
     @State private var navigateToObstacleLogs = false
@@ -146,73 +148,39 @@ struct HomeScreen: View {
                 .onReceive(NotificationCenter.default.publisher(for: .openObstacleLogs)) { _ in
                     // Siri intent triggers this notification
                     navigateToObstacleLogs = true
-                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
+//                    SpeechManager.shared.speak(_text: "Opening obstacle logs")
                 }
                 .padding(.top, 30)
                 
                 // --- Centered Live Mode Button ---
-                VStack {
-                    NavigationLink(destination: LiveScreen()) {
-                        Label("Live Mode", systemImage: "antenna.radiowaves.left.and.right")
-                            .font(.title2.bold())
-                            .foregroundColor(Theme.brand)
-                            .padding(.vertical, 10)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 18)
+//                VStack {
+//                    NavigationLink(destination: LiveScreen()) {
+//                        Label("Live Mode", systemImage: "antenna.radiowaves.left.and.right")
+//                            .font(.title.bold())
+//                            .foregroundColor(Theme.brand)
+//                            .padding(.vertical, 20)
+//                            .padding(.horizontal, 30)
+//                    }
+//                    .frame(maxWidth: .infinity)
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 15)
+//                            .stroke(Theme.brand, lineWidth: 2)
+//                    )
+//                }
+//                .frame(maxWidth: .infinity)
+//                .padding(.top, 18)
                 
-                // --- Centered Voice Command Section ---
-                //                VStack {
-                //                    Text("🎤 Say a command")
-                //                        .font(.title3)
-                //                        .foregroundColor(.secondary)
-                //                        .frame(maxWidth: .infinity)
-                //                        .multilineTextAlignment(.center)
-                //                }
-                // The rest of the VStack for transcript and mic button...
-                //                VStack {
-                //                    Text(recognizer.transcript)
-                //                        .padding()
-                //                        .frame(maxWidth: .infinity)
-                //                        .background(Color.gray.opacity(0.2))
-                //                        .cornerRadius(10)
-                //                        .padding(.horizontal)
-                //                    HStack {
-                //                        Spacer()
-                //                        ZStack {
-                //                            Circle()
-                //                                .fill(Theme.brand)
-                //                                .frame(width: 72, height: 72)
-                //                                .shadow(radius: 5)
-                //                            Button(action: {
-                //                                try? recognizer.startRecording()
-                //                            }) {
-                //                                Image(systemName: "mic.fill")
-                //                                    .font(.system(size: 34))
-                //                                    .foregroundColor(.white)
-                //                                    .accessibility(label: Text("Start voice command recording"))
-                //                            }
-                //                            .buttonStyle(PlainButtonStyle())
-                //                        }
-                //                        Spacer()
-                //                    }
-                //                    Button("Stop") {
-                //                        recognizer.stopRecording()
-                //                    }
-                //                    .buttonStyle(.bordered)
-                //                }
-                .padding(.bottom, 30)
+   
+                .padding(.top, 30)
                 
-                
-                // MARK: - Spacer
-                // Pushes all content to the top of the screen
-                Spacer()
-                // Removed duplicate ObstacleLogsView NavigationLink
-                
-                NavigationLink(destination: LiveScreen(),
-                               isActive: $navigateToNavigation) { EmptyView() }
-                NavigationLink(destination: MyRoutesView(), isActive: $navigateToMyRoutes) { EmptyView() }
+                 // MARK: - Spacer
+                 // Pushes all content to the top of the screen
+                 Spacer()
+                 
+                 // NavigationLinks for Siri intents
+                 NavigationLink(destination: ObstacleLogsView(), isActive: $navigateToObstacleLogs) { EmptyView() }
+                 NavigationLink(destination: LiveScreen(), isActive: $navigateToNavigation) { EmptyView() }
+                 NavigationLink(destination: MyRoutesView(), isActive: $navigateToMyRoutes) { EmptyView() }
                 
             }
             .padding()
@@ -237,28 +205,28 @@ struct HomeScreen: View {
                     if openObstacleLogFromSiri {
                         navigateToObstacleLogs = true
                         openObstacleLogFromSiri = false
-                        SpeechManager.shared.speak(_text: "Obstacle log opened.")
+//                        SpeechManager.shared.speak(_text: "Obstacle log opened.")
                     } else if openMyRoutesFromSiri {
                         navigateToMyRoutes = true
                         openMyRoutesFromSiri = false
-                        SpeechManager.shared.speak(_text: "Opening my routes.")
+//                        SpeechManager.shared.speak(_text: "Opening my routes.")
                     } else {
-                        SpeechManager.shared.speak(_text: "SmartCane is open. Say a command to begin.")
+//                        SpeechManager.shared.speak(_text: "SmartCane is open. Say a command to begin.")
                     }
                 }
             }
                     
         // 🧠 On transcript change — detect commands
-            .onChange(of: recognizer.transcript) { newValue in
-                let transcript = newValue.lowercased()
-                if transcript.contains("open obstacle logs") {
-                    // Obstacle logs can be accessed via the button on home screen
-                    SpeechManager.shared.speak(_text: "Obstacle logs available on home screen")
-                } else if transcript.contains("start navigation") {
-                    navigateToNavigation = true
-                    SpeechManager.shared.speak(_text: "Starting navigation")
-                }
-            }
+                    .onChange(of: recognizer.transcript) { newValue in
+                        let transcript = newValue.lowercased()
+                        if transcript.contains("open obstacle logs") {
+                            // Obstacle logs can be accessed via the button on home screen
+                            SpeechManager.shared.speak(_text: "Obstacle logs available on home screen")
+                        } else if transcript.contains("start navigation") {
+                            navigateToNavigation = true
+                            SpeechManager.shared.speak(_text: "Starting navigation")
+                        }
+                    }
                     
                 }
             }
@@ -344,16 +312,16 @@ struct HomeScreen: View {
                     Image(systemName: systemImage)
                         .resizable()                    // Allows icon to be resized
                         .scaledToFit()                  // Maintains aspect ratio
-                        .frame(width: 40, height: 40)   // Fixed size for consistency
+                        .frame(width: 60, height: 60)   // Bigger size for easier tapping
                         .foregroundColor(.primary)      // Uses system primary color (adapts to light/dark mode)
                     
                     // MARK: - Title Text
                     // Button title text with accessibility-friendly font
                     Text(title)
-                        .font(.body)                    // Scalable for dynamic type (accessibility)
+                        .font(.body.bold())             // Bold and scalable for dynamic type (accessibility)
                         .multilineTextAlignment(.center) // Centers text for better appearance
                 }
-                .frame(maxWidth: .infinity, minHeight: 100)  // Makes button fill available width
+                .frame(maxWidth: .infinity, minHeight: 140)  // Makes button fill available width with bigger height
                 .background(
                     RoundedRectangle(cornerRadius: 15)      // Rounded corners for modern look
                         .stroke(Color.primary, lineWidth: 1) // Border using system primary color

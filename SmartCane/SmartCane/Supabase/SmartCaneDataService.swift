@@ -22,6 +22,8 @@ enum SmartCaneDataServiceError: LocalizedError {
 
 class SmartCaneDataService: ObservableObject {
     @Published var obstacleLogs: [ObstacleLog] = []
+    @Published var savedLocations: [SavedLocation] = []
+    @Published var userRoutes: [SavedRoute] = []
     
     // Track which obstacle logs have already been announced via text-to-speech
     private var announcedObstacleKeys: Set<String> = []
@@ -112,6 +114,253 @@ class SmartCaneDataService: ObservableObject {
         print("✅ Loaded obstacle logs: \(logs.count)")
     }
 
+    // MARK: - Locations Table Models
+    struct SavedLocationInsert: Encodable {
+        let user_id: UUID
+        let name: String
+        let address: String?
+        let latitude: Double
+        let longitude: Double
+        let created_at: Date? = nil
+    }
+
+    struct LocationRow: Decodable, Identifiable {
+        let id: UUID
+        let user_id: UUID
+        let name: String
+        let address: String?
+        let latitude: Double
+        let longitude: Double
+        let created_at: Date?
+    }
+
+    // MARK: - Locations: Save
+    @MainActor
+    func saveUserLocation(_ location: SavedLocation) async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            // When signed out, save locally so the app still shows locations
+            var local = savedLocations
+            local.insert(location, at: 0)
+            savedLocations = local
+            if let encoded = try? JSONEncoder().encode(local) {
+                UserDefaults.standard.set(encoded, forKey: "SavedLocations")
+            }
+            print("⚠️ Not authenticated. Saved location locally: \(location.name)")
+            return
+        }
+
+        let insert = SavedLocationInsert(
+            user_id: userId,
+            name: location.name,
+            address: location.address,
+            latitude: location.latitude,
+            longitude: location.longitude
+        )
+
+        try await supabase
+            .from("locations")
+            .insert(insert)
+            .execute()
+
+        print("✅ Location saved:", location.name)
+    }
+
+    // MARK: - Locations: Fetch
+    @MainActor
+    func fetchUserLocations() async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            // Fallback to local storage when signed out
+            if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
+               let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
+                self.savedLocations = decoded
+                print("⚠️ Not authenticated. Loaded local locations:", decoded.count)
+            } else {
+                self.savedLocations = []
+                print("⚠️ Not authenticated. No local locations found.")
+            }
+            return
+        }
+
+        let rows: [LocationRow] = try await supabase
+            .from("locations")
+            .select()
+            .eq("user_id", value: userId)
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+
+        let mapped: [SavedLocation] = rows.map { row in
+            SavedLocation(
+                id: row.id,
+                name: row.name,
+                address: row.address ?? "",
+                latitude: row.latitude,
+                longitude: row.longitude,
+                notes: "",
+                created_at: row.created_at ?? Date()
+            )
+        }
+
+        self.savedLocations = mapped
+        print("✅ Loaded locations:", mapped.count)
+    }
+
+    // MARK: - Locations: Delete
+    @MainActor
+    func deleteUserLocation(_ location: SavedLocation) async throws {
+        if let userId = supabase.auth.currentUser?.id {
+            try await supabase
+                .from("locations")
+                .delete()
+                .eq("id", value: location.id)
+                .eq("user_id", value: userId)
+                .execute()
+            print("🗑️ Deleted location:", location.name)
+            try await fetchUserLocations()
+            return
+        }
+
+        // Signed out: delete from local
+        savedLocations.removeAll { $0.id == location.id }
+        if let encoded = try? JSONEncoder().encode(savedLocations) {
+            UserDefaults.standard.set(encoded, forKey: "SavedLocations")
+        }
+    }
+    // MARK: - Routes Table Models
+    struct RouteInsert: Encodable {
+        let user_id: UUID
+        let name: String
+        let description: String?
+        let start_name: String
+        let start_address: String
+        let start_lat: Double
+        let start_lon: Double
+        let end_name: String
+        let end_address: String
+        let end_lat: Double
+        let end_lon: Double
+    }
+
+    struct RouteRow: Decodable, Identifiable {
+        let id: UUID
+        let user_id: UUID
+        let name: String
+        let description: String?
+        let start_name: String
+        let start_address: String
+        let start_lat: Double
+        let start_lon: Double
+        let end_name: String
+        let end_address: String
+        let end_lat: Double
+        let end_lon: Double
+        let created_at: Date?
+    }
+
+    // MARK: - Routes: Save
+    @MainActor
+    func saveUserRoute(_ route: SavedRoute) async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            throw SmartCaneDataServiceError.notAuthenticated
+        }
+
+        let insert = RouteInsert(
+            user_id: userId,
+            name: route.name,
+            description: route.description,
+            start_name: route.startLocation.name,
+            start_address: route.startLocation.address,
+            start_lat: route.startLocation.latitude,
+            start_lon: route.startLocation.longitude,
+            end_name: route.endLocation.name,
+            end_address: route.endLocation.address,
+            end_lat: route.endLocation.latitude,
+            end_lon: route.endLocation.longitude
+        )
+
+        print("🧾 Saving route for user:", userId)
+        print("🧭 Route name:", route.name)
+
+        try await supabase
+            .from("routes")
+            .insert(insert)
+            .execute()
+
+        // Reload after saving
+        try await fetchUserRoutes()
+        print("✅ Route saved successfully")
+    }
+
+    // MARK: - Routes: Fetch
+    @MainActor
+    func fetchUserRoutes() async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            throw SmartCaneDataServiceError.notAuthenticated
+        }
+
+        let rows: [RouteRow] = try await supabase
+            .from("routes")
+            .select()
+            .eq("user_id", value: userId)
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+
+        let mapped: [SavedRoute] = rows.map { row in
+            let start = SavedLocation(
+                id: UUID(),
+                name: row.start_name,
+                address: row.start_address,
+                latitude: row.start_lat,
+                longitude: row.start_lon,
+                notes: "",
+                created_at: row.created_at ?? Date()
+            )
+            let end = SavedLocation(
+                id: UUID(),
+                name: row.end_name,
+                address: row.end_address,
+                latitude: row.end_lat,
+                longitude: row.end_lon,
+                notes: "",
+                created_at: row.created_at ?? Date()
+            )
+
+            var route = SavedRoute(
+                name: row.name,
+                startLocation: start,
+                endLocation: end,
+                description: row.description ?? ""
+            )
+            route.id = row.id
+            return route
+        }
+
+        self.userRoutes = mapped
+        print("✅ Fetched routes:", mapped.count)
+    }
+
+    // MARK: - Routes: Delete
+    @MainActor
+    func deleteUserRoute(_ route: SavedRoute) async throws {
+        guard let userId = supabase.auth.currentUser?.id else {
+            throw SmartCaneDataServiceError.notAuthenticated
+        }
+
+        try await supabase
+            .from("routes")
+            .delete()
+            .eq("id", value: route.id)
+            .eq("user_id", value: userId)
+            .execute()
+
+        // Update local state
+        userRoutes.removeAll { $0.id == route.id }
+        print("🗑️ Deleted route:", route.name)
+    }
+
+    
+
     // MARK: - Announcement Helpers
     private func resetAnnouncementTracking() {
         announcedObstacleKeys.removeAll()
@@ -140,6 +389,7 @@ class SmartCaneDataService: ObservableObject {
     }
 
     private func announceObstacleLog(_ log: ObstacleLog) {
+        // Disabled TTS here to avoid duplicate announcements; Pipeline handles speaking
         var phrases: [String] = ["New obstacle detected: \(log.obstacleType.capitalized)"]
         if let distance = log.distanceCm {
             phrases.append("\(distance) centimeters away")
@@ -164,7 +414,8 @@ class SmartCaneDataService: ObservableObject {
             phrases.append("reported by device \(deviceId)")
         }
         let message = phrases.joined(separator: ", ")
-        SpeechManager.shared.speak(_text: message)
+        print("🔔 Obstacle log announced (silent): \(message)")
+        // SpeechManager.shared.speak(_text: message)
     }
     
     @MainActor

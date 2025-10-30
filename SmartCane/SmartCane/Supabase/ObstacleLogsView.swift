@@ -21,10 +21,7 @@ struct ObstacleLogsView: View {
     var body: some View {
         ZStack {
             VStack {
-                Button("➕ Add Test Log") {
-                    Task { await addTestLog() }
-                }
-                .padding(.vertical)
+               
 
                 List(dataService.obstacleLogs) { log in
                     VStack(alignment: .leading) {
@@ -52,9 +49,7 @@ struct ObstacleLogsView: View {
                     if let latest = dataService.obstacleLogs.first {
                              let type = latest.obstacleType
                              let time = latest.createdAt?.formatted(date: .omitted, time: .shortened) ?? "just now"
-                             let spokenText = "Obstacle detected: \(type), at \(time)."
-                             SpeechManager.shared.speak(_text: spokenText)
-                             print("🔊 Speaking: \(spokenText)")
+                
                          }
                 }
             }

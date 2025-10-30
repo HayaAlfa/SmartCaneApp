@@ -60,7 +60,7 @@ final class Pipeline: ObservableObject {
             print("✅ Saved obstacle log to Supabase")
             NotificationCenter.default.post(name: .obstacleDetected, object: nil)
             // 3️⃣ Voice feedback
-            speech.speak(_text: "Obstacle \(direction) at \(distance) centimeters away.")
+            speech.speak(_text: "\(obstacleType) \(distance) centimeters away.")
             appError = nil
         } catch {
             print("❌ Save failed: \(error.localizedDescription)")
@@ -77,7 +77,7 @@ final class Pipeline: ObservableObject {
             } catch {
                 if attempt == 3 { throw error }
                 try? await Task.sleep(nanoseconds: 400_000_000) // 0.4s delay before retry
-                SpeechManager.shared.speak(_text: "Obstacle detected ahead.")
+//                SpeechManager.shared.speak(_text: "Obstacle detected ahead.")
 
             }
         }

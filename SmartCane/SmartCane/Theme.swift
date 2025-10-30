@@ -13,11 +13,13 @@ import SwiftUI
 enum Theme {
     // MARK: - Brand Colors
     // These colors are defined in the Assets.xcassets file and represent the app's brand identity
-    static let brand = Color("Brand")           // Primary brand color (main app color)
-    static let brandMuted = Color("BrandMuted") // Muted version of brand color (for subtle elements)
+    // Sunlight-readable palette (high contrast)
+    // Use very dark accents and pure white backgrounds for maximum outdoor readability
+    static let brand = Color.black               // Primary brand color (high contrast in sunlight)
+    static let brandMuted = Color(red: 0.2, green: 0.2, blue: 0.2) // Dark gray for secondary elements
     
     // MARK: - System Colors
-    // These colors adapt automatically to light/dark mode and accessibility settings
-    static let bg = Color(.systemBackground)    // Background color (white in light mode, black in dark mode)
-    static let text = Color.primary             // Primary text color (black in light mode, white in dark mode)
+//    // These colors adapt automatically to light/dark mode and accessibility settings
+    static let bg = Color.white                 // Pure white background for maximum contrast
+//    static let text = Color.white               // Pure black text for maximum contrast
 }

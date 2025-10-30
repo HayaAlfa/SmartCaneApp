@@ -131,7 +131,7 @@ struct AddLocationView: View {
             latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,   // GPS latitude if enabled
             longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0, // GPS longitude if enabled
             notes: notes,                  // User-entered notes
-            dateAdded: Date()              // Current timestamp
+            created_at: Date()            // Current timestamp
         )
         
         // Call the onSave closure passed from the parent view
@@ -146,4 +146,5 @@ struct AddLocationView: View {
 // Shows the view in Xcode's canvas for design purposes
 #Preview {
     AddLocationView { _ in }
+    
 }

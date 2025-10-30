@@ -12,6 +12,7 @@ import SwiftUI
 @main
 struct SmartCaneApp: App {
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var dataService = SmartCaneDataService()
 
 
     var body: some Scene {
@@ -19,11 +20,13 @@ struct SmartCaneApp: App {
             if authViewModel.isAuthenticated {
                 MainTabView(isAuthenticated: .constant(false))
                     .environmentObject(authViewModel)
+                    .environmentObject(dataService)
                     .task { await authViewModel.restoreSession() }
                 
             } else {
                 AuthView()
                     .environmentObject(authViewModel)
+                    .environmentObject(dataService) 
                     .task { await authViewModel.restoreSession() }
                    
             }

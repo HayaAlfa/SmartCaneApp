@@ -105,7 +105,8 @@ struct MapView: View {
                 latitude: item.placemark.coordinate.latitude, 
                 longitude: item.placemark.coordinate.longitude, 
                 notes: "", 
-                dateAdded: Date()
+                created_at: Date()
+                
             )
             annotations.append(searchLocation)
         }
@@ -594,7 +595,7 @@ struct SaveLocationView: View {
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
             notes: locationNotes,
-            dateAdded: Date()
+            created_at: Date()
         )
         
         onSave(newLocation)

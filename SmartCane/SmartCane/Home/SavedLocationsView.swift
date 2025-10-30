@@ -10,12 +10,13 @@ struct SavedLocation: Identifiable, Codable {
     var latitude: Double               // GPS latitude coordinate
     var longitude: Double              // GPS longitude coordinate
     var notes: String                  // Optional user notes about the location
-    var dateAdded: Date                // When the location was saved
+    var created_at: Date                // When the location was saved
 }
 
 struct SavedLocationsView: View {
     // MARK: - State Properties
-    @State private var savedLocations: [SavedLocation] = []        // Array of all saved locations
+    @EnvironmentObject var dataService: SmartCaneDataService
+    
     @State private var showingAddLocation = false                  // Controls add location sheet
     @Binding var selectedTab: Int                                  // Binding to control tab selection
     
@@ -24,24 +25,28 @@ struct SavedLocationsView: View {
         NavigationView {
             VStack {
                 // MARK: - Locations List
-                if savedLocations.isEmpty {
-                    // Show empty state when no locations are saved
+                if dataService.savedLocations.isEmpty {
                     emptyStateView
                 } else {
-                    // Show list of all saved locations
                     List {
-
-                        ForEach(savedLocations) { location in
-
-
-                            SavedLocationRow(location: location, selectedTab: $selectedTab, onDelete: {
-                                deleteLocation(location)  // Pass delete function to row
-                            })
+                        ForEach(dataService.savedLocations) { location in
+                            SavedLocationRow(
+                                location: location,
+                                selectedTab: $selectedTab,
+                                onDelete: {
+                                    Task {
+                                        do {
+                                            try await dataService.deleteUserLocation(location)
+                                        } catch {
+                                            print("❌ Failed to delete location:", error)
+                                        }
+                                    }
+                                }
+                            )
                         }
-                        .onDelete(perform: deleteLocationsAtIndex)  // Enable swipe-to-delete
                     }
-                    .listStyle(PlainListStyle())  // Remove default list styling
                 }
+
             }
             .navigationTitle("Saved Locations")  // Navigation bar title
             .navigationBarTitleDisplayMode(.large)  // Large title style
@@ -58,12 +63,25 @@ struct SavedLocationsView: View {
             // MARK: - Add Location Sheet
             .sheet(isPresented: $showingAddLocation) {
                 AddLocationView { newLocation in
-                    savedLocations.append(newLocation)  // Add new location to array
-                    saveLocations()                      // Save to persistent storage
+                    Task {
+                        do {
+                            try await dataService.saveUserLocation(newLocation)
+                            try await dataService.fetchUserLocations()
+                        } catch {
+                            print("❌ Failed to save location:", error)
+                        }
+                    }
                 }
             }
+
             .onAppear {
-                loadLocations()  // Load saved locations when view appears
+                Task {
+                    do {
+                        try await dataService.fetchUserLocations()
+                    } catch {
+                        print("❌ Failed to fetch locations:", error)
+                    }
+                }
             }
         }
     }
@@ -110,39 +128,9 @@ struct SavedLocationsView: View {
         .padding()
     }
     
-    // MARK: - Data Management Functions
+
     
-    // Remove a location from the array
-    private func deleteLocation(_ location: SavedLocation) {
-        if let index = savedLocations.firstIndex(where: { $0.id == location.id }) {
-            savedLocations.remove(at: index)  // Remove from array
-            saveLocations()                    // Save changes to storage
-        }
-    }
     
-    // Delete locations by index set (for swipe-to-delete)
-    private func deleteLocationsAtIndex(offsets: IndexSet) {
-        savedLocations.remove(atOffsets: offsets)
-        saveLocations()
-    }
-    
-    // Save locations array to UserDefaults (persistent storage)
-    private func saveLocations() {
-        if let encoded = try? JSONEncoder().encode(savedLocations) {
-            UserDefaults.standard.set(encoded, forKey: "SavedLocations")
-            
-            // Post notification to update map pins
-            NotificationCenter.default.post(name: .locationsUpdated, object: nil)
-        }
-    }
-    
-    // Load locations from UserDefaults (persistent storage)
-    private func loadLocations() {
-        if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
-           let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
-            savedLocations = decoded
-        }
-    }
 }
 
 // MARK: - Individual Location Row Component
@@ -184,7 +172,7 @@ struct SavedLocationRow: View {
                 }
                 
                 // Show when location was added
-                Text("Added \(location.dateAdded, style: .date)")
+                Text("Added \(location.created_at, style: .date)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -247,4 +235,5 @@ struct SavedLocationRow: View {
 // Shows the view in Xcode's canvas for design purposes
 #Preview {
     SavedLocationsView(selectedTab: .constant(0))
+        .environmentObject(SmartCaneDataService())
 }

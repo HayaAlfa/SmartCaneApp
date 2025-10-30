@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import UIKit
 
 // MARK: - Speech Manager
 // This class handles text-to-speech functionality for accessibility features
@@ -26,6 +27,13 @@ class SpeechManager {
     // This enforces the singleton pattern
     private init() {}
     
+    // MARK: - VoiceOver Detection
+    // Check if VoiceOver is currently running
+    // This prevents double audio when VoiceOver is active
+    private var isVoiceOverRunning: Bool {
+        return UIAccessibility.isVoiceOverRunning
+    }
+    
     // MARK: - Speech Function
     // This function converts text to speech and plays it through the device speakers
     // Parameters:
@@ -33,6 +41,12 @@ class SpeechManager {
     // - language: The language code for speech (defaults to English US)
     // - rate: How fast the speech plays (0.0 = very slow, 1.0 = very fast)
     func speak(_text: String, language: String = "en-US", rate: Float = 0.5) {
+        // Check if VoiceOver is running - disable speech to avoid double audio
+        guard !isVoiceOverRunning else {
+            print("🔇 VoiceOver is active - skipping speech to avoid double audio")
+            return
+        }
+        
         // Check if voice feedback is enabled in user settings
         // If disabled, don't speak anything (respects user preference)
         // Default to true if not set (first launch)
