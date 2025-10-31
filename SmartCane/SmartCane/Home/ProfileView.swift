@@ -1,4 +1,5 @@
 import SwiftUI
+import Supabase
 
 struct ProfileView: View {
     @State private var showingEditProfile = false
@@ -66,7 +67,9 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                loadCurrentUser()
+                Task {
+                    await loadCurrentUser()
+                }
             }
             .sheet(isPresented: $showingEditProfile) {
                 EditProfileView ()
@@ -79,12 +82,40 @@ struct ProfileView: View {
             }
         }
     }
-    // MARK: - Load current user credentials
-    private func loadCurrentUser() {
-        if let user = supabase.auth.currentUser {
-            userEmail = user.email ?? ""
+    // MARK: - Load current user credentials from Supabase
+    private func loadCurrentUser() async {
+        guard let user = supabase.auth.currentUser else { return }
+        
+        // Load email from auth user
+        userEmail = user.email ?? ""
+        
+        do {
+            // Try to fetch profile from Supabase
+            let profile: [ProfileRow] = try await supabase
+                .from("profiles")
+                .select()
+                .eq("id", value: user.id)
+                .execute()
+                .value
+            
+            if let profileData = profile.first {
+                // Load from Supabase
+                userName = profileData.username
+                userPhone = profileData.phone
+                
+                // Also update UserDefaults as local cache
+                UserDefaults.standard.set(profileData.username, forKey: "username")
+                UserDefaults.standard.set(profileData.phone, forKey: "phone")
+            } else {
+                // Fallback to UserDefaults if no profile exists in Supabase
+                userName = UserDefaults.standard.string(forKey: "username") ?? ""
+                userPhone = UserDefaults.standard.string(forKey: "phone") ?? "+1 (555) 123-4567"
+            }
+        } catch {
+            print("⚠️ Failed to load profile from Supabase: \(error.localizedDescription)")
+            // Fallback to UserDefaults
             userName = UserDefaults.standard.string(forKey: "username") ?? ""
-            userPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
+            userPhone = UserDefaults.standard.string(forKey: "phone") ?? "+1 (555) 123-4567"
         }
     }
 }

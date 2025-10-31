@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Speech
+import AVFoundation
 
 // MARK: - My Routes View
 struct MyRoutesView: View {
@@ -16,11 +16,28 @@ struct MyRoutesView: View {
     @State private var showingAddRoute = false
     @State private var selectedRouteToDelete: SavedRoute?
     @State private var showingDeleteAlert = false
+    @State private var showStartPrompt = false
+    @State private var routeToStart: SavedRoute?
     @Binding var selectedTab: Int
     
     // MARK: - Init
     init(selectedTab: Binding<Int>) {
         self._selectedTab = selectedTab
+    }
+    
+    // MARK: - Computed Properties
+    private var alertTitle: String {
+        if let route = routeToStart {
+            return "Start Navigation from \(route.name)?"
+        }
+        return "Start Navigation?"
+    }
+    
+    private var deleteAlertTitle: String {
+        if let route = selectedRouteToDelete {
+            return "Delete Route from \(route.name)?"
+        }
+        return "Delete Route?"
     }
     
     // MARK: - Body
@@ -38,6 +55,10 @@ struct MyRoutesView: View {
                                 onDelete: {
                                     selectedRouteToDelete = route
                                     showingDeleteAlert = true
+                                },
+                                onPlay: {
+                                    routeToStart = route
+                                    prepareNavigationAndPrompt(for: route)
                                 },
                                 selectedTab: $selectedTab
                             )
@@ -79,7 +100,7 @@ struct MyRoutesView: View {
                     }
                 }
             }
-            .alert("Delete Route", isPresented: $showingDeleteAlert) {
+            .alert(deleteAlertTitle, isPresented: $showingDeleteAlert) {
                 Button("Cancel", role: .cancel) { }
                 Button("Delete", role: .destructive) {
                     if let route = selectedRouteToDelete {
@@ -92,12 +113,50 @@ struct MyRoutesView: View {
                         }
                     }
                 }
-            } message: {
-                if let route = selectedRouteToDelete {
-                    Text("Are you sure you want to delete '\(route.name)'? This action cannot be undone.")
+            }
+            .alert(alertTitle, isPresented: $showStartPrompt) {
+                Button("Cancel", role: .cancel) {
+                    cancelNavigation()
+                    routeToStart = nil
+                }
+                Button("Start") {
+                    if let route = routeToStart {
+                        startNavigation(for: route)
+                    }
+                    routeToStart = nil
                 }
             }
         }
+    }
+    
+    // MARK: - Navigation Functions
+    private func startNavigation(for route: SavedRoute) {
+        UserDefaults.standard.set(true, forKey: "AutoStartNavigation")
+        selectedTab = 1
+    }
+
+    private func cancelNavigation() {
+        let keys = ["NavigationStartLatitude", "NavigationStartLongitude", "NavigationEndLatitude", "NavigationEndLongitude", "AutoStartNavigation"]
+        keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+    }
+
+    private func prepareNavigationAndPrompt(for route: SavedRoute) {
+        UserDefaults.standard.set(route.startLocation.latitude, forKey: "NavigationStartLatitude")
+        UserDefaults.standard.set(route.startLocation.longitude, forKey: "NavigationStartLongitude")
+        UserDefaults.standard.set(route.endLocation.latitude, forKey: "NavigationEndLatitude")
+        UserDefaults.standard.set(route.endLocation.longitude, forKey: "NavigationEndLongitude")
+        UserDefaults.standard.set(false, forKey: "AutoStartNavigation")
+        
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .spokenAudio, options: [])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("⚠️ Audio session error:", error)
+        }
+        
+        SpeechManager.shared.speak(_text: "Route is ready.")
+        showStartPrompt = true
     }
     
     // MARK: - Empty State
@@ -144,19 +203,13 @@ struct SavedRoute: Identifiable, Codable {
     }
 }
 
-// MARK: - Route Row View (merged with speech recognition)
+// MARK: - Route Row View
 struct RouteRowView: View {
     let route: SavedRoute
     let onTap: () -> Void
     let onDelete: () -> Void
+    let onPlay: () -> Void
     @Binding var selectedTab: Int
-    
-    @State private var showStartPrompt = false
-    @State private var speechAuthStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
-    @State private var audioEngine = AVAudioEngine()
-    @State private var recognizer: SFSpeechRecognizer? = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    @State private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    @State private var recognitionTask: SFSpeechRecognitionTask?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -168,7 +221,7 @@ struct RouteRowView: View {
                 HStack(spacing: 10) {
                     // Play button
                     Button {
-                        prepareNavigationAndPrompt()
+                        onPlay()
                     } label: {
                         HStack {
                             Image(systemName: "play.fill")
@@ -208,131 +261,6 @@ struct RouteRowView: View {
             }
         }
         .padding(.vertical, 6)
-        .alert("Start Navigation?", isPresented: $showStartPrompt) {
-            Button("Cancel", role: .cancel) {
-                cancelNavigation()
-                stopVoicePromptListening()
-            }
-            Button("Start") {
-                startNavigation()
-                stopVoicePromptListening()
-            }
-        } message: {
-            Text("Say 'start' or 'cancel', or use the buttons below.")
-        }
-        .onChange(of: showStartPrompt) { _, isShown in
-            if isShown {
-                requestSpeechAuthIfNeededAndStart(startAfter: 1.8)
-            } else {
-                stopVoicePromptListening()
-            }
-        }
-    }
-
-    // MARK: - Navigation
-    private func startNavigation() {
-        UserDefaults.standard.set(true, forKey: "AutoStartNavigation")
-        selectedTab = 1
-    }
-
-    private func cancelNavigation() {
-        let keys = ["NavigationStartLatitude", "NavigationStartLongitude", "NavigationEndLatitude", "NavigationEndLongitude", "AutoStartNavigation"]
-        keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
-    }
-
-    private func prepareNavigationAndPrompt() {
-        UserDefaults.standard.set(route.startLocation.latitude, forKey: "NavigationStartLatitude")
-        UserDefaults.standard.set(route.startLocation.longitude, forKey: "NavigationStartLongitude")
-        UserDefaults.standard.set(route.endLocation.latitude, forKey: "NavigationEndLatitude")
-        UserDefaults.standard.set(route.endLocation.longitude, forKey: "NavigationEndLongitude")
-        UserDefaults.standard.set(false, forKey: "AutoStartNavigation")
-        
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .spokenAudio, options: [])
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            print("⚠️ Audio session error:", error)
-        }
-        
-        SpeechManager.shared.speak(_text: "Route is ready. Say start or cancel, or use the buttons.")
-        showStartPrompt = true
-    }
-
-    // MARK: - Speech Recognition
-    private func requestSpeechAuthIfNeededAndStart(startAfter delay: TimeInterval = 0.0) {
-        let current = SFSpeechRecognizer.authorizationStatus()
-        if current == .authorized {
-            speechAuthStatus = .authorized
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                startVoicePromptListening()
-            }
-            return
-        }
-        SFSpeechRecognizer.requestAuthorization { status in
-            DispatchQueue.main.async {
-                self.speechAuthStatus = status
-                if status == .authorized {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                        self.startVoicePromptListening()
-                    }
-                } else {
-                    print("⚠️ Speech not authorized")
-                }
-            }
-        }
-    }
-
-    private func startVoicePromptListening() {
-        guard speechAuthStatus == .authorized else { return }
-        stopVoicePromptListening()
-        
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch { print("❌ Session error:", error) }
-        
-        audioEngine = AVAudioEngine()
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else { return }
-        recognitionRequest.shouldReportPartialResults = true
-        
-        let inputNode = audioEngine.inputNode
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: nil) { buffer, _ in
-            self.recognitionRequest?.append(buffer)
-        }
-        
-        do { try audioEngine.start() } catch { print("❌ Engine start error:", error) }
-        
-        recognitionTask = recognizer?.recognitionTask(with: recognitionRequest) { result, error in
-            if let text = result?.bestTranscription.formattedString.lowercased() {
-                if text.contains("start") {
-                    startNavigation()
-                    stopVoicePromptListening()
-                    showStartPrompt = false
-                } else if text.contains("cancel") || text.contains("stop") {
-                    cancelNavigation()
-                    stopVoicePromptListening()
-                    showStartPrompt = false
-                }
-            }
-            if let error = error {
-                print("❌ Speech recognition error:", error.localizedDescription)
-                stopVoicePromptListening()
-            }
-        }
-    }
-
-    private func stopVoicePromptListening() {
-        if audioEngine.isRunning {
-            audioEngine.inputNode.removeTap(onBus: 0)
-            audioEngine.stop()
-            audioEngine.reset()
-        }
-        recognitionTask?.cancel(); recognitionTask = nil
-        recognitionRequest?.endAudio(); recognitionRequest = nil
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }
 

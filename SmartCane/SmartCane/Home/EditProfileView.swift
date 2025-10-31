@@ -37,31 +37,6 @@ struct EditProfileView: View {
                     Text(errorMessage)
                         .foregroundColor(.red)
                 }
-                
-                Section("Profile Picture") {
-                    HStack {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.blue)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Profile Picture")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Text("Tap to change")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        Button("Change") {
-                            // Add photo picker here
-                        }
-                        .foregroundColor(.blue)
-                    }
-                    .padding(.vertical, 8)
-                }
             }
             .navigationTitle("Edit Profile")
             .navigationBarTitleDisplayMode(.inline)
@@ -78,13 +53,49 @@ struct EditProfileView: View {
                 }
             }
             .onAppear {
-                // Load current credentials from Supabase
-                if let user = supabase.auth.currentUser {
-                    tempEmail = user.email ?? ""
-                    tempUsername = UserDefaults.standard.string(forKey: "username") ?? ""
-                    tempPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
+                Task {
+                    await loadProfile()
                 }
             }
+        }
+    }
+    
+    // MARK: - Load profile from Supabase
+    private func loadProfile() async {
+        guard let user = supabase.auth.currentUser else { return }
+        
+        do {
+            // Try to fetch profile from Supabase
+            let profile: [ProfileRow] = try await supabase
+                .from("profiles")
+                .select()
+                .eq("id", value: user.id)
+                .execute()
+                .value
+            
+            if let profileData = profile.first {
+                // Load from Supabase
+                tempUsername = profileData.username
+                tempPhone = profileData.phone
+                
+                // Also update UserDefaults as local cache
+                UserDefaults.standard.set(profileData.username, forKey: "username")
+                UserDefaults.standard.set(profileData.phone, forKey: "phone")
+            } else {
+                // Fallback to UserDefaults if no profile exists in Supabase
+                tempUsername = UserDefaults.standard.string(forKey: "username") ?? ""
+                tempPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
+            }
+        } catch {
+            print("⚠️ Failed to load profile from Supabase: \(error.localizedDescription)")
+            // Fallback to UserDefaults
+            tempUsername = UserDefaults.standard.string(forKey: "username") ?? ""
+            tempPhone = UserDefaults.standard.string(forKey: "phone") ?? ""
+        }
+        
+        // Email comes from auth user
+        if let user = supabase.auth.currentUser {
+            tempEmail = user.email ?? ""
         }
     }
     
@@ -114,6 +125,12 @@ struct EditProfileView: View {
     }
 }
 struct ProfileUpdate: Encodable {
+    let username: String
+    let phone: String
+}
+
+struct ProfileRow: Decodable {
+    let id: UUID
     let username: String
     let phone: String
 }

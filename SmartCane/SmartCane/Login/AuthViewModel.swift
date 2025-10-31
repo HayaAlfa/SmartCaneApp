@@ -15,8 +15,16 @@ class AuthViewModel: ObservableObject {
     @Published var username = ""
     @Published var isAuthenticated = false
     @Published var errorMessage: String?
+    @Published var isRestoringSession = true // Track if we're still checking session
 
     private let client = supabase
+    
+    init() {
+        // Check initial session state synchronously
+        Task {
+            await restoreSession()
+        }
+    }
 
     func signUp() async {
         errorMessage = nil
@@ -136,6 +144,10 @@ class AuthViewModel: ObservableObject {
                 UserDefaults.standard.removeObject(forKey: "email_for_login_\(cachedUsername)")
             }
             UserDefaults.standard.removeObject(forKey: "lastObstacleDescription_\(cachedUsername)")
+            
+            // ✅ Clear global locations and routes cache to prevent mixing with other accounts
+            UserDefaults.standard.removeObject(forKey: "SavedLocations")
+            UserDefaults.standard.removeObject(forKey: "SavedRoutes")
 
 
             print("👋 Successfully signed out.")
@@ -163,8 +175,12 @@ class AuthViewModel: ObservableObject {
         }
     }
     func restoreSession() async {
+        isRestoringSession = true
+        defer { isRestoringSession = false }
+        
         do {
             // Try to load the current session from storage
+            // Supabase automatically persists sessions, so this should restore the logged-in state
             let session = try await client.auth.session
             if session.user != nil {
                 isAuthenticated = true

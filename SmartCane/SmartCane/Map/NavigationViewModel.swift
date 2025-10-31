@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 import MapKit
 import CoreLocation
 import AVFoundation
@@ -384,6 +385,26 @@ class NavigationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate
     }
 
     func speak(_ text: String) {
+        // Check if this is a cancellation message - only skip if VoiceOver is on
+        let isCancelMessage = text.lowercased().contains("cancelled") && text.lowercased().contains("route cleared")
+        if isCancelMessage {
+            // Skip cancel message if VoiceOver is running to avoid double audio
+            guard !UIAccessibility.isVoiceOverRunning else {
+                logInfo("🔇 VoiceOver is active - skipping cancel message to avoid double audio")
+                return
+            }
+        }
+        // Navigation instructions always play (don't check VoiceOver for them)
+        
+        // Check if voice feedback is enabled in user settings
+        // If disabled, don't speak anything (respects user preference)
+        // Default to true if not set (first launch)
+        let voiceEnabled = UserDefaults.standard.object(forKey: "voiceFeedbackEnabled") as? Bool ?? true
+        guard voiceEnabled else {
+            logInfo("🔇 Voice feedback is disabled - skipping speech")
+            return
+        }
+        
         startBackgroundTask()
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")

@@ -138,14 +138,16 @@ class SmartCaneDataService: ObservableObject {
     @MainActor
     func saveUserLocation(_ location: SavedLocation) async throws {
         guard let userId = supabase.auth.currentUser?.id else {
-            // When signed out, save locally so the app still shows locations
+            // When signed out, save to user-specific key to prevent mixing accounts
+            let userId = UUID().uuidString // Temporary ID for signed-out user
+            let userKey = "SavedLocations_\(userId)"
             var local = savedLocations
             local.insert(location, at: 0)
             savedLocations = local
             if let encoded = try? JSONEncoder().encode(local) {
-                UserDefaults.standard.set(encoded, forKey: "SavedLocations")
+                UserDefaults.standard.set(encoded, forKey: userKey)
             }
-            print("⚠️ Not authenticated. Saved location locally: \(location.name)")
+            print("⚠️ Not authenticated. Saved location locally with user-specific key: \(location.name)")
             return
         }
 
@@ -169,15 +171,9 @@ class SmartCaneDataService: ObservableObject {
     @MainActor
     func fetchUserLocations() async throws {
         guard let userId = supabase.auth.currentUser?.id else {
-            // Fallback to local storage when signed out
-            if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
-               let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
-                self.savedLocations = decoded
-                print("⚠️ Not authenticated. Loaded local locations:", decoded.count)
-            } else {
-                self.savedLocations = []
-                print("⚠️ Not authenticated. No local locations found.")
-            }
+            // When signed out, don't load old data (it might be from a different account)
+            self.savedLocations = []
+            print("⚠️ Not authenticated. Cleared locations (user-specific data required).")
             return
         }
 
@@ -202,7 +198,11 @@ class SmartCaneDataService: ObservableObject {
         }
 
         self.savedLocations = mapped
-        print("✅ Loaded locations:", mapped.count)
+        
+        // Clear old global UserDefaults key to prevent mixing accounts
+        UserDefaults.standard.removeObject(forKey: "SavedLocations")
+        
+        print("✅ Loaded locations from Supabase:", mapped.count)
     }
 
     // MARK: - Locations: Delete
@@ -220,11 +220,10 @@ class SmartCaneDataService: ObservableObject {
             return
         }
 
-        // Signed out: delete from local
+        // Signed out: delete from local (using user-specific key if available)
         savedLocations.removeAll { $0.id == location.id }
-        if let encoded = try? JSONEncoder().encode(savedLocations) {
-            UserDefaults.standard.set(encoded, forKey: "SavedLocations")
-        }
+        // Note: When signed out, locations are stored in memory only
+        // No UserDefaults persistence for signed-out users to prevent account mixing
     }
     // MARK: - Routes Table Models
     struct RouteInsert: Encodable {
@@ -261,7 +260,12 @@ class SmartCaneDataService: ObservableObject {
     @MainActor
     func saveUserRoute(_ route: SavedRoute) async throws {
         guard let userId = supabase.auth.currentUser?.id else {
-            throw SmartCaneDataServiceError.notAuthenticated
+            // When signed out, save locally (in memory only - no UserDefaults for routes when signed out)
+            var local = userRoutes
+            local.insert(route, at: 0)
+            userRoutes = local
+            print("⚠️ Not authenticated. Saved route locally: \(route.name)")
+            return
         }
 
         let insert = RouteInsert(
@@ -288,6 +292,12 @@ class SmartCaneDataService: ObservableObject {
 
         // Reload after saving
         try await fetchUserRoutes()
+        
+        // Also save to UserDefaults as local cache
+        if let encoded = try? JSONEncoder().encode(userRoutes) {
+            UserDefaults.standard.set(encoded, forKey: "SavedRoutes")
+        }
+        
         print("✅ Route saved successfully")
     }
 
@@ -295,7 +305,10 @@ class SmartCaneDataService: ObservableObject {
     @MainActor
     func fetchUserRoutes() async throws {
         guard let userId = supabase.auth.currentUser?.id else {
-            throw SmartCaneDataServiceError.notAuthenticated
+            // When signed out, don't load old data (it might be from a different account)
+            self.userRoutes = []
+            print("⚠️ Not authenticated. Cleared routes (user-specific data required).")
+            return
         }
 
         let rows: [RouteRow] = try await supabase
@@ -337,14 +350,26 @@ class SmartCaneDataService: ObservableObject {
         }
 
         self.userRoutes = mapped
-        print("✅ Fetched routes:", mapped.count)
+        
+        // Clear old global UserDefaults key to prevent mixing accounts
+        UserDefaults.standard.removeObject(forKey: "SavedRoutes")
+        
+        // Update UserDefaults with fresh data from Supabase
+        if let encoded = try? JSONEncoder().encode(mapped) {
+            UserDefaults.standard.set(encoded, forKey: "SavedRoutes")
+        }
+        
+        print("✅ Loaded routes from Supabase:", mapped.count)
     }
 
     // MARK: - Routes: Delete
     @MainActor
     func deleteUserRoute(_ route: SavedRoute) async throws {
         guard let userId = supabase.auth.currentUser?.id else {
-            throw SmartCaneDataServiceError.notAuthenticated
+            // Signed out: delete from local (in memory only)
+            userRoutes.removeAll { $0.id == route.id }
+            print("🗑️ Deleted route from local:", route.name)
+            return
         }
 
         try await supabase
@@ -357,6 +382,9 @@ class SmartCaneDataService: ObservableObject {
         // Update local state
         userRoutes.removeAll { $0.id == route.id }
         print("🗑️ Deleted route:", route.name)
+        
+        // Reload to ensure consistency
+        try await fetchUserRoutes()
     }
 
     

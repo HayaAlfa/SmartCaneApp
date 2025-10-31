@@ -17,20 +17,24 @@ struct SmartCaneApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if authViewModel.isAuthenticated {
-                MainTabView(isAuthenticated: .constant(false))
-                    .environmentObject(authViewModel)
-                    .environmentObject(dataService)
-                    .task { await authViewModel.restoreSession() }
-                
-            } else {
-                AuthView()
-                    .environmentObject(authViewModel)
-                    .environmentObject(dataService) 
-                    .task { await authViewModel.restoreSession() }
-                   
+            Group {
+                if authViewModel.isRestoringSession {
+                    // Show loading state while checking session
+                    ProgressView()
+                        .task {
+                            // Restore session on app launch to remember logged-in user
+                            await authViewModel.restoreSession()
+                        }
+                } else if authViewModel.isAuthenticated {
+                    MainTabView(isAuthenticated: .constant(false))
+                        .environmentObject(authViewModel)
+                        .environmentObject(dataService)
+                } else {
+                    AuthView()
+                        .environmentObject(authViewModel)
+                        .environmentObject(dataService)
+                }
             }
-            
         }
     }
 }

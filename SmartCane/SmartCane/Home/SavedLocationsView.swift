@@ -175,11 +175,13 @@ struct SavedLocationRow: View {
                 Text("\(location.latitude), \(location.longitude)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .accessibilityHidden(true)  // Hide coordinates from VoiceOver
                 
                 // Show when location was added
                 Text("Added \(location.created_at, style: .date)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .accessibilityHidden(true)  // Hide date from VoiceOver
             }
             
             Spacer()
@@ -189,12 +191,14 @@ struct SavedLocationRow: View {
                 // Button to show location on app's map
                 Button(action: {
                     print("🗺️ Map button tapped for: \(location.name)")
-                    // Switch to Map tab (index 1) and center on this location
-                    selectedTab = 1
                     // Store location coordinates for map to use
                     UserDefaults.standard.set(location.latitude, forKey: "MapCenterLatitude")
                     UserDefaults.standard.set(location.longitude, forKey: "MapCenterLongitude")
                     UserDefaults.standard.set(location.name, forKey: "MapCenterName")
+                    // Switch to Map tab (index 1) and notify map to center on this location
+                    selectedTab = 1
+                    // Notify MapView to check for location center
+                    NotificationCenter.default.post(name: .mapTabSelected, object: nil)
                 }) {
                     HStack(spacing: 6) {
                         Image(systemName: "location.fill")
@@ -229,13 +233,11 @@ struct SavedLocationRow: View {
         .padding(.vertical, 8)
         
         // MARK: - Delete Confirmation Alert
-        .alert("Delete Location", isPresented: $showingDeleteAlert) {
+        .alert("Delete Location \(location.name)?", isPresented: $showingDeleteAlert) {
             Button("Delete", role: .destructive) {
                 onDelete()  // Call the delete function passed from parent
             }
             Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("Are you sure you want to delete '\(location.name)'?")
         }
     }
     

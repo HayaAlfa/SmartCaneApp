@@ -2,7 +2,6 @@ import SwiftUI
 import MapKit
 import CoreLocation
 import AVFoundation
-import Speech
 import MediaPlayer
 import UserNotifications
 import os.log
@@ -10,6 +9,7 @@ import os.log
 // MARK: - Notification Extension
 extension Notification.Name {
     static let locationsUpdated = Notification.Name("locationsUpdated")
+    static let mapTabSelected = Notification.Name("mapTabSelected")
 }
 
 // MARK: - MapView Search
@@ -52,21 +52,6 @@ private extension MapView {
     
     func saveSearchHistory() {
         UserDefaults.standard.set(Array(searchHistory.prefix(5)), forKey: searchHistoryDefaultsKey)
-    }
-}
-
-// MARK: - Map Annotation Item
-struct MapAnnotationItem: Identifiable {
-    let id: String
-    let coordinate: CLLocationCoordinate2D
-    let title: String
-    let subtitle: String?
-    let type: AnnotationType
-    let savedLocation: SavedLocation?
-    
-    enum AnnotationType {
-        case savedLocation
-        case navigation
     }
 }
 
@@ -219,11 +204,11 @@ struct MapView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         )
         let temp = SavedLocation(
-            name: item.name ?? "Search Result",
-            address: item.placemark.title ?? "",
+                name: item.name ?? "Search Result", 
+                address: item.placemark.title ?? "", 
             latitude: coord.latitude,
             longitude: coord.longitude,
-            notes: "",
+                notes: "", 
             created_at: Date()
         )
         if !dataService.savedLocations.contains(where: { $0.latitude == temp.latitude && $0.longitude == temp.longitude }) {
@@ -268,8 +253,8 @@ struct MapView: View {
                     // Success notification
                     Group {
                         if showZoomSuccess {
-                            VStack {
-                                HStack {
+        VStack {
+            HStack {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundColor(.green)
                                         .font(.title2)
@@ -376,7 +361,7 @@ struct MapView: View {
                                             .background(Color.blue)
                             .clipShape(Circle())
                                             .shadow(radius: 3)
-                                    }
+                    }
 
                     
                 }
@@ -400,18 +385,6 @@ struct MapView: View {
                             .shadow(color: .black, radius: 3, x: 1, y: 1)
                     }
                     
-                    // Voice recognition status indicator (only when screen is on)
-                    if viewModel.isListening {
-                        Text("🎤 Listening...")
-                            .font(.headline)
-                            .foregroundColor(.green)
-                            .padding()
-                            .background(Color.black.opacity(0.8))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
-                            .padding(.bottom, 20)
-                            .shadow(color: .black, radius: 2, x: 1, y: 1)
-                    }
                 }
             }
             .navigationTitle("Map")
@@ -484,41 +457,6 @@ struct MapView: View {
                 )
             }
         }
-    }
-    
-    // MARK: - All Map Annotations
-    private var allMapAnnotations: [MapAnnotationItem] {
-        var annotations: [MapAnnotationItem] = []
-        
-
-        for location in dataService.savedLocations {
-            annotations.append(MapAnnotationItem(
-                id: location.id.uuidString,
-                coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
-                title: location.name,
-                subtitle: location.address,
-                type: .savedLocation,
-                savedLocation: location
-            ))
-        }
-        
-        // Add navigation annotations (start/end points)
-        for annotation in viewModel.annotations {
-            annotations.append(MapAnnotationItem(
-                id: annotation.id.uuidString,
-                coordinate: annotation.coordinate,
-                title: annotation.name,
-                subtitle: nil,
-                type: .navigation,
-                savedLocation: nil
-            ))
-        }
-        
-        
-        for annotation in annotations {
-            
-        }
-        return annotations
     }
     
     // MARK: - Save Location Sheet
@@ -599,6 +537,15 @@ struct MapView: View {
             queue: .main
         ) { _ in
             loadSavedLocations()
+        }
+        
+        // Listen for when Map tab is selected (from Saved Locations button)
+        NotificationCenter.default.addObserver(
+            forName: .mapTabSelected,
+            object: nil,
+            queue: .main
+        ) { _ in
+            checkForLocationCenter()
         }
 
         // Load persisted search history
@@ -746,9 +693,15 @@ struct MapView: View {
         let name = UserDefaults.standard.string(forKey: "MapCenterName") ?? ""
         
         if latitude != 0.0 && longitude != 0.0 {
+            print("📍 Centering map on location: \(name) at (\(latitude), \(longitude))")
             
+            // Center map on the saved location - update testRegion which is what the map actually uses
+            testRegion = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
             
-            // Center map on the saved location
+            // Also update locationManager for consistency
             locationManager.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                 span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -1122,45 +1075,6 @@ struct UserLocationIndicatorView: View {
     }
 }
 
-// SmartCaneNavigationViewModel moved to SmartCane/SmartCane/Map/SmartCaneNavigationViewModel.swift
-
-// MARK: - Route Overlay
-struct RouteOverlay: UIViewRepresentable {
-    @Binding var route: MKRoute?
-
-    func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView()
-        mapView.delegate = context.coordinator
-        return mapView
-    }
-
-    func updateUIView(_ mapView: MKMapView, context: Context) {
-        mapView.removeOverlays(mapView.overlays)
-        if let route = route {
-            mapView.addOverlay(route.polyline)
-            mapView.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    class Coordinator: NSObject, MKMapViewDelegate {
-        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            if let polyline = overlay as? MKPolyline {
-                let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = .systemGreen
-                renderer.lineWidth = 6
-                return renderer
-            }
-            return MKOverlayRenderer()
-        }
-    }
-}
-
- 
-
 // MARK: - UIKit MKMapView wrapper
 struct UIKitMapView: UIViewRepresentable {
     @Binding var region: MKCoordinateRegion
@@ -1178,6 +1092,33 @@ struct UIKitMapView: UIViewRepresentable {
         map.isScrollEnabled = true
         map.isUserInteractionEnabled = true
         map.delegate = context.coordinator
+        
+        // Hide map from VoiceOver to prevent accidental announcements when touching map areas
+        map.accessibilityElementsHidden = true
+        map.isAccessibilityElement = false
+        
+        // Completely disable VoiceOver for all map features (roads, place names, streets, etc.)
+        // Override accessibility properties to prevent VoiceOver from reading any map content
+        if #available(iOS 11.0, *) {
+            map.showsCompass = false  // Also hide compass from VoiceOver
+        }
+        
+        // Additional VoiceOver suppression - override all accessibility properties
+        DispatchQueue.main.async {
+            // Clear all accessibility properties to prevent VoiceOver from reading map content
+            map.accessibilityLabel = nil
+            map.accessibilityHint = nil
+            map.accessibilityValue = nil
+            map.accessibilityTraits = []
+            map.accessibilityElementsHidden = true
+            map.isAccessibilityElement = false
+            // Disable accessibility for all subviews (map tiles, labels, etc.)
+            map.subviews.forEach { subview in
+                subview.accessibilityElementsHidden = true
+                subview.isAccessibilityElement = false
+            }
+        }
+        
         // Add an accurate tap recognizer to convert touch to coordinate
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         tap.numberOfTapsRequired = 1
@@ -1200,6 +1141,31 @@ struct UIKitMapView: UIViewRepresentable {
     func updateUIView(_ uiView: MKMapView, context: Context) {
         // Update coordinator's parent reference to get latest isPinMode value
         context.coordinator.parent = self
+        
+        // Ensure map stays hidden from VoiceOver (in case it gets reset)
+        uiView.accessibilityElementsHidden = true
+        uiView.isAccessibilityElement = false
+        
+        // Disable all map features from VoiceOver on every update
+        // This prevents VoiceOver from reading street names, place names, roads, etc.
+        if #available(iOS 11.0, *) {
+            uiView.showsCompass = false
+        }
+        
+        // Continuously suppress VoiceOver for all map features (roads, place names, etc.)
+        DispatchQueue.main.async {
+            uiView.accessibilityLabel = nil
+            uiView.accessibilityHint = nil
+            uiView.accessibilityValue = nil
+            uiView.accessibilityTraits = []
+            uiView.accessibilityElementsHidden = true
+            uiView.isAccessibilityElement = false
+            // Disable accessibility for all map subviews (tiles, labels, etc.)
+            uiView.subviews.forEach { subview in
+                subview.accessibilityElementsHidden = true
+                subview.isAccessibilityElement = false
+            }
+        }
         
         // Only set if meaningfully different to avoid animation spam
         let current = uiView.region
@@ -1283,6 +1249,29 @@ struct UIKitMapView: UIViewRepresentable {
             } else {
                 print("📍 Pin mode disabled, ignoring tap")
             }
+        }
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            // Hide all annotation views from VoiceOver to prevent accidental announcements
+            if annotation is MKUserLocation {
+                // Keep user location annotation accessible (return nil to use default)
+                return nil
+            }
+            
+            let identifier = "SavedLocationPin"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            // Hide annotation view from VoiceOver
+            annotationView?.accessibilityElementsHidden = true
+            annotationView?.isAccessibilityElement = false
+            
+            return annotationView
         }
 
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
