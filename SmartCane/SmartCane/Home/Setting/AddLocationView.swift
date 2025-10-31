@@ -17,9 +17,13 @@ struct AddLocationView: View {
     // MARK: - State Properties
     // @State properties are used for data that can change and trigger UI updates
     @State private var name = ""                    // Location name (e.g., "Home", "Work")
-    @State private var address = ""                 // Full address of the location
+    // Address removed; we capture coordinates directly
     @State private var notes = ""                   // Optional user notes about the location
     @State private var useCurrentLocation = false   // Whether to use GPS coordinates
+    @State private var latitudeInput = ""           // Manual latitude input
+    @State private var longitudeInput = ""          // Manual longitude input
+    @State private var showValidationAlert = false
+    @State private var validationMessage = ""
     
     var body: some View {
         NavigationView {
@@ -32,21 +36,25 @@ struct AddLocationView: View {
                     TextField("Location Name", text: $name)
                         .textContentType(.name)  // iOS will suggest names from contacts
                     
-                    // MARK: - Address Input
-                    // Text field for the full address
-                    TextField("Address", text: $address)
-                        .textContentType(.fullStreetAddress)  // iOS will suggest addresses
-                    
-                    
                     // MARK: - Current Location Toggle
                     // Switch to automatically use current GPS coordinates
                     Toggle("Use Current Location", isOn: $useCurrentLocation)
                         .onChange(of: useCurrentLocation) {
                             if useCurrentLocation {
-                                // When enabled, automatically fill in current address
-                                address = locationManager.getCurrentLocationString()
+                                if let loc = locationManager.currentLocation {
+                                    latitudeInput = String(format: "%.6f", loc.coordinate.latitude)
+                                    longitudeInput = String(format: "%.6f", loc.coordinate.longitude)
+                                }
                             }
                         }
+
+                    // Manual coordinate inputs (enabled when not using current location)
+                    TextField("Latitude (-90 to 90)", text: $latitudeInput)
+                        .keyboardType(.decimalPad)
+                        .disabled(useCurrentLocation)
+                    TextField("Longitude (-180 to 180)", text: $longitudeInput)
+                        .keyboardType(.decimalPad)
+                        .disabled(useCurrentLocation)
                 }
                 
                 // MARK: - Additional Information Section
@@ -105,16 +113,21 @@ struct AddLocationView: View {
                     Button("Save") {
                         saveLocation()  // Call the save function
                     }
-                    .disabled(name.isEmpty || address.isEmpty)  // Disable if required fields are empty
+                    .disabled(name.isEmpty)
                 }
             }
             .onAppear {
                 // MARK: - View Setup
                 // This runs when the view appears on screen
-                if locationManager.currentLocation != nil {
-                    // If we have a current location, pre-fill the address
-                    address = locationManager.getCurrentLocationString()
+                if let loc = locationManager.currentLocation {
+                    latitudeInput = String(format: "%.6f", loc.coordinate.latitude)
+                    longitudeInput = String(format: "%.6f", loc.coordinate.longitude)
                 }
+            }
+            .alert("Invalid Coordinates", isPresented: $showValidationAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(validationMessage)
             }
         }
     }
@@ -124,20 +137,43 @@ struct AddLocationView: View {
     // MARK: - Save Location Function
     // Creates a new SavedLocation and calls the onSave closure
     private func saveLocation() {
-        // Create a new location object with the form data
+        // Determine coordinates
+        var lat: Double?
+        var lon: Double?
+        if useCurrentLocation, let loc = locationManager.currentLocation {
+            lat = loc.coordinate.latitude
+            lon = loc.coordinate.longitude
+        } else {
+            lat = Double(latitudeInput.trimmingCharacters(in: .whitespaces))
+            lon = Double(longitudeInput.trimmingCharacters(in: .whitespaces))
+        }
+        // Validate presence
+        guard let latitude = lat, let longitude = lon else {
+            validationMessage = "Please enter valid numeric latitude and longitude."
+            showValidationAlert = true
+            return
+        }
+        // Validate ranges
+        guard (-90.0...90.0).contains(latitude) else {
+            validationMessage = "Latitude must be between -90 and 90."
+            showValidationAlert = true
+            return
+        }
+        guard (-180.0...180.0).contains(longitude) else {
+            validationMessage = "Longitude must be between -180 and 180."
+            showValidationAlert = true
+            return
+        }
+        // Create location
         let newLocation = SavedLocation(
             name: name,                    // User-entered name
-            address: address,              // User-entered address
-            latitude: useCurrentLocation ? locationManager.region.center.latitude : 0.0,   // GPS latitude if enabled
-            longitude: useCurrentLocation ? locationManager.region.center.longitude : 0.0, // GPS longitude if enabled
+            address: "Unknown Address",    // No address captured for manual input
+            latitude: latitude,            // Validated latitude
+            longitude: longitude,          // Validated longitude
             notes: notes,                  // User-entered notes
             created_at: Date()            // Current timestamp
         )
-        
-        // Call the onSave closure passed from the parent view
         onSave(newLocation)
-        
-        // Close the sheet
         dismiss()
     }
 }

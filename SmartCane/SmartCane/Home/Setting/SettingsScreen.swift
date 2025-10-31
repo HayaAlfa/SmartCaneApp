@@ -8,6 +8,8 @@
 import SwiftUI
 import UserNotifications  // For checking and requesting notification permissions
 import CoreBluetooth      // For real Bluetooth functionality
+import Speech             // For speech recognition permission
+import AVFAudio           // For microphone permission
 
 // MARK: - Settings Screen
 // This screen provides app configuration options and user preferences
@@ -31,6 +33,8 @@ struct SettingsScreen: View {
     @State private var locationServicesEnabled = false   // Whether location services are active
     @AppStorage("bluetoothEnabled") private var bluetoothEnabled = false  // Persistent Bluetooth state
     @State private var showingBluetoothDevices = false
+    @State private var speechEnabled = false
+    @State private var microphoneEnabled = false
 
     
     // Real ESP32 Bluetooth Manager
@@ -114,6 +118,58 @@ struct SettingsScreen: View {
                         .font(.caption)
                     }
                     
+                    // MARK: - Speech Recognition
+                    HStack {
+                        Image(systemName: "waveform")
+                            .foregroundColor(speechEnabled ? .green : .gray)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading) {
+                            Text("Speech Recognition")
+                                .font(.body)
+                            Text(speechEnabled ? "Enabled" : "Disabled")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Button(speechEnabled ? "Open" : "Allow") {
+                            if speechEnabled {
+                                openAppSettings()
+                            } else {
+                                requestSpeechPermission()
+                            }
+                        }
+                        .font(.caption)
+                    }
+
+                    // MARK: - Microphone
+                    HStack {
+                        Image(systemName: "mic")
+                            .foregroundColor(microphoneEnabled ? .green : .gray)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading) {
+                            Text("Microphone")
+                                .font(.body)
+                            Text(microphoneEnabled ? "Enabled" : "Disabled")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Button(microphoneEnabled ? "Open" : "Allow") {
+                            if microphoneEnabled {
+                                openAppSettings()
+                            } else {
+                                requestMicrophonePermission()
+                            }
+                        }
+                        .font(.caption)
+                    }
+
                     // MARK: - Bluetooth Status
                     // Shows general bluetooth status with toggle
                     HStack {
@@ -241,6 +297,7 @@ struct SettingsScreen: View {
 
             }
             .navigationTitle("Settings")  // Sets the navigation bar title
+            .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 // Check current permission status when view appears
                 checkPermissions()
@@ -275,6 +332,14 @@ struct SettingsScreen: View {
         
         // Bluetooth status is now persistent via @AppStorage
         // No need to reset it here
+
+        // Speech recognition
+        let s = SFSpeechRecognizer.authorizationStatus()
+        speechEnabled = (s == .authorized)
+
+        // Microphone
+        let mic = AVAudioApplication.shared.recordPermission
+        microphoneEnabled = (mic == .granted)
     }
     
     // Open iOS Settings app to notification permissions
@@ -288,6 +353,28 @@ struct SettingsScreen: View {
     private func openLocationSettings() {
         if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(settingsUrl)
+        }
+    }
+
+    private func openAppSettings() {
+        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(settingsUrl)
+        }
+    }
+
+    private func requestSpeechPermission() {
+        SFSpeechRecognizer.requestAuthorization { status in
+            DispatchQueue.main.async {
+                self.speechEnabled = (status == .authorized)
+            }
+        }
+    }
+
+    private func requestMicrophonePermission() {
+        AVAudioApplication.requestRecordPermission { granted in
+            DispatchQueue.main.async {
+                self.microphoneEnabled = granted
+            }
         }
     }
     

@@ -154,10 +154,12 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         
         // Filter out low accuracy locations
-        if location.horizontalAccuracy > 50 { // More strict accuracy filter
+        if location.horizontalAccuracy > 100 { // Relaxed accuracy filter for debugging
             print("⚠️ Low accuracy location received: \(location.horizontalAccuracy)m")
             return
         }
+        
+        print("📍 Location received: \(location.coordinate), accuracy: \(location.horizontalAccuracy)m")
         
         // Check if this is a significant location change
         if let previousLocation = currentLocation {
@@ -169,6 +171,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
         
         DispatchQueue.main.async {
+            print("📍 Setting currentLocation to: \(location.coordinate)")
             self.currentLocation = location
             self.locationAccuracy = location.horizontalAccuracy
             self.lastLocationUpdate = Date()

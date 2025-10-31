@@ -335,16 +335,19 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TM58HAMYR5;
+				DEVELOPMENT_TEAM = UMJJAL8T57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartCane/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth access to connect to your SmartCane device for obstacle detection and navigation assistance.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "SmartCane uses Bluetooth to receive cane obstacle signals, including in background.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth access to connect to your SmartCane device for obstacle detection and navigation assistance.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCane needs camera access to detect and identify obstacles in your path.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "SmartCane needs background location to continue navigation with the screen off.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "SmartCane needs your location to track obstacles and provide continuous navigation assistance.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SmartCane needs your location to save obstacle locations and provide navigation assistance.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to provide walking navigation and show your current position on the map.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SmartCane uses the microphone to listen for navigation commands like “start” or “cancel”.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SmartCane needs speech recognition to let you say “start” or “cancel”.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
@@ -356,7 +359,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fau.SmartCane;
+				PRODUCT_BUNDLE_IDENTIFIER = hayaalfakieh.fau.SmartCane;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -372,16 +375,19 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TM58HAMYR5;
+				DEVELOPMENT_TEAM = UMJJAL8T57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SmartCane/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "This app needs Bluetooth access to connect to your SmartCane device for obstacle detection and navigation assistance.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "SmartCane uses Bluetooth to receive cane obstacle signals, including in background.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "This app needs Bluetooth access to connect to your SmartCane device for obstacle detection and navigation assistance.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SmartCane needs camera access to detect and identify obstacles in your path.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "SmartCane needs background location to continue navigation with the screen off.";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "SmartCane needs your location to track obstacles and provide continuous navigation assistance.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "SmartCane needs your location to save obstacle locations and provide navigation assistance.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location to provide walking navigation and show your current position on the map.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "SmartCane uses the microphone to listen for navigation commands like “start” or “cancel”.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "SmartCane needs speech recognition to let you say “start” or “cancel”.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
@@ -393,7 +399,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fau.SmartCane;
+				PRODUCT_BUNDLE_IDENTIFIER = hayaalfakieh.fau.SmartCane;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -1,21 +1,29 @@
 //
 //  MyRoutesView.swift
 //  SmartCane
-
+//
+//  Merged version (Haya + friend)
+//
 
 import SwiftUI
+import Speech
 
 // MARK: - My Routes View
-// This view allows users to save and manage familiar routes between locations
 struct MyRoutesView: View {
 
-    // MARK: - State & Environment
+    // MARK: - Environment & State
+    @EnvironmentObject var dataService: SmartCaneDataService
     @State private var showingAddRoute = false
     @State private var selectedRouteToDelete: SavedRoute?
     @State private var showingDeleteAlert = false
-    @EnvironmentObject var dataService: SmartCaneDataService
-
-    // MARK: - Main Body
+    @Binding var selectedTab: Int
+    
+    // MARK: - Init
+    init(selectedTab: Binding<Int>) {
+        self._selectedTab = selectedTab
+    }
+    
+    // MARK: - Body
     var body: some View {
         NavigationView {
             VStack {
@@ -24,28 +32,43 @@ struct MyRoutesView: View {
                 } else {
                     List {
                         ForEach(dataService.userRoutes) { route in
-                            RouteRowView(route: route, onDelete: {
-                                selectedRouteToDelete = route
-                                showingDeleteAlert = true
-                            })
+                            RouteRowView(
+                                route: route,
+                                onTap: { SpeechManager.shared.speak(_text: "Route \(route.name) selected") },
+                                onDelete: {
+                                    selectedRouteToDelete = route
+                                    showingDeleteAlert = true
+                                },
+                                selectedTab: $selectedTab
+                            )
                         }
                     }
                 }
             }
             .navigationTitle("My Routes")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
+                    Button {
                         showingAddRoute = true
-                    }) {
-                        Image(systemName: "plus")
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.headline)
+                            Text("Add Route")
+                                .font(.headline)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
             }
             .sheet(isPresented: $showingAddRoute) {
                 AddRouteView()
-                    .environmentObject(dataService) // give AddRouteView access to dataService
+                    .environmentObject(dataService)
             }
             .onAppear {
                 Task {
@@ -76,24 +99,24 @@ struct MyRoutesView: View {
             }
         }
     }
-
-    // MARK: - Empty State View
+    
+    // MARK: - Empty State
     private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "map.circle.fill")
                 .font(.system(size: 80))
                 .foregroundColor(.gray)
-
+            
             Text("No Routes Saved")
                 .font(.title2)
                 .fontWeight(.semibold)
-
-            Text("Save your familiar routes to get quick navigation assistance")
+            
+            Text("Save your familiar routes to get quick navigation assistance.")
                 .font(.body)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-
+            
             Button("Add Your First Route") {
                 showingAddRoute = true
             }
@@ -121,54 +144,195 @@ struct SavedRoute: Identifiable, Codable {
     }
 }
 
-// MARK: - Route Row View
+// MARK: - Route Row View (merged with speech recognition)
 struct RouteRowView: View {
     let route: SavedRoute
+    let onTap: () -> Void
     let onDelete: () -> Void
+    @Binding var selectedTab: Int
+    
+    @State private var showStartPrompt = false
+    @State private var speechAuthStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
+    @State private var audioEngine = AVAudioEngine()
+    @State private var recognizer: SFSpeechRecognizer? = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+    @State private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    @State private var recognitionTask: SFSpeechRecognitionTask?
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text(route.name)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(route.name)
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            GeometryReader { geo in
+                HStack(spacing: 10) {
+                    // Play button
+                    Button {
+                        prepareNavigationAndPrompt()
+                    } label: {
+                        HStack {
+                            Image(systemName: "play.fill")
+                            Text("Play")
+                        }
                         .font(.headline)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    // Delete button
-                    Button(action: onDelete) {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
-                            .font(.title3)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(height: 44)
+                        .background(Color.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .buttonStyle(PlainButtonStyle())
-                }
-
-                HStack {
-                    Image(systemName: "mappin.circle.fill")
-                        .foregroundColor(.green)
-                    Text(route.startLocation.name)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-
-                    Spacer()
-
-                    Image(systemName: "flag.circle.fill")
-                        .foregroundColor(.red)
-                    Text(route.endLocation.name)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-
-                if !route.description.isEmpty {
-                    Text(route.description)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
+                    .frame(width: geo.size.width * 0.7)
+                    
+                    // Delete button
+                    Button(action: onDelete) {
+                        Image(systemName: "trash.fill")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(height: 44)
+                            .background(Color.red)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .frame(width: geo.size.width * 0.28)
                 }
             }
-            .padding(.vertical, 4)
+            .frame(height: 44)
+            
+            if !route.description.isEmpty {
+                Text(route.description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            }
         }
-        .buttonStyle(PlainButtonStyle())
+        .padding(.vertical, 6)
+        .alert("Start Navigation?", isPresented: $showStartPrompt) {
+            Button("Cancel", role: .cancel) {
+                cancelNavigation()
+                stopVoicePromptListening()
+            }
+            Button("Start") {
+                startNavigation()
+                stopVoicePromptListening()
+            }
+        } message: {
+            Text("Say 'start' or 'cancel', or use the buttons below.")
+        }
+        .onChange(of: showStartPrompt) { _, isShown in
+            if isShown {
+                requestSpeechAuthIfNeededAndStart(startAfter: 1.8)
+            } else {
+                stopVoicePromptListening()
+            }
+        }
+    }
+
+    // MARK: - Navigation
+    private func startNavigation() {
+        UserDefaults.standard.set(true, forKey: "AutoStartNavigation")
+        selectedTab = 1
+    }
+
+    private func cancelNavigation() {
+        let keys = ["NavigationStartLatitude", "NavigationStartLongitude", "NavigationEndLatitude", "NavigationEndLongitude", "AutoStartNavigation"]
+        keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+    }
+
+    private func prepareNavigationAndPrompt() {
+        UserDefaults.standard.set(route.startLocation.latitude, forKey: "NavigationStartLatitude")
+        UserDefaults.standard.set(route.startLocation.longitude, forKey: "NavigationStartLongitude")
+        UserDefaults.standard.set(route.endLocation.latitude, forKey: "NavigationEndLatitude")
+        UserDefaults.standard.set(route.endLocation.longitude, forKey: "NavigationEndLongitude")
+        UserDefaults.standard.set(false, forKey: "AutoStartNavigation")
+        
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .spokenAudio, options: [])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("⚠️ Audio session error:", error)
+        }
+        
+        SpeechManager.shared.speak(_text: "Route is ready. Say start or cancel, or use the buttons.")
+        showStartPrompt = true
+    }
+
+    // MARK: - Speech Recognition
+    private func requestSpeechAuthIfNeededAndStart(startAfter delay: TimeInterval = 0.0) {
+        let current = SFSpeechRecognizer.authorizationStatus()
+        if current == .authorized {
+            speechAuthStatus = .authorized
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                startVoicePromptListening()
+            }
+            return
+        }
+        SFSpeechRecognizer.requestAuthorization { status in
+            DispatchQueue.main.async {
+                self.speechAuthStatus = status
+                if status == .authorized {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                        self.startVoicePromptListening()
+                    }
+                } else {
+                    print("⚠️ Speech not authorized")
+                }
+            }
+        }
+    }
+
+    private func startVoicePromptListening() {
+        guard speechAuthStatus == .authorized else { return }
+        stopVoicePromptListening()
+        
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch { print("❌ Session error:", error) }
+        
+        audioEngine = AVAudioEngine()
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest = recognitionRequest else { return }
+        recognitionRequest.shouldReportPartialResults = true
+        
+        let inputNode = audioEngine.inputNode
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: nil) { buffer, _ in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        do { try audioEngine.start() } catch { print("❌ Engine start error:", error) }
+        
+        recognitionTask = recognizer?.recognitionTask(with: recognitionRequest) { result, error in
+            if let text = result?.bestTranscription.formattedString.lowercased() {
+                if text.contains("start") {
+                    startNavigation()
+                    stopVoicePromptListening()
+                    showStartPrompt = false
+                } else if text.contains("cancel") || text.contains("stop") {
+                    cancelNavigation()
+                    stopVoicePromptListening()
+                    showStartPrompt = false
+                }
+            }
+            if let error = error {
+                print("❌ Speech recognition error:", error.localizedDescription)
+                stopVoicePromptListening()
+            }
+        }
+    }
+
+    private func stopVoicePromptListening() {
+        if audioEngine.isRunning {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.stop()
+            audioEngine.reset()
+        }
+        recognitionTask?.cancel(); recognitionTask = nil
+        recognitionRequest?.endAudio(); recognitionRequest = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }
 
@@ -176,66 +340,25 @@ struct RouteRowView: View {
 struct AddRouteView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var dataService: SmartCaneDataService
-
+    
     @State private var routeName = ""
     @State private var selectedStartLocation: SavedLocation?
     @State private var selectedEndLocation: SavedLocation?
     @State private var description = ""
     @State private var showingStartLocationPicker = false
     @State private var showingEndLocationPicker = false
-
+    
     var body: some View {
         NavigationView {
             Form {
                 Section("Route Details") {
                     TextField("Route Name", text: $routeName)
-
-                    // Start Location Picker
-                    Button(action: {
-                        showingStartLocationPicker = true
-                    }) {
-                        HStack {
-                            Text("Start Location")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text(selectedStartLocation?.name ?? "Select Start Location")
-                                .foregroundColor(selectedStartLocation != nil ? .secondary : .blue)
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // End Location Picker
-                    Button(action: {
-                        showingEndLocationPicker = true
-                    }) {
-                        HStack {
-                            Text("End Location")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Text(selectedEndLocation?.name ?? "Select End Location")
-                                .foregroundColor(selectedEndLocation != nil ? .secondary : .blue)
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // Validation message
-                    if selectedStartLocation != nil &&
-                        selectedEndLocation != nil &&
-                        selectedStartLocation?.id == selectedEndLocation?.id {
-                        Text("Start and end locations must be different")
-                            .foregroundColor(.red)
-                            .font(.caption)
-                    }
+                    Button("Select Start Location") { showingStartLocationPicker = true }
+                    Button("Select End Location") { showingEndLocationPicker = true }
                 }
-
+                
                 Section("Description (Optional)") {
-                    TextField("Add notes about this route...", text: $description, axis: .vertical)
+                    TextField("Add notes...", text: $description, axis: .vertical)
                         .lineLimit(3...6)
                 }
             }
@@ -243,16 +366,11 @@ struct AddRouteView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
-
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        saveRoute()
-                    }
-                    .disabled(!canSave)
+                    Button("Save") { saveRoute() }
+                        .disabled(!canSave)
                 }
             }
             .sheet(isPresented: $showingStartLocationPicker) {
@@ -271,44 +389,26 @@ struct AddRouteView: View {
             }
             .onAppear {
                 Task {
-                    do {
-                        try await dataService.fetchUserLocations()
-                    } catch {
-                        print("❌ Failed to fetch locations:", error.localizedDescription)
-                    }
+                    try? await dataService.fetchUserLocations()
                 }
             }
         }
     }
-
+    
     private var canSave: Bool {
-        !routeName.isEmpty &&
         selectedStartLocation != nil &&
         selectedEndLocation != nil &&
         selectedStartLocation?.id != selectedEndLocation?.id
     }
-
+    
     private func saveRoute() {
-        guard let startLocation = selectedStartLocation,
-              let endLocation = selectedEndLocation else {
-            return
-        }
-
-        let newRoute = SavedRoute(
-            name: routeName,
-            startLocation: startLocation,
-            endLocation: endLocation,
-            description: description
-        )
-
+        guard let start = selectedStartLocation, let end = selectedEndLocation else { return }
+        let autoName = "\(start.name) to \(end.name)"
+        let newRoute = SavedRoute(name: autoName, startLocation: start, endLocation: end, description: description)
         Task {
-            do {
-                try await dataService.saveUserRoute(newRoute)
-                try await dataService.fetchUserRoutes()
-                dismiss()
-            } catch {
-                print("❌ Failed to save route:", error.localizedDescription)
-            }
+            try? await dataService.saveUserRoute(newRoute)
+            try? await dataService.fetchUserRoutes()
+            dismiss()
         }
     }
 }
@@ -345,9 +445,7 @@ struct LocationPickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
+                    Button("Cancel") { dismiss() }
                 }
             }
             .searchable(text: $searchText, prompt: "Search locations...")
@@ -429,25 +527,6 @@ struct LocationPickerRowView: View {
     }
 }
 
-// MARK: - Search Bar
-struct SearchBar: View {
-    @Binding var text: String
-
-    var body: some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
-
-            TextField("Search routes...", text: $text)
-                .textFieldStyle(PlainTextFieldStyle())
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(10)
-    }
-}
-
 // MARK: - Primary Button Style
 struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -463,6 +542,6 @@ struct PrimaryButtonStyle: ButtonStyle {
 
 // MARK: - Preview
 #Preview {
-    MyRoutesView()
+    MyRoutesView(selectedTab: .constant(0))
         .environmentObject(SmartCaneDataService())
 }

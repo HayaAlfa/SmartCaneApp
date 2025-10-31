@@ -53,6 +53,10 @@ class SpeechManager {
         let voiceEnabled = UserDefaults.standard.object(forKey: "voiceFeedbackEnabled") as? Bool ?? true
         guard voiceEnabled else { return }
         
+        // If something is already speaking (e.g., navigation), interrupt it for higher-priority alerts
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
         // Create a speech utterance (the text to be spoken)
         let utterance = AVSpeechUtterance(string: _text)
         

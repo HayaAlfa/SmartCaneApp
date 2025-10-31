@@ -52,12 +52,23 @@ struct SavedLocationsView: View {
             .navigationBarTitleDisplayMode(.large)  // Large title style
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    // Add button in top-right corner
+                    // Larger accessible add button in the top-right
                     Button(action: {
-                        showingAddLocation = true  // Show add location sheet
+                        showingAddLocation = true
                     }) {
-                        Image(systemName: "plus")
+                        HStack(spacing: 8) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.headline)
+                            Text("Add Location")
+                                .font(.headline)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             // MARK: - Add Location Sheet
@@ -83,6 +94,7 @@ struct SavedLocationsView: View {
                     }
                 }
             }
+            
         }
     }
     
@@ -159,17 +171,10 @@ struct SavedLocationRow: View {
                     .font(.headline)
                     .foregroundColor(.primary)
                 
-                Text(location.address)  // Full address
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
                 
-                // Show notes if they exist
-                if !location.notes.isEmpty {
-                    Text(location.notes)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)  // Limit to 2 lines to save space
-                }
+                Text("\(location.latitude), \(location.longitude)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
                 
                 // Show when location was added
                 Text("Added \(location.created_at, style: .date)")
@@ -191,12 +196,15 @@ struct SavedLocationRow: View {
                     UserDefaults.standard.set(location.longitude, forKey: "MapCenterLongitude")
                     UserDefaults.standard.set(location.name, forKey: "MapCenterName")
                 }) {
-                    Image(systemName: "map")
-                        .font(.title2)
-                        .foregroundColor(.blue)
-                        .frame(width: 30, height: 30)
-                        .background(Color.blue.opacity(0.1))
-                        .clipShape(Circle())
+                    HStack(spacing: 6) {
+                        Image(systemName: "location.fill")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.blue)
+                    .cornerRadius(12)
                 }
                 .buttonStyle(PlainButtonStyle())
                 
@@ -205,12 +213,15 @@ struct SavedLocationRow: View {
                     print("🗑️ Delete button tapped for: \(location.name)")
                     showingDeleteAlert = true  // Show delete confirmation
                 }) {
-                    Image(systemName: "trash")
-                        .font(.title2)
-                        .foregroundColor(.red)
-                        .frame(width: 30, height: 30)
-                        .background(Color.red.opacity(0.1))
-                        .clipShape(Circle())
+                    HStack(spacing: 6) {
+                        Image(systemName: "trash.fill")
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color.red)
+                    .cornerRadius(12)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
