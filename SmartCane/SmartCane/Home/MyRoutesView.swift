@@ -341,7 +341,6 @@ struct AddRouteView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var dataService: SmartCaneDataService
     
-    @State private var routeName = ""
     @State private var selectedStartLocation: SavedLocation?
     @State private var selectedEndLocation: SavedLocation?
     @State private var description = ""
@@ -352,9 +351,29 @@ struct AddRouteView: View {
         NavigationView {
             Form {
                 Section("Route Details") {
-                    TextField("Route Name", text: $routeName)
-                    Button("Select Start Location") { showingStartLocationPicker = true }
-                    Button("Select End Location") { showingEndLocationPicker = true }
+                    Button(action: { showingStartLocationPicker = true }) {
+                        HStack {
+                            Text(selectedStartLocation != nil ? selectedStartLocation!.name : "Select Start Location")
+                                .foregroundColor(selectedStartLocation != nil ? .primary : .blue)
+                            Spacer()
+                            if selectedStartLocation != nil {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
+                        }
+                    }
+                    
+                    Button(action: { showingEndLocationPicker = true }) {
+                        HStack {
+                            Text(selectedEndLocation != nil ? selectedEndLocation!.name : "Select End Location")
+                                .foregroundColor(selectedEndLocation != nil ? .primary : .blue)
+                            Spacer()
+                            if selectedEndLocation != nil {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                            }
+                        }
+                    }
                 }
                 
                 Section("Description (Optional)") {

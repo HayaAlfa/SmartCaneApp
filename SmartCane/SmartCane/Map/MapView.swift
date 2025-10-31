@@ -73,9 +73,9 @@ struct MapAnnotationItem: Identifiable {
 struct MapView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var viewModel = NavigationViewModel()
+    @EnvironmentObject var dataService: SmartCaneDataService
     
     // Pin functionality
-    @State private var savedLocations: [SavedLocation] = []
     @State private var selectedSavedLocation: SavedLocation?
     @State private var showingSavedLocationDetail = false
     @State private var showLocationAlert = false
@@ -226,8 +226,17 @@ struct MapView: View {
             notes: "",
             created_at: Date()
         )
-        if !savedLocations.contains(where: { $0.latitude == temp.latitude && $0.longitude == temp.longitude }) {
-            savedLocations.append(temp)
+        if !dataService.savedLocations.contains(where: { $0.latitude == temp.latitude && $0.longitude == temp.longitude }) {
+            // Save search result to Supabase
+            Task {
+                do {
+                    try await dataService.saveUserLocation(temp)
+                    try await dataService.fetchUserLocations()
+                    print("✅ Search result saved to Supabase: \(temp.name)")
+                } catch {
+                    print("❌ Failed to save search result: \(error.localizedDescription)")
+                }
+            }
         }
     }
 
@@ -237,11 +246,14 @@ struct MapView: View {
                 // Full screen map in background (single MKMapView for device reliability)
                 UIKitMapView(
                     region: $testRegion,
-                    annotations: savedLocations,
+                    annotations: dataService.savedLocations,
                     route: viewModel.route,
+                    isPinMode: isPinMode,
                     onMapTap: { coordinate in
-                        tappedCoordinate = coordinate
-                        showingSaveLocationSheet = true
+                        if isPinMode {
+                            tappedCoordinate = coordinate
+                            showingSaveLocationSheet = true
+                        }
                     }
                 )
                 .ignoresSafeArea(.all)
@@ -479,7 +491,7 @@ struct MapView: View {
         var annotations: [MapAnnotationItem] = []
         
 
-        for location in savedLocations {
+        for location in dataService.savedLocations {
             annotations.append(MapAnnotationItem(
                 id: location.id.uuidString,
                 coordinate: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude),
@@ -514,8 +526,19 @@ struct MapView: View {
         Group {
             if let coordinate = tappedCoordinate {
                 SaveLocationView(coordinate: coordinate) { savedLocation in
-                    savedLocations.append(savedLocation)
-                    saveLocationsToUserDefaults()
+                    Task {
+                        do {
+                            // Save to Supabase
+                            try await dataService.saveUserLocation(savedLocation)
+                            // Fetch updated list from Supabase
+                            try await dataService.fetchUserLocations()
+                            print("✅ Location saved to Supabase from pin mode: \(savedLocation.name)")
+                        } catch {
+                            print("❌ Failed to save location to Supabase: \(error.localizedDescription)")
+                            // Still save locally as fallback
+                            saveLocationLocally(savedLocation)
+                        }
+                    }
                 }
                 .onAppear {
                     
@@ -541,10 +564,10 @@ struct MapView: View {
         loadSavedLocations()
         
         // Set map region to show saved locations
-        if !savedLocations.isEmpty {
+        if !dataService.savedLocations.isEmpty {
             // Calculate center point from saved locations
-            let avgLat = savedLocations.map { $0.latitude }.reduce(0, +) / Double(savedLocations.count)
-            let avgLon = savedLocations.map { $0.longitude }.reduce(0, +) / Double(savedLocations.count)
+            let avgLat = dataService.savedLocations.map { $0.latitude }.reduce(0, +) / Double(dataService.savedLocations.count)
+            let avgLon = dataService.savedLocations.map { $0.longitude }.reduce(0, +) / Double(dataService.savedLocations.count)
             
             locationManager.region = MKCoordinateRegion(
                 center: CLLocationCoordinate2D(latitude: avgLat, longitude: avgLon),
@@ -740,15 +763,37 @@ struct MapView: View {
     
     // MARK: - Load Saved Locations
     private func loadSavedLocations() {
+        // Load from Supabase via dataService
+        Task {
+            do {
+                try await dataService.fetchUserLocations()
+                print("✅ Loaded locations from Supabase in MapView: \(dataService.savedLocations.count)")
+            } catch {
+                print("❌ Failed to load locations from Supabase: \(error.localizedDescription)")
+                // Fallback to UserDefaults if Supabase fails
+                loadLocationsFromUserDefaults()
+            }
+        }
+    }
+    
+    // Fallback: Load from UserDefaults
+    private func loadLocationsFromUserDefaults() {
         if let data = UserDefaults.standard.data(forKey: "SavedLocations"),
            let decoded = try? JSONDecoder().decode([SavedLocation].self, from: data) {
-            savedLocations = decoded
-            
-            for location in savedLocations {
-                
-            }
-        } else {
-            
+            // Update dataService with local locations
+            dataService.savedLocations = decoded
+            print("⚠️ Loaded locations from UserDefaults: \(decoded.count)")
+        }
+    }
+    
+    // Save location locally as fallback
+    private func saveLocationLocally(_ location: SavedLocation) {
+        var local = dataService.savedLocations
+        local.append(location)
+        if let encoded = try? JSONEncoder().encode(local) {
+            UserDefaults.standard.set(encoded, forKey: "SavedLocations")
+            dataService.savedLocations = local
+            print("⚠️ Saved location locally as fallback: \(location.name)")
         }
     }
     
@@ -792,7 +837,8 @@ struct MapView: View {
     
     // MARK: - Save Locations to UserDefaults
     private func saveLocationsToUserDefaults() {
-        if let encoded = try? JSONEncoder().encode(savedLocations) {
+        // Sync dataService.savedLocations to UserDefaults as backup
+        if let encoded = try? JSONEncoder().encode(dataService.savedLocations) {
             UserDefaults.standard.set(encoded, forKey: "SavedLocations")
             
             // Post notification to update other parts of the app
@@ -1120,6 +1166,7 @@ struct UIKitMapView: UIViewRepresentable {
     @Binding var region: MKCoordinateRegion
     var annotations: [SavedLocation] = []
     var route: MKRoute? = nil
+    var isPinMode: Bool = false
     var onMapTap: ((CLLocationCoordinate2D) -> Void)? = nil
 
     func makeUIView(context: Context) -> MKMapView {
@@ -1151,6 +1198,9 @@ struct UIKitMapView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        // Update coordinator's parent reference to get latest isPinMode value
+        context.coordinator.parent = self
+        
         // Only set if meaningfully different to avoid animation spam
         let current = uiView.region
         let new = region
@@ -1225,8 +1275,13 @@ struct UIKitMapView: UIViewRepresentable {
             let point = gesture.location(in: mapView)
             let coord = mapView.convert(point, toCoordinateFrom: mapView)
             print("📍 Map tap at coordinate: (\(coord.latitude), \(coord.longitude))")
-            if let callback = parent.onMapTap {
+            print("📍 Pin mode is: \(parent.isPinMode)")
+            // Only call callback if pin mode is enabled
+            if parent.isPinMode, let callback = parent.onMapTap {
+                print("📍 Pin mode enabled, calling callback")
                 callback(coord)
+            } else {
+                print("📍 Pin mode disabled, ignoring tap")
             }
         }
 
